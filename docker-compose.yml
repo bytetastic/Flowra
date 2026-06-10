@@ -1,0 +1,12 @@
+services:
+  flowra:
+    build: ../../Downloads/flowra
+    container_name: flowra
+    restart: unless-stopped
+    ports:
+      - "9876:9876"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - FLOWRA_DB=/app/data/flowra.db
+
