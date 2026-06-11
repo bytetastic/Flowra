@@ -28,7 +28,7 @@ a = Analysis(
         'anyio._backends._asyncio',
         'sqlite3',
     ],
-    excludes=['tkinter', 'matplotlib', 'numpy', 'pandas', 'PIL', 'pytest'],
+    excludes=['tkinter', 'matplotlib', 'numpy', 'pandas', 'pytest'],
     noarchive=False,
 )
 
@@ -46,6 +46,6 @@ exe = EXE(
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=False,        # kein schwarzes Konsolenfenster
+    console=False,        # Kein schwarzes Konsolenfenster im Hintergrund
     icon='assets/icon.ico',
 )
