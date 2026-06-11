@@ -1,6 +1,6 @@
 name: Flowra Build
 
-on:
+'on':
   workflow_dispatch:
     inputs:
       version:
@@ -9,24 +9,22 @@ on:
         default: '1.0.0'
 
 env:
-  ICON_ICO_B64: "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"
-  ICON_PNG_B64: "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"
+  ICON_ICO_B64: "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"
+  ICON_PNG_B64: "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"
 
 jobs:
-  # ── Windows → Flowra.exe ──────────────────────────────
+
+  # ── WINDOWS ──────────────────────────────────────────
   build-windows:
     runs-on: windows-latest
     steps:
-      - name: Code auschecken
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Python 3.14 einrichten
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.14'
 
-      - name: Node.js einrichten
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
 
@@ -34,61 +32,74 @@ jobs:
         run: pip install pyinstaller pywebview fastapi uvicorn pydantic aiofiles
 
       - name: Frontend bauen
-        run: |
-          cd frontend
-          npm install
-          npm run build
+        run: cd frontend && npm install && npm run build
 
-      - name: Flowra-Icon einbetten
+      - name: Icon und Spec erstellen
         shell: python
         run: |
           import base64, os
           os.makedirs('backend/assets', exist_ok=True)
-          open('backend/assets/icon.ico', 'wb').write(base64.b64decode(os.environ['ICON_ICO_B64'].strip()))
-          print('[OK] icon.ico eingebettet')
+          open('backend/assets/icon.ico','wb').write(base64.b64decode(os.environ['ICON_ICO_B64']))
+          spec = (
+            '# -*- mode: python ; coding: utf-8 -*-\n'
+            'from PyInstaller.utils.hooks import collect_data_files, collect_submodules\n'
+            'import os\n'
+            "frontend_build = os.path.join('..','frontend','build')\n"
+            'a = Analysis(\n'
+            "    ['main_desktop.py'],pathex=['.'],binaries=[],\n"
+            "    datas=[(frontend_build,'frontend_build'),*collect_data_files('webview')],\n"
+            '    hiddenimports=[\n'
+            "        *collect_submodules('uvicorn'),*collect_submodules('fastapi'),\n"
+            "        *collect_submodules('webview'),\n"
+            "        'uvicorn.logging','uvicorn.loops','uvicorn.loops.auto',\n"
+            "        'uvicorn.protocols','uvicorn.protocols.http',\n"
+            "        'uvicorn.protocols.http.auto','uvicorn.lifespan',\n"
+            "        'uvicorn.lifespan.on','anyio','anyio._backends._asyncio','sqlite3',\n"
+            '    ],\n'
+            "    excludes=['tkinter','matplotlib','numpy','pandas','PIL','pytest'],\n"
+            '    noarchive=False,\n'
+            ')\n'
+            'pyz = PYZ(a.pure)\n'
+            'exe = EXE(pyz,a.scripts,a.binaries,a.datas,[],\n'
+            "    name='Flowra',debug=False,strip=False,\n"
+            "    upx=True,console=False,icon='assets/icon.ico')\n"
+          )
+          open('backend/flowra_win.spec','w').write(spec)
+          print('OK')
 
       - name: Flowra.exe bauen
-        run: |
-          cd backend
-          # Sicherheitsnetz: Kopiere flowra.spec zu flowra_windows.spec, falls alte Aufrufe hängen
-          if (Test-Path "flowra.spec") { Copy-Item "flowra.spec" -Destination "flowra_windows.spec" }
-          pyinstaller flowra.spec --distpath dist --workpath build_tmp --noconfirm
+        run: cd backend && pyinstaller flowra_win.spec --distpath dist --workpath build_tmp --noconfirm
 
-      - name: Prüfen ob .exe existiert
+      - name: Ergebnis prüfen
         shell: python
         run: |
           import os, sys
-          if not os.path.exists('backend/dist/Flowra.exe'):
-            print('FEHLER: Flowra.exe nicht gefunden!')
-            sys.exit(1)
-          size = os.path.getsize('backend/dist/Flowra.exe') / 1024 / 1024
-          print(f'[OK] Flowra.exe ({size:.0f} MB)')
+          f = 'backend/dist/Flowra.exe'
+          if not os.path.exists(f):
+            print('FEHLER: Flowra.exe fehlt!'); sys.exit(1)
+          print(f"OK {os.path.getsize(f)//1024//1024} MB")
 
-      - name: Als Artefakt hochladen
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: Flowra-Windows
           path: backend/dist/Flowra.exe
           retention-days: 30
 
-  # ── Linux → Flowra Binary ─────────────────────────────
+  # ── LINUX ─────────────────────────────────────────────
   build-linux:
     runs-on: ubuntu-latest
     steps:
-      - name: Code auschecken
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Python 3.14 einrichten
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.14'
 
-      - name: Node.js einrichten
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: System-Pakete für pywebview installieren
+      - name: System-Pakete für pywebview
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y \
@@ -102,50 +113,63 @@ jobs:
         run: pip install pyinstaller pywebview fastapi uvicorn pydantic aiofiles
 
       - name: Frontend bauen
-        run: |
-          cd frontend
-          npm install
-          npm run build
+        run: cd frontend && npm install && npm run build
 
-      - name: Flowra-Icon einbetten
+      - name: Icon und Spec erstellen
         run: |
           mkdir -p backend/assets
-          python3 -c "
+          python3 - << 'PYEOF'
           import base64, os
-          open('backend/assets/icon.ico','wb').write(base64.b64decode(os.environ['ICON_ICO_B64'].strip()))
-          print('[OK] icon.ico')
-          "
+          open('backend/assets/icon.ico','wb').write(base64.b64decode(os.environ['ICON_ICO_B64']))
+          spec = (
+            '# -*- mode: python ; coding: utf-8 -*-\n'
+            'from PyInstaller.utils.hooks import collect_data_files, collect_submodules\n'
+            'import os\n'
+            "frontend_build = os.path.join('..','frontend','build')\n"
+            'a = Analysis(\n'
+            "    ['main_desktop.py'],pathex=['.'],binaries=[],\n"
+            "    datas=[(frontend_build,'frontend_build'),*collect_data_files('webview')],\n"
+            '    hiddenimports=[\n'
+            "        *collect_submodules('uvicorn'),*collect_submodules('fastapi'),\n"
+            "        *collect_submodules('webview'),\n"
+            "        'uvicorn.logging','uvicorn.loops','uvicorn.loops.auto',\n"
+            "        'uvicorn.protocols','uvicorn.protocols.http',\n"
+            "        'uvicorn.protocols.http.auto','uvicorn.lifespan',\n"
+            "        'uvicorn.lifespan.on','anyio','anyio._backends._asyncio','sqlite3',\n"
+            '    ],\n'
+            "    excludes=['tkinter','matplotlib','numpy','pandas','PIL','pytest'],\n"
+            '    noarchive=False,\n'
+            ')\n'
+            'pyz = PYZ(a.pure)\n'
+            'exe = EXE(pyz,a.scripts,a.binaries,a.datas,[],\n'
+            "    name='Flowra',debug=False,strip=False,upx=True,console=False)\n"
+          )
+          open('backend/flowra_linux.spec','w').write(spec)
+          print('OK')
+          PYEOF
 
-      - name: Flowra Linux-Binary bauen
-        run: |
-          cd backend
-          cp flowra.spec flowra_windows.spec 2>/dev/null || true
-          pyinstaller flowra.spec --distpath dist --workpath build_tmp --noconfirm
+      - name: Flowra Binary bauen
+        run: cd backend && pyinstaller flowra_linux.spec --distpath dist --workpath build_tmp --noconfirm
 
-      - name: Binary ausführbar machen
-        run: chmod +x backend/dist/Flowra
+      - run: chmod +x backend/dist/Flowra
 
-      - name: Als Artefakt hochladen
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: Flowra-Linux
           path: backend/dist/Flowra
           retention-days: 30
 
-  # ── macOS → Flowra.app ────────────────────────────────
+  # ── MACOS ─────────────────────────────────────────────
   build-macos:
     runs-on: macos-latest
     steps:
-      - name: Code auschecken
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Python 3.14 einrichten
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.14'
 
-      - name: Node.js einrichten
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
 
@@ -153,102 +177,100 @@ jobs:
         run: pip install pyinstaller pywebview fastapi uvicorn pydantic aiofiles Pillow
 
       - name: Frontend bauen
-        run: |
-          cd frontend
-          npm install
-          npm run build
+        run: cd frontend && npm install && npm run build
 
-      - name: Flowra-Icon als .icns einbetten
+      - name: Icon als .icns einbetten
         run: |
           mkdir -p backend/assets
-          python3 << 'PYEOF'
-          import base64, os, subprocess
+          python3 - << 'PYEOF'
+          import base64, os, subprocess, io
           from PIL import Image
-          import io
-
-          # PNG aus Base64
-          png_data = base64.b64decode(os.environ['ICON_PNG_B64'].strip())
-          img = Image.open(io.BytesIO(png_data)).convert("RGBA")
-
-          # iconutil braucht ein .iconset Verzeichnis mit bestimmten Dateinamen
+          img = Image.open(io.BytesIO(base64.b64decode(os.environ['ICON_PNG_B64']))).convert('RGBA')
           iconset = '/tmp/Flowra.iconset'
           os.makedirs(iconset, exist_ok=True)
-
-          for size in [16, 32, 64, 128, 256, 512]:
-              resized = img.resize((size, size), Image.LANCZOS)
-              resized.save(f'{iconset}/icon_{size}x{size}.png')
-              resized2 = img.resize((size*2, size*2), Image.LANCZOS)
-              resized2.save(f'{iconset}/icon_{size}x{size}@2x.png')
-
-          subprocess.run(['iconutil', '-c', 'icns', iconset, '-o', 'backend/assets/icon.icns'], check=True)
-
-          # Auch ICO für PyInstaller spec
-          open('backend/assets/icon.ico','wb').write(base64.b64decode(os.environ['ICON_ICO_B64'].strip()))
-          print('[OK] icon.icns + icon.ico')
+          for size in [16,32,64,128,256,512]:
+              img.resize((size,size),     Image.LANCZOS).save(f'{iconset}/icon_{size}x{size}.png')
+              img.resize((size*2,size*2), Image.LANCZOS).save(f'{iconset}/icon_{size}x{size}@2x.png')
+          subprocess.run(['iconutil','-c','icns',iconset,'-o','backend/assets/icon.icns'],check=True)
+          open('backend/assets/icon.ico','wb').write(base64.b64decode(os.environ['ICON_ICO_B64']))
+          print('OK')
           PYEOF
 
-      - name: macOS-Spec modifizieren (BUNDLE hinzufügen)
+      - name: macOS-Spec erstellen
         run: |
-          cd backend
-          cat >> flowra.spec << 'SPECEOF'
-
-          app = BUNDLE(exe,
-              name='Flowra.app',
-              icon='assets/icon.icns',
-              bundle_identifier='com.flowra.app',
-              info_plist={
-                  'NSHighResolutionCapable': True,
-                  'LSMinimumSystemVersion': '10.15',
-              })
-          SPECEOF
+          python3 - << 'PYEOF'
+          spec = (
+            '# -*- mode: python ; coding: utf-8 -*-\n'
+            'from PyInstaller.utils.hooks import collect_data_files, collect_submodules\n'
+            'import os\n'
+            "frontend_build = os.path.join('..','frontend','build')\n"
+            'a = Analysis(\n'
+            "    ['main_desktop.py'],pathex=['.'],binaries=[],\n"
+            "    datas=[(frontend_build,'frontend_build'),*collect_data_files('webview')],\n"
+            '    hiddenimports=[\n'
+            "        *collect_submodules('uvicorn'),*collect_submodules('fastapi'),\n"
+            "        *collect_submodules('webview'),\n"
+            "        'uvicorn.logging','uvicorn.loops','uvicorn.loops.auto',\n"
+            "        'uvicorn.protocols','uvicorn.protocols.http',\n"
+            "        'uvicorn.protocols.http.auto','uvicorn.lifespan',\n"
+            "        'uvicorn.lifespan.on','anyio','anyio._backends._asyncio','sqlite3',\n"
+            '    ],\n'
+            "    excludes=['tkinter','matplotlib','numpy','pandas','PIL','pytest'],\n"
+            '    noarchive=False,\n'
+            ')\n'
+            'pyz = PYZ(a.pure)\n'
+            'exe = EXE(pyz,a.scripts,a.binaries,a.datas,[],\n'
+            "    name='Flowra',debug=False,strip=False,upx=False,console=False)\n"
+            'app = BUNDLE(exe,\n'
+            "    name='Flowra.app',\n"
+            "    icon='assets/icon.icns',\n"
+            "    bundle_identifier='com.flowra.app',\n"
+            '    info_plist={\n'
+            "        'NSHighResolutionCapable':True,\n"
+            "        'LSMinimumSystemVersion':'10.15',\n"
+            '    })\n'
+          )
+          open('backend/flowra_macos.spec','w').write(spec)
+          print('OK')
+          PYEOF
 
       - name: Flowra.app bauen
-        run: |
-          cd backend
-          pyinstaller flowra.spec --distpath dist --workpath build_tmp --noconfirm
+        run: cd backend && pyinstaller flowra_macos.spec --distpath dist --workpath build_tmp --noconfirm
 
-      - name: .app als ZIP verpacken
-        run: |
-          cd backend/dist
-          zip -r Flowra-macOS.zip Flowra.app
+      - name: ZIP erstellen
+        run: cd backend/dist && zip -r Flowra-macOS.zip Flowra.app
 
-      - name: Als Artefakt hochladen
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: Flowra-macOS
           path: backend/dist/Flowra-macOS.zip
           retention-days: 30
 
-  # ── Release erstellen ─────────────────────────────────
+  # ── RELEASE ───────────────────────────────────────────
   create-release:
     needs: [build-windows, build-linux, build-macos]
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      - name: Windows-Artefakt holen
-        uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4
         with:
           name: Flowra-Windows
           path: release/windows
 
-      - name: Linux-Artefakt holen
-        uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4
         with:
           name: Flowra-Linux
           path: release/linux
 
-      - name: macOS-Artefakt holen
-        uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4
         with:
           name: Flowra-macOS
           path: release/macos
 
-      - name: Linux-Binary ausführbar machen
-        run: chmod +x release/linux/Flowra
+      - run: chmod +x release/linux/Flowra
 
-      - name: Release erstellen
-        uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ github.event.inputs.version }}
           name: Flowra v${{ github.event.inputs.version }}
@@ -257,12 +279,13 @@ jobs:
           body: |
             ## Flowra v${{ github.event.inputs.version }}
 
-            ### Download
             | Datei | System | Hinweis |
             |---|---|---|
             | `Flowra.exe` | Windows | Einfach starten, kein Install nötig |
             | `Flowra` | Linux | `chmod +x Flowra` dann starten |
-            | `Flowra-macOS.zip` | macOS | Entpacken, `Flowra.app` in Programme ziehen |
+            | `Flowra-macOS.zip` | macOS | Entpacken, Flowra.app in Programme ziehen |
+
+            Die Datenbank `flowra.db` wird beim ersten Start neben der Datei erstellt.
           files: |
             release/windows/Flowra.exe
             release/linux/Flowra
