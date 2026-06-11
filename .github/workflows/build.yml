@@ -8,9 +8,8 @@ on:
         required: true
         default: '1.0.0'
 
-# Icon ist als Base64 in den Schritten eingebettet – kein separater Asset-Ordner nötig
 env:
-  ICON_ICO_B64: "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"
+  ICON_ICO_B64: "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"
   ICON_PNG_B64: "iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABccqhmAAAI3ElEQVR4nO3dS27bSBQFUDnoWYBk4h1knuVkBV5WVuDleJ4dZJIAGacH3Ur0oSR+qliv6p0zajfQFknwXr4iKffTYQDvPzz/br0N5PPr5/en1tuwVXc7IOxE1lsphN9Ygadn0Qsh5MYJPSOKWAahNkjwySBSETTfEKEns9Zl0OzDBR/+alUE71p8qPDDuVaZ2LV1BB8e23Ma2OWDBB+W26MIqi8BhB/W2SM7VQtA+GGb2hmqMmIIPpRXY0lQfAIQfqijRraKFoDwQ12lM1asAIQf9lEya0UKQPhhX6Uyt7kAhB/aKJG9TQUg/NDW1gyuLgDhhxi2ZHFVAQg/xLI2k4sLQPghpjXZbPJ1YCCGRQXg6g+xLc3o7AIQfujDkqzOKgDhh77Mzax7AJDYwwJw9Yc+zcmuCQASu1sArv7Qt0cZvlkAwg9juJdlSwBIbLIAXP1hLLcybQKAxBQAJHZVAMZ/GNNUtk0AkNhZAbj6w9guM24CgMQUACT2pwCM/5DDadZNAJCYAoDEFAAk9u5wsP6HbI6ZNwFAYgoAElMAkJgCgMSe3ACEvP5pvQH04+315dvpz5+/fP3UalsoQwGw2mkhKIM+uQdAEW+vL98uJwTiUwAUpQj64iYgs6wNtaVBbCYAqjINxKYAqM6yIC4FwG6UQDzuAfBQjeC6NxCDCYAmTAMxKACaUQLtKQDuqh1SJdCWAqA5JdCOAiAEJdCGAiAMJbA/BcBNLQKpBPalAAhHCexHAUBiCoCQTAH7UABMihDACNswOgUAiSkAQjMF1OXbgDwUIYS+PViHCYCHPn/5+kkAx2QCYLFWE4ESKs8EwGKCOA4TAJvsPQ0on7JMAGwikH1TAGy2ZwlEeCIxEgVAESaBPikAilEC/VEAdMcyoBwFQFGmgL4oAIpTAv1QAJCYAqCK2lOA+wBlKABITAFAYgqAatwMjE8BQGIKgG65EbidAqAqy4DYFAAkpgAgMQUAiSkASEwBQGIKABJTAJCYAoDEFAAkpgAgMQVAVd7Xj+2f1huQxZogeI/+PsdnOwVQQamr3tTvcdJTkgIoYM8x9/KzIheC8T8+BbBBhBP8uA2Ri4C4FMBCEUI/5XS7lAFzPb3/8Py79Ub0IGrw72lZBLWPl5IrwwTwQI/BP7I84BHvAdzRc/hP7b0foxy3DEwAE0Y8gfeaBkY8diMzAVwY/QQeYf8sacpRACdGCMcctfYzy/EbiSXAIeeJW3pJkPEYjiD9BJD9xC2x/3seQ+N/WakngOzhP/r/OHw8/vz5y9fnhf8tnUr7IpATd9LH0x/uFUGL4+fqX17KJYDwT/p4+S/eXl++v72+fJ/4947fINJNAE7eSVfhv+FH1a24w9W/jlT3AIR/0pzwNws+daUqAK7cC3+Y0Lv615PmHoCr/5W5Y39Twl9XigIQ/itdhJ/6hi8A4b8yN/zNS8LVv77hC4AzzUM9l/DvY+ibgNGu/ktO6grb3k342c+w7wFECX+JK1mBfVkb/iZPAlz99zP0BNBK6RP49PetKIMtV/6Ph51LQPj3NeQE0Orqv+fJO3MfS4z9uxWA8O/PTcBC9j55Z3xeV2t+4W9juAJI9i21WyEXfmZxD2CDICfuMew/Ln4u+furLQOCHMO0FMBKAU/crq76h0PIY5jOUEuAvcZ/J+52jmEMJgDmKLYMEPxYhpkAXP3jc+ziMQEs4ARex3GLa5gJoLaIJ/GSv97bSsTjxl8mgDHUegR4atF9AMHvwxAFkPz/Rf/jxj8fDg0eDQY/VlwYogC46bQQqpaB4PdJAeRRfDoQ+v4pgAcGPsnXFEJ3bxtynwLgaFEh9PAEgse6fwwY5S//tFB532/e8Rf+cXRfADUNPP7PMTkBCP9YFACzCf943APgIcEflwLgJsEfnyUAk4Q/BwUAiSkASEwBQGIKABJTAJCYAoDEFMAdvmfA6LovgJrv60f/LkD07SM+bwKeECiySV0AAn/f2+vLN8dobKkKwMkM54YvAKGH257ef3j+3XojSjjetc4Y+OR/Fp0NhpkAnKSwXPePAanPOwHjUgDMogTGpAAGsNfyRwmMRwFAYgpgEKYA1lAALBatBN5eX75F26ZeDPMeAG2C2fLx69T+ehy8jAlgIC1O/lZX3lufaxJYRgGw2d6he/R5SmA+S4ABtQxAzSlk6X5ZDjymAAYU5QpYIoBb90UJ3KcABhWlBI6WBLH0tiuB2xTAwKKVQEtKYJqbgKSgDKcpgIG56p1TAtcUwOCUwDklcE4BJKAEzimBvxQAKSmB/yiAJEwB15SAAkhFCVzLXgIKIBklcC1zCSiAhJTAuczHQwEklfmkP5X9OCiAxLKf/Nn3/3DwXQD+l2kdLPh/mQA4HA55QpFlP+dSAPwxejhG3781LAGYNNKSQPBvMwEwaZTQjLIftZgAeKjHaUDw51EAzNZDEQj+MgqAVSKVgdCvpwDYZNQ/QZ6FAqComoUg8OUpAKpbUwrCvg8FAIl5DwASUwCQmAKAxBQAJKYAIDEFAIm9+/Xz+1PrjQD29+vn9ycTACSmACAxBQCJKQBI7N3h8N/NgNYbAuznmHkTACSmACAxBQCJ/SkA9wEgh9OsmwAgMQUAiZ0VgGUAjO0y4yYASOyqAEwBMKapbJsAIDEFAIlNFoBlAIzlVqZNAJDYzQIwBcAY7mX57gSgBKBvjzJsCQCJPSwAUwD0aU52TQCQ2KwCMAVAX+ZmdvYEoASgD0uyumgJoAQgtqUZdQ8AEltcAKYAiGlNNldNAEoAYlmbydVLACUAMWzJ4qZ7AEoA2tqawc03AZUAtFEie0WeAigB2FepzBV7DKgEYB8ls1b0PQAlAHWVzljxF4GUANRRI1tVw/r+w/Pvmr8fMqh5Ua36KrBpALapnaHq3wVQArDOHtnZNZyWBPDYnhfNJldnRQDXWkzLTb4ObFkA51plonkQTQNk1vpi2LwATikDMmgd+lNhNuSUImBEkYJ/FG6DLikDehYx9KdCb9wUhUBk0QN/qauNvUUp0EJvYZ/yL07DUnuX+EFJAAAAAElFTkSuQmCC"
 
 jobs:
@@ -51,7 +50,9 @@ jobs:
       - name: Flowra.exe bauen
         run: |
           cd backend
-          pyinstaller flowra_windows.spec --distpath dist --workpath build_tmp --noconfirm
+          # Sicherheitsnetz: Kopiere flowra.spec zu flowra_windows.spec, falls alte Aufrufe hängen
+          if (Test-Path "flowra.spec") { Copy-Item "flowra.spec" -Destination "flowra_windows.spec" }
+          pyinstaller flowra.spec --distpath dist --workpath build_tmp --noconfirm
 
       - name: Prüfen ob .exe existiert
         shell: python
@@ -115,35 +116,11 @@ jobs:
           print('[OK] icon.ico')
           "
 
-      - name: Linux-Spec erstellen
-        run: |
-          cat > backend/flowra_linux.spec << 'SPECEOF'
-          # -*- mode: python ; coding: utf-8 -*-
-          from PyInstaller.utils.hooks import collect_data_files, collect_submodules
-          import os
-          frontend_build = os.path.join('..', 'frontend', 'build')
-          a = Analysis(
-              ['main_desktop.py'], pathex=['.'], binaries=[],
-              datas=[(frontend_build, 'frontend_build'), *collect_data_files('webview')],
-              hiddenimports=[
-                  *collect_submodules('uvicorn'), *collect_submodules('fastapi'),
-                  *collect_submodules('webview'),
-                  'uvicorn.logging','uvicorn.loops','uvicorn.loops.auto',
-                  'uvicorn.protocols','uvicorn.protocols.http',
-                  'uvicorn.protocols.http.auto','uvicorn.lifespan',
-                  'uvicorn.lifespan.on','anyio','anyio._backends._asyncio','sqlite3',
-              ],
-              excludes=['tkinter','matplotlib','numpy','pandas'], noarchive=False,
-          )
-          pyz = PYZ(a.pure)
-          exe = EXE(pyz, a.scripts, a.binaries, a.datas, [],
-              name='Flowra', debug=False, strip=False, upx=True, console=False)
-          SPECEOF
-
       - name: Flowra Linux-Binary bauen
         run: |
           cd backend
-          pyinstaller flowra_linux.spec --distpath dist --workpath build_tmp --noconfirm
+          cp flowra.spec flowra_windows.spec 2>/dev/null || true
+          pyinstaller flowra.spec --distpath dist --workpath build_tmp --noconfirm
 
       - name: Binary ausführbar machen
         run: chmod +x backend/dist/Flowra
@@ -210,29 +187,11 @@ jobs:
           print('[OK] icon.icns + icon.ico')
           PYEOF
 
-      - name: macOS-Spec erstellen
+      - name: macOS-Spec modifizieren (BUNDLE hinzufügen)
         run: |
-          cat > backend/flowra_macos.spec << 'SPECEOF'
-          # -*- mode: python ; coding: utf-8 -*-
-          from PyInstaller.utils.hooks import collect_data_files, collect_submodules
-          import os
-          frontend_build = os.path.join('..', 'frontend', 'build')
-          a = Analysis(
-              ['main_desktop.py'], pathex=['.'], binaries=[],
-              datas=[(frontend_build, 'frontend_build'), *collect_data_files('webview')],
-              hiddenimports=[
-                  *collect_submodules('uvicorn'), *collect_submodules('fastapi'),
-                  *collect_submodules('webview'),
-                  'uvicorn.logging','uvicorn.loops','uvicorn.loops.auto',
-                  'uvicorn.protocols','uvicorn.protocols.http',
-                  'uvicorn.protocols.http.auto','uvicorn.lifespan',
-                  'uvicorn.lifespan.on','anyio','anyio._backends._asyncio','sqlite3',
-              ],
-              excludes=['tkinter','matplotlib','numpy','pandas'], noarchive=False,
-          )
-          pyz = PYZ(a.pure)
-          exe = EXE(pyz, a.scripts, a.binaries, a.datas, [],
-              name='Flowra', debug=False, strip=False, upx=False, console=False)
+          cd backend
+          cat >> flowra.spec << 'SPECEOF'
+
           app = BUNDLE(exe,
               name='Flowra.app',
               icon='assets/icon.icns',
@@ -246,7 +205,7 @@ jobs:
       - name: Flowra.app bauen
         run: |
           cd backend
-          pyinstaller flowra_macos.spec --distpath dist --workpath build_tmp --noconfirm
+          pyinstaller flowra.spec --distpath dist --workpath build_tmp --noconfirm
 
       - name: .app als ZIP verpacken
         run: |
@@ -260,7 +219,7 @@ jobs:
           path: backend/dist/Flowra-macOS.zip
           retention-days: 30
 
-  # ── Release erstellen (alle 3 müssen OK sein) ─────────
+  # ── Release erstellen ─────────────────────────────────
   create-release:
     needs: [build-windows, build-linux, build-macos]
     runs-on: ubuntu-latest
@@ -304,8 +263,6 @@ jobs:
             | `Flowra.exe` | Windows | Einfach starten, kein Install nötig |
             | `Flowra` | Linux | `chmod +x Flowra` dann starten |
             | `Flowra-macOS.zip` | macOS | Entpacken, `Flowra.app` in Programme ziehen |
-
-            Die Datenbank `flowra.db` wird beim ersten Start automatisch neben der Datei erstellt.
           files: |
             release/windows/Flowra.exe
             release/linux/Flowra
