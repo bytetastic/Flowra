@@ -549,10 +549,27 @@ function exportDiagram(nodes, edges, format, colors, diagramName, theme){
   const svgStr=`<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="${BG}"/>${edgeSVG}${shapeSVG}</svg>`;
   const fname=(diagramName||"flowra-diagram").replace(/\s+/g,"-").toLowerCase();
 
-  if(format==="svg"){const blob=new Blob([svgStr],{type:"image/svg+xml"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`${fname}.svg`;a.click();return;}
-  const img=new Image(),scale=2;const blob=new Blob([svgStr],{type:"image/svg+xml"});const url=URL.createObjectURL(blob);
-  img.onload=()=>{const canvas=document.createElement("canvas");canvas.width=W*scale;canvas.height=H*scale;const ctx=canvas.getContext("2d");if(format==="jpeg"){ctx.fillStyle=BG;ctx.fillRect(0,0,canvas.width,canvas.height);}ctx.scale(scale,scale);ctx.drawImage(img,0,0);URL.revokeObjectURL(url);canvas.toBlob(b=>{const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=`${fname}.${format==="jpeg"?"jpg":"png"}`;a.click();},format==="jpeg"?"image/jpeg":"image/png",0.95);};
-  img.src=url;
+  if(format==="svg"){const blob=new Blob([svgStr],{type:"image/svg+xml"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`${fname}.svg`;document.body.appendChild(a);a.click();document.body.removeChild(a);return;}
+  const img=new Image(),scale=2;const blob=new Blob([svgStr],{type:"image/svg+xml"});
+  // Base64 Data URL statt Object URL – funktioniert zuverlässig in Qt-WebEngine
+  const reader=new FileReader();
+  reader.onload=()=>{
+    img.onload=()=>{
+      const canvas=document.createElement("canvas");
+      canvas.width=W*scale;canvas.height=H*scale;
+      const ctx=canvas.getContext("2d");
+      if(format==="jpeg"){ctx.fillStyle=BG;ctx.fillRect(0,0,canvas.width,canvas.height);}
+      ctx.scale(scale,scale);ctx.drawImage(img,0,0);
+      canvas.toBlob(b=>{
+        const a=document.createElement("a");
+        a.href=URL.createObjectURL(b);
+        a.download=`${fname}.${format==="jpeg"?"jpg":"png"}`;
+        document.body.appendChild(a);a.click();document.body.removeChild(a);
+      },format==="jpeg"?"image/jpeg":"image/png",0.95);
+    };
+    img.src=reader.result;
+  };
+  reader.readAsDataURL(blob);
 }
 
 // ─── Demo EPK for onboarding ───────────────────────────────────────────────
@@ -1428,7 +1445,7 @@ export default function FlowraEditor(){
           </div>
           <div style={{padding:"4px 10px 10px",display:"flex",flexDirection:"column",gap:2}}>
             {PALETTE.map(item=>{const isOp=item.type.startsWith("operator");const w=isOp?42:92,h=isOp?42:36;return(
-              <div key={item.type} className="pal-item" draggable 
+              <div key={item.type} className="pal-item" draggable
                 onDragStart={e=>{
                   paletteDragRef.current=true;
                   setIsPaletteDrag(true);
@@ -1620,7 +1637,7 @@ export default function FlowraEditor(){
               </div>
               {node.color&&<div onClick={()=>{const nn=nodes.map(n=>n.id===node.id?(()=>{const{color,...rest}=n;return rest;})():n);setNodes(nn);pushHistory(nn,edges);}}
                 style={{fontSize:10.5,color:"var(--faint)",cursor:"pointer",textDecoration:"underline",marginTop:2}}>↺ auf Typfarbe zurücksetzen</div>}
-            </div>);})()} 
+            </div>);})()}
           {selected?.type==="edge"&&(()=>{const edge=edges.find(e=>e.id===selected.id);if(!edge)return null;
             const ls=edge.lineStyle||"arrow";
             const lineTypes=[{id:"arrow",label:"→ Pfeil"},{id:"dashed",label:"- - → Gestrichelt"},{id:"dashed-line",label:"- - - Gestrichelt (kein Pfeil)"},{id:"line",label:"—— Linie"}];
@@ -1642,7 +1659,7 @@ export default function FlowraEditor(){
               <div style={{fontSize:11,color:"var(--faint)"}}>Label</div>
               <input value={edge.label||""} onChange={e=>setEdges(prev=>prev.map(ed=>ed.id===edge.id?{...ed,label:e.target.value}:ed))} onBlur={()=>pushHistory(nodes,edges)} placeholder="optional…" style={{background:"var(--glass)",border:"1px solid var(--border)",borderRadius:8,color:"var(--text)",padding:"8px 10px",fontSize:12.5,width:"100%"}}/>
               <div style={{fontSize:10,color:"var(--dim)",marginTop:1}}>oder Doppelklick auf den Pfeil</div>
-            </div>);})()} 
+            </div>);})()}
           {!selected&&<div style={{fontSize:11.5,color:"var(--dim)",lineHeight:1.9}}>Element auswählen, um Eigenschaften zu bearbeiten.</div>}
           <div style={{marginTop:"auto",borderTop:"1px solid var(--border)",paddingTop:12,display:"flex",flexDirection:"column",gap:6}}>
             {[["Elemente",nodes.length],["Verbindungen",edges.length]].map(([l,v])=>(
