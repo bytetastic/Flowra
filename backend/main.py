@@ -13,7 +13,11 @@ def get_base_path():
     return os.path.dirname(os.path.abspath(__file__))
 
 BASE      = get_base_path()
-BUILD_DIR = os.path.abspath(os.path.join(BASE, "..", "frontend", "build"))
+# FLOWRA_BUILD_DIR wird von main_desktop.py gesetzt (zeigt auf frontend_build im .exe Paket)
+BUILD_DIR = os.environ.get(
+    "FLOWRA_BUILD_DIR",
+    os.path.abspath(os.path.join(BASE, "..", "frontend", "build"))
+)
 DB_PATH   = os.environ.get("FLOWRA_DB", os.path.join(os.path.dirname(os.path.abspath(__file__)), "flowra.db"))
 PORT      = 9876
 
@@ -116,7 +120,8 @@ else:
         return {"message": "Frontend nicht gebaut. 'npm run build' ausführen.", "docs": "/docs"}
 
 def open_browser():
-    if not os.environ.get("FLOWRA_DB"):  # only open browser when not in Docker
+    # Kein Browser öffnen wenn als Desktop-App gestartet (pywebview übernimmt)
+    if not os.environ.get("FLOWRA_DB") and not os.environ.get("FLOWRA_DESKTOP"):
         webbrowser.open(f"http://localhost:{PORT}")
 
 if __name__ == "__main__":
