@@ -1,17 +1,15 @@
 # Flowra
 
-Eine moderne, Open-Source-Webanwendung zur visuellen Prozess- und Systemmodellierung.
-
+Eine moderne, Open-Source-Webanwendung zur visuellen Prozess- und Systemmodellierung.  
 Flowra ist eine leichtgewichtige Alternative zu Tools wie draw.io oder Visio –
 fokussiert, schnell und für echte Modellierungsstandards gebaut.
 
 ## Aktueller Stand
+
 - ✅ EPK-Editor (Ereignisgesteuerte Prozessketten)
-- 🔜 BPMN 2.0
-- 🔜 UML (Klassen-, Sequenz-, Aktivitätsdiagramme)
-- 🔜 ER-Diagramme
 
 ## Funktionen
+
 - Drag & Drop aus der Palette auf den Canvas
 - Verbindungen per Port-Ziehen erstellen
 - Pfeile mit Labels beschriften
@@ -24,53 +22,22 @@ fokussiert, schnell und für echte Modellierungsstandards gebaut.
 - Einstellungen: Farben pro Element-Typ anpassbar
 
 ## Technologie
+
 - **Frontend:** React
 - **Backend:** Python (FastAPI)
+- **Datenbank:** SQLite
 
-## Einrichtung (einmalig)
+## Download
 
-### 1. Backend-Abhängigkeiten installieren
-```bash
-cd backend
-pip install -r requirements.txt
-```
+Fertige Builds für alle Betriebssysteme sind unter [Releases](../../releases) verfügbar – kein Python oder Node.js nötig.
 
-### 2. Frontend bauen
-```bash
-cd frontend
-npm install
-npm run build
-```
+| Datei | System | Hinweis |
+|---|---|---|
+| `Flowra.exe` | Windows | Einfach starten, kein Install nötig |
+| `Flowra` + `flowra.sh` | Linux | Einmalig `chmod +x flowra.sh`, dann `./flowra.sh` starten (installiert GTK automatisch) |
+| `Flowra-macOS.zip` | macOS | Entpacken, `Flowra.app` in Programme ziehen |
 
-## Starten
-
-```bash
-cd backend
-python main.py
-```
-
-→ App läuft auf **http://localhost:9876**  
-→ API-Dokumentation unter **http://localhost:9876/docs**
-
-## EXE erstellen (optional)
-
-Um eine eigenständige `.exe` zu erstellen, die ohne Python und Node.js auskommt:
-
-```bash
-cd backend
-python build_exe.py
-```
-
-Die fertige Datei liegt danach unter `dist/Flowra.exe`.
-
-## Entwicklung
-
-Nur nötig wenn du aktiv am Frontend-Code arbeitest:
-
-```bash
-cd frontend
-npm start   # läuft auf http://localhost:3000
-```
+Die Datenbank `flowra.db` wird beim ersten Start automatisch neben der Datei erstellt.
 
 ## Shortcuts
 
