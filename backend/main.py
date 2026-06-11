@@ -108,6 +108,50 @@ def rename_diagram(name: str, body: dict):
         con.commit()
     return {"renamed": new_name}
 
+
+class ExportPayload(BaseModel):
+    data: str      # Base64
+    filename: str
+    mime: str
+
+@app.post("/api/export")
+def export_file(payload: ExportPayload):
+    """Speichert exportierte Datei via nativem Speicherdialog (pywebview) oder Downloads-Ordner."""
+    import base64, os, platform, subprocess
+    raw = base64.b64decode(payload.data)
+
+    # Speicherort: Downloads-Ordner des Nutzers
+    home = os.path.expanduser("~")
+    downloads = os.path.join(home, "Downloads")
+    if not os.path.isdir(downloads):
+        downloads = home
+
+    out_path = os.path.join(downloads, payload.filename)
+
+    # Falls Datei schon existiert, Nummer anhängen
+    base, ext = os.path.splitext(out_path)
+    counter = 1
+    while os.path.exists(out_path):
+        out_path = f"{base}_{counter}{ext}"
+        counter += 1
+
+    with open(out_path, 'wb') as f:
+        f.write(raw)
+
+    # Datei im Dateimanager anzeigen
+    try:
+        system = platform.system()
+        if system == "Windows":
+            subprocess.Popen(f'explorer /select,"{out_path}"')
+        elif system == "Darwin":
+            subprocess.Popen(["open", "-R", out_path])
+        else:  # Linux
+            subprocess.Popen(["xdg-open", downloads])
+    except Exception:
+        pass
+
+    return {"saved": out_path}
+
 # ── Serve React ──────────────────────────────────────────
 if os.path.exists(BUILD_DIR):
     app.mount("/static", StaticFiles(directory=os.path.join(BUILD_DIR,"static")), name="static")

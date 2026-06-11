@@ -549,7 +549,12 @@ function exportDiagram(nodes, edges, format, colors, diagramName, theme){
   const svgStr=`<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="${BG}"/>${edgeSVG}${shapeSVG}</svg>`;
   const fname=(diagramName||"flowra-diagram").replace(/\s+/g,"-").toLowerCase();
 
-  if(format==="svg"){const blob=new Blob([svgStr],{type:"image/svg+xml"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`${fname}.svg`;document.body.appendChild(a);a.click();document.body.removeChild(a);return;}
+  if(format==="svg"){
+    // SVG: Base64 ans Backend schicken zum Speichern
+    const b64=btoa(unescape(encodeURIComponent(svgStr)));
+    fetch(`${API_BASE}/export`,{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({data:b64,filename:fname+".svg",mime:"image/svg+xml"})});
+    return;}
   const img=new Image(),scale=2;const blob=new Blob([svgStr],{type:"image/svg+xml"});
   // Base64 Data URL statt Object URL – funktioniert zuverlässig in Qt-WebEngine
   const reader=new FileReader();
@@ -561,10 +566,15 @@ function exportDiagram(nodes, edges, format, colors, diagramName, theme){
       if(format==="jpeg"){ctx.fillStyle=BG;ctx.fillRect(0,0,canvas.width,canvas.height);}
       ctx.scale(scale,scale);ctx.drawImage(img,0,0);
       canvas.toBlob(b=>{
-        const a=document.createElement("a");
-        a.href=URL.createObjectURL(b);
-        a.download=`${fname}.${format==="jpeg"?"jpg":"png"}`;
-        document.body.appendChild(a);a.click();document.body.removeChild(a);
+        // PNG/JPEG: Base64 ans Backend zum Speichern
+        const fr=new FileReader();
+        fr.onload=()=>{
+          const b64=fr.result.split(",")[1];
+          const ext=format==="jpeg"?"jpg":"png";
+          fetch(`${API_BASE}/export`,{method:"POST",headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({data:b64,filename:`${fname}.${ext}`,mime:format==="jpeg"?"image/jpeg":"image/png"})});
+        };
+        fr.readAsDataURL(b);
       },format==="jpeg"?"image/jpeg":"image/png",0.95);
     };
     img.src=reader.result;
