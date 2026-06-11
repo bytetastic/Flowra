@@ -4,7 +4,7 @@ const API_BASE = "http://localhost:9876/api";
 
 // ─── CSS (Mesh Gradient + Glass + 5 Themes + Animations) ──────────────────
 const CSS = `
-  @import url('https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+  /* Fonts: System-Stack – kein Internet nötig */
   :root {
     --bg:#080a14; --bg-canvas:#0a0c17; --ink:#f2f5fc;
     --glass:rgba(255,255,255,0.035); --glass-strong:rgba(255,255,255,0.06); --glass-hover:rgba(255,255,255,0.10);
@@ -47,7 +47,7 @@ const CSS = `
   [data-theme="bloom"] #mesh span { opacity:.6; mix-blend-mode:screen; filter:blur(105px); }
   * { box-sizing:border-box; }
   html,body { margin:0; padding:0; height:100%; }
-  body { background:var(--bg); color:var(--text); font-family:'Schibsted Grotesk',system-ui,sans-serif; overflow:hidden; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; transition:background .5s ease; }
+  body { background:var(--bg); color:var(--text); font-family:system-ui,'Segoe UI',Inter,Arial,sans-serif; overflow:hidden; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; transition:background .5s ease; }
   ::selection { background:var(--accent-soft); }
   input { font-family:inherit; } input:focus { outline:none; }
   #mesh { position:fixed; inset:0; z-index:0; overflow:hidden; background:var(--bg); pointer-events:none; }
@@ -75,7 +75,7 @@ const CSS = `
   .zoom-group { display:flex; align-items:center; gap:2px; background:var(--glass-strong); border:1px solid var(--border); border-radius:var(--r-sm); padding:3px; }
   .zoom-group .tbtn { border:none; background:transparent; padding:6px 10px; box-shadow:none; }
   .zoom-group .tbtn:hover { background:var(--glass-hover); transform:none; }
-  .zoom-label { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted); min-width:48px; text-align:center; font-weight:500; }
+  .zoom-label { font-family:'Consolas','Monaco','Courier New',monospace; font-size:12px; color:var(--muted); min-width:48px; text-align:center; font-weight:500; }
   .logo-mark { width:30px; height:30px; display:grid; place-items:center; filter:drop-shadow(0 2px 9px var(--accent-glow)); animation:logobreath 16s linear infinite; }
   .logo-mark svg { display:block; }
   @keyframes logobreath { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
@@ -110,7 +110,7 @@ const CSS = `
   .swatch:hover { transform:scale(1.12) translateY(-1px); box-shadow:0 6px 16px rgba(0,0,0,.4); }
   .stat-card { background:var(--glass-strong); border:1px solid var(--border); border-radius:var(--r-md); padding:11px 13px; }
   .stat-row { display:flex; justify-content:space-between; align-items:center; font-size:12px; padding:3px 0; }
-  .stat-label { color:var(--faint); } .stat-val { color:var(--text); font-weight:700; font-family:'JetBrains Mono',monospace; } .stat-val.ok { color:var(--accent); }
+  .stat-label { color:var(--faint); } .stat-val { color:var(--text); font-weight:700; font-family:'Consolas','Monaco','Courier New',monospace; } .stat-val.ok { color:var(--accent); }
   .menu-item { transition:background .14s,color .14s; cursor:pointer; }
   .menu-item:hover { background:var(--glass-hover); color:var(--text) !important; }
   .theme-pick { border:1px solid var(--border); cursor:pointer; font-family:inherit; font-size:12px; font-weight:600; color:var(--muted); padding:8px 12px; border-radius:24px; background:var(--glass); display:flex; align-items:center; gap:8px; transition:color .2s,background .2s,border-color .2s,transform .15s cubic-bezier(.34,1.56,.64,1); }
@@ -185,7 +185,7 @@ function persistTheme(id){ if(id==="eclipse")document.documentElement.removeAttr
 
 const DEFAULT_COLORS = themeColors("bloom");
 const NODE_W=140, NODE_H=64, PADDING=60, GRID=5;
-const FONT="'Schibsted Grotesk',sans-serif";
+const FONT="system-ui,'Segoe UI',Inter,Arial,sans-serif";
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const rgba=(hex,a)=>{const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return`rgba(${r},${g},${b},${a})`;};
 
@@ -344,14 +344,18 @@ function ShapeRenderer({type,label,width=NODE_W,height=NODE_H,selected,dimmed,co
   const lines=(label||"").split("\n");
   const lineH=fontSize*1.45;
   const textEl=lines.length<=1
-    ?(<text x={width/2} y={height/2+0.5} textAnchor="middle" dominantBaseline="middle"
+    ?(<text x={width/2} y={height/2+fontSize*0.38} textAnchor="middle"
         fill={txt} fontSize={fontSize} fontWeight="600" fontFamily={FONT}
         style={{pointerEvents:"none",userSelect:"none",letterSpacing:"0.2px"}}>{label}</text>)
-    :(<text x={width/2} textAnchor="middle"
-        fill={txt} fontSize={fontSize} fontWeight="600" fontFamily={FONT}
-        style={{pointerEvents:"none",userSelect:"none",letterSpacing:"0.2px"}}>
-        {lines.map((l,i)=><tspan key={i} x={width/2} dy={i===0?-(lines.length-1)*lineH/2:lineH} dominantBaseline="middle">{l}</tspan>)}
-      </text>);
+    :(()=>{
+        const totalH=(lines.length-1)*lineH;
+        const startY=height/2 - totalH/2 + fontSize*0.38;
+        return(<text x={width/2} textAnchor="middle"
+          fill={txt} fontSize={fontSize} fontWeight="600" fontFamily={FONT}
+          style={{pointerEvents:"none",userSelect:"none",letterSpacing:"0.2px"}}>
+          {lines.map((l,i)=><tspan key={i} x={width/2} y={startY+i*lineH}>{l}</tspan>)}
+        </text>);
+      })();
   const selRing=selected?(isOp
     ?<circle className="sel-ring" cx={width/2} cy={height/2} r={Math.min(width,height)/2+6}
         fill="none" strokeWidth={1.6} opacity={0.9} style={{stroke:"var(--accent)",filter:"drop-shadow(0 0 8px var(--accent-glow))"}}/>
@@ -390,8 +394,8 @@ function ShapeRenderer({type,label,width=NODE_W,height=NODE_H,selected,dimmed,co
         <path d={path} fill={fill} stroke={accent} strokeWidth={strokeW} strokeLinejoin="round" style={ss}/>
         {(()=>{const dlines=(label||"").split("\n");const dlH=fontSize*1.45;const cy=(height-wH)/2+1;
           return dlines.length<=1
-            ?<text x={width/2} y={cy} textAnchor="middle" dominantBaseline="middle" fill={txt} fontSize={fontSize} fontWeight="600" fontFamily={FONT} style={{pointerEvents:"none",userSelect:"none"}}>{label}</text>
-            :<text x={width/2} textAnchor="middle" fill={txt} fontSize={fontSize} fontWeight="600" fontFamily={FONT} style={{pointerEvents:"none",userSelect:"none"}}>{dlines.map((l,i)=><tspan key={i} x={width/2} dy={i===0?cy-(dlines.length-1)*dlH/2:dlH} dominantBaseline="middle">{l}</tspan>)}</text>;
+            ?<text x={width/2} y={cy+fontSize*0.38} textAnchor="middle" fill={txt} fontSize={fontSize} fontWeight="600" fontFamily={FONT} style={{pointerEvents:"none",userSelect:"none"}}>{label}</text>
+            :(()=>{ const totalH2=(dlines.length-1)*dlH; const startY2=cy-totalH2/2+fontSize*0.38; return <text x={width/2} textAnchor="middle" fill={txt} fontSize={fontSize} fontWeight="600" fontFamily={FONT} style={{pointerEvents:"none",userSelect:"none"}}>{dlines.map((l,i)=><tspan key={i} x={width/2} y={startY2+i*dlH}>{l}</tspan>)}</text>; })();
         })()}</svg>;
     }
     case "prozesspfad":{
@@ -513,7 +517,7 @@ function exportDiagram(nodes, edges, format, colors, diagramName, theme){
     const pathData=pts.map((p,i)=>`${i===0?"M":"L"}${p.x+offX},${p.y+offY}`).join(" ");
     const lineSVG=`<path d="${pathData}" fill="none" stroke="${EDGE}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"${dash}/>`;
     const arrowSVG=hasArrow?`<polygon points="${p2.x+offX},${p2.y+offY} ${ax+px+offX},${ay+py+offY} ${ax-px+offX},${ay-py+offY}" fill="${EDGE}"/>`:"";
-    const labelSVG=edge.label?`<rect x="${midX-edge.label.length*3.6-5}" y="${midY-10}" width="${edge.label.length*7.2+10}" height="18" rx="6" fill="${BG}" stroke="${rgba('#ffffff',0.16)}"/><text x="${midX}" y="${midY+1}" text-anchor="middle" dominant-baseline="middle" fill="${INK}" font-size="10.5" font-family="Schibsted Grotesk,sans-serif">${edge.label}</text>`:"";
+    const labelSVG=edge.label?`<rect x="${midX-edge.label.length*3.6-5}" y="${midY-10}" width="${edge.label.length*7.2+10}" height="18" rx="6" fill="${BG}" stroke="${rgba('#ffffff',0.16)}"/><text x="${midX}" y="${midY+1}" text-anchor="middle" dominant-baseline="middle" fill="${INK}" font-size="10.5" font-family="system-ui,Segoe UI,Arial,sans-serif">${edge.label}</text>`:"";
     return lineSVG+arrowSVG+labelSVG;
   }).join("");
 
@@ -531,14 +535,14 @@ function exportDiagram(nodes, edges, format, colors, diagramName, theme){
       case "informationsobjekt":shape=`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="4" fill="${fillCol}" stroke="${accent}" stroke-width="${sw}"/><line x1="${x+w*0.2}" y1="${y}" x2="${x+w*0.2}" y2="${y+h}" stroke="${accent}" stroke-width="1.3" opacity="0.55"/><line x1="${x+w*0.8}" y1="${y}" x2="${x+w*0.8}" y2="${y+h}" stroke="${accent}" stroke-width="1.3" opacity="0.55"/>`;break;
       case "dokument":{const wH=11;shape=`<path d="M ${x} ${y} L ${x+w} ${y} L ${x+w} ${y+h-wH} Q ${x+w*0.75} ${y+h+wH*0.5} ${x+w*0.5} ${y+h-wH} Q ${x+w*0.25} ${y+h-wH*2.5} ${x} ${y+h-wH} Z" fill="${fillCol}" stroke="${accent}" stroke-width="${sw}" stroke-linejoin="round"/>`;break;}
       case "prozesspfad":{const aW=22;const pts=[[0,0],[w-aW,0],[w,h/2],[w-aW,h],[0,h]].map(p=>`${p[0]+x},${p[1]+y}`).join(" ");shape=`<polygon points="${pts}" fill="${fillCol}" stroke="${accent}" stroke-width="${sw}" stroke-linejoin="round"/>`;break;}
-      default:{const lm={operator_and:"AND",operator_or:"OR",operator_xor:"XOR"};const r=Math.min(w,h)/2-2;return `<circle cx="${x+w/2}" cy="${y+h/2}" r="${r}" fill="${fillCol}" stroke="${accent}" stroke-width="${sw}"/><text x="${x+w/2}" y="${y+h/2+1}" text-anchor="middle" dominant-baseline="middle" fill="${INK}" font-size="12.5" font-weight="700" font-family="Schibsted Grotesk,sans-serif" letter-spacing="0.5">${lm[node.type]||""}</text>`;}
+      default:{const lm={operator_and:"AND",operator_or:"OR",operator_xor:"XOR"};const r=Math.min(w,h)/2-2;return `<circle cx="${x+w/2}" cy="${y+h/2}" r="${r}" fill="${fillCol}" stroke="${accent}" stroke-width="${sw}"/><text x="${x+w/2}" y="${y+h/2+1}" text-anchor="middle" dominant-baseline="middle" fill="${INK}" font-size="12.5" font-weight="700" font-family="system-ui,Segoe UI,Arial,sans-serif" letter-spacing="0.5">${lm[node.type]||""}</text>`;}
     }
     const ty=node.type==="dokument"?y+(h-11)/2:y+h/2;
     const lines=(node.label||"").split("\n");
     const lineH=14*1.4;
     const labelSVG=lines.length<=1
-      ?`<text x="${x+w/2}" y="${ty+1}" text-anchor="middle" dominant-baseline="middle" fill="${INK}" font-size="12.5" font-weight="600" font-family="Schibsted Grotesk,sans-serif">${node.label||""}</text>`
-      :`<text x="${x+w/2}" text-anchor="middle" fill="${INK}" font-size="12.5" font-weight="600" font-family="Schibsted Grotesk,sans-serif">${lines.map((l,i)=>`<tspan x="${x+w/2}" y="${ty-(lines.length-1)*lineH/2+i*lineH}">${l}</tspan>`).join("")}</text>`;
+      ?`<text x="${x+w/2}" y="${ty+1}" text-anchor="middle" dominant-baseline="middle" fill="${INK}" font-size="12.5" font-weight="600" font-family="system-ui,Segoe UI,Arial,sans-serif">${node.label||""}</text>`
+      :`<text x="${x+w/2}" text-anchor="middle" fill="${INK}" font-size="12.5" font-weight="600" font-family="system-ui,Segoe UI,Arial,sans-serif">${lines.map((l,i)=>`<tspan x="${x+w/2}" y="${ty-(lines.length-1)*lineH/2+i*lineH}">${l}</tspan>`).join("")}</text>`;
     return shape+labelSVG;
   }).join("\n");
 
@@ -891,7 +895,7 @@ function FAQModal({onClose}){
                         {item.shortcuts.map(([key,desc],ki)=>(
                           <tr key={ki}>
                             <td style={{padding:"4px 10px 4px 0",width:140}}>
-                              <code style={{background:"var(--glass-strong)",border:"1px solid var(--border)",borderRadius:5,padding:"2px 7px",fontSize:12,fontFamily:"'JetBrains Mono',monospace",color:"var(--text)"}}>{key}</code>
+                              <code style={{background:"var(--glass-strong)",border:"1px solid var(--border)",borderRadius:5,padding:"2px 7px",fontSize:12,fontFamily:"'Consolas','Monaco','Courier New',monospace",color:"var(--text)"}}>{key}</code>
                             </td>
                             <td style={{padding:"4px 0",fontSize:13,color:"var(--muted)"}}>{desc}</td>
                           </tr>
