@@ -18,9 +18,9 @@ jobs:
   build-windows:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.14'
 
@@ -79,7 +79,7 @@ jobs:
             print('FEHLER: Flowra.exe fehlt!'); sys.exit(1)
           print(f"OK {os.path.getsize(f)//1024//1024} MB")
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: Flowra-Windows
           path: backend/dist/Flowra.exe
@@ -89,9 +89,9 @@ jobs:
   build-linux:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.14'
 
@@ -153,19 +153,42 @@ jobs:
 
       - run: chmod +x backend/dist/Flowra
 
-      - uses: actions/upload-artifact@v4
+      - name: Linux Launcher-Script hinzufügen
+        run: |
+          cat > backend/dist/flowra.sh << 'SHEOF'
+          #!/bin/bash
+          SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+          FLOWRA="$SCRIPT_DIR/Flowra"
+          MISSING=()
+          check_pkg() { dpkg -s "$1" &>/dev/null || MISSING+=("$1"); }
+          check_pkg "python3-gi"
+          check_pkg "python3-gi-cairo"
+          check_pkg "gir1.2-gtk-3.0"
+          check_pkg "gir1.2-webkit2-4.1"
+          check_pkg "libwebkit2gtk-4.1-0"
+          if [ ${#MISSING[@]} -gt 0 ]; then
+            echo "Fehlende Bibliotheken werden installiert (einmalig)..."
+            sudo apt-get update -qq && sudo apt-get install -y "${MISSING[@]}"
+          fi
+          exec "$FLOWRA"
+          SHEOF
+          chmod +x backend/dist/flowra.sh
+
+      - uses: actions/upload-artifact@v6
         with:
           name: Flowra-Linux
-          path: backend/dist/Flowra
+          path: backend/dist/
+          retention-days: 30
+
           retention-days: 30
 
   # ── MACOS ─────────────────────────────────────────────
   build-macos:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.14'
 
@@ -240,7 +263,7 @@ jobs:
       - name: ZIP erstellen
         run: cd backend/dist && zip -r Flowra-macOS.zip Flowra.app
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: Flowra-macOS
           path: backend/dist/Flowra-macOS.zip
@@ -268,7 +291,7 @@ jobs:
           name: Flowra-macOS
           path: release/macos
 
-      - run: chmod +x release/linux/Flowra
+      - run: chmod +x release/linux/Flowra release/linux/flowra.sh
 
       - uses: softprops/action-gh-release@v2
         with:
@@ -282,11 +305,12 @@ jobs:
             | Datei | System | Hinweis |
             |---|---|---|
             | `Flowra.exe` | Windows | Einfach starten, kein Install nötig |
-            | `Flowra` | Linux | `chmod +x Flowra` dann starten |
+            | `Flowra` + `flowra.sh` | Linux | `./flowra.sh` starten (installiert GTK automatisch) |
             | `Flowra-macOS.zip` | macOS | Entpacken, Flowra.app in Programme ziehen |
 
             Die Datenbank `flowra.db` wird beim ersten Start neben der Datei erstellt.
           files: |
             release/windows/Flowra.exe
             release/linux/Flowra
+            release/linux/flowra.sh
             release/macos/Flowra-macOS.zip
