@@ -517,7 +517,7 @@ function exportDiagram(nodes, edges, format, colors, diagramName, theme){
     const pathData=pts.map((p,i)=>`${i===0?"M":"L"}${p.x+offX},${p.y+offY}`).join(" ");
     const lineSVG=`<path d="${pathData}" fill="none" stroke="${EDGE}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"${dash}/>`;
     const arrowSVG=hasArrow?`<polygon points="${p2.x+offX},${p2.y+offY} ${ax+px+offX},${ay+py+offY} ${ax-px+offX},${ay-py+offY}" fill="${EDGE}"/>`:"";
-    const labelSVG=edge.label?`<rect x="${midX-edge.label.length*3.6-5}" y="${midY-10}" width="${edge.label.length*7.2+10}" height="18" rx="6" fill="${BG}" stroke="${rgba('#ffffff',0.16)}"/><text x="${midX}" y="${midY+1}" text-anchor="middle" dominant-baseline="middle" fill="${INK}" font-size="10.5" font-family="system-ui,Segoe UI,Arial,sans-serif">${edge.label}</text>`:"";
+    const labelSVG=edge.label?`<rect x="${midX-edge.label.length*3.6-5}" y="${midY-10}" width="${edge.label.length*7.2+10}" height="18" rx="6" fill="${BG}" stroke="${rgba('#ffffff',0.16)}"/><text x="${midX}" y="${midY+1}" text-anchor="middle" fill="${INK}" font-size="10.5" font-family="system-ui,Segoe UI,Arial,sans-serif">${edge.label}</text>`:"";
     return lineSVG+arrowSVG+labelSVG;
   }).join("");
 
@@ -525,7 +525,17 @@ function exportDiagram(nodes, edges, format, colors, diagramName, theme){
     const{w,h}=getNodeSize(node);
     const cBase=col(node.type); const accent=node.color||cBase.accent;
     const x=node.x+offX,y=node.y+offY;
-    const fillCol=rgba(accent,FX.fill);
+    // Export: Hintergrund + farbige Füllung kombinieren
+    const fillR=parseInt(accent.slice(1,3),16)||0;
+    const fillG=parseInt(accent.slice(3,5),16)||0;
+    const fillB=parseInt(accent.slice(5,7),16)||0;
+    // Mische Accent mit dunklem Hintergrund (BG ~18,27,36) für sichtbare Füllung
+    const bgR=18,bgG=23,bgB=36;
+    const mix=0.28;
+    const mr=Math.round(bgR*(1-mix)+fillR*mix);
+    const mg=Math.round(bgG*(1-mix)+fillG*mix);
+    const mb=Math.round(bgB*(1-mix)+fillB*mix);
+    const fillCol=`rgb(${mr},${mg},${mb})`;
     const sw=FX.strokeW;
     let shape="";
     switch(node.type){
@@ -535,14 +545,14 @@ function exportDiagram(nodes, edges, format, colors, diagramName, theme){
       case "informationsobjekt":shape=`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="4" fill="${fillCol}" stroke="${accent}" stroke-width="${sw}"/><line x1="${x+w*0.2}" y1="${y}" x2="${x+w*0.2}" y2="${y+h}" stroke="${accent}" stroke-width="1.3" opacity="0.55"/><line x1="${x+w*0.8}" y1="${y}" x2="${x+w*0.8}" y2="${y+h}" stroke="${accent}" stroke-width="1.3" opacity="0.55"/>`;break;
       case "dokument":{const wH=11;shape=`<path d="M ${x} ${y} L ${x+w} ${y} L ${x+w} ${y+h-wH} Q ${x+w*0.75} ${y+h+wH*0.5} ${x+w*0.5} ${y+h-wH} Q ${x+w*0.25} ${y+h-wH*2.5} ${x} ${y+h-wH} Z" fill="${fillCol}" stroke="${accent}" stroke-width="${sw}" stroke-linejoin="round"/>`;break;}
       case "prozesspfad":{const aW=22;const pts=[[0,0],[w-aW,0],[w,h/2],[w-aW,h],[0,h]].map(p=>`${p[0]+x},${p[1]+y}`).join(" ");shape=`<polygon points="${pts}" fill="${fillCol}" stroke="${accent}" stroke-width="${sw}" stroke-linejoin="round"/>`;break;}
-      default:{const lm={operator_and:"AND",operator_or:"OR",operator_xor:"XOR"};const r=Math.min(w,h)/2-2;return `<circle cx="${x+w/2}" cy="${y+h/2}" r="${r}" fill="${fillCol}" stroke="${accent}" stroke-width="${sw}"/><text x="${x+w/2}" y="${y+h/2+1}" text-anchor="middle" dominant-baseline="middle" fill="${INK}" font-size="12.5" font-weight="700" font-family="system-ui,Segoe UI,Arial,sans-serif" letter-spacing="0.5">${lm[node.type]||""}</text>`;}
+      default:{const lm={operator_and:"AND",operator_or:"OR",operator_xor:"XOR"};const r=Math.min(w,h)/2-2;return `<circle cx="${x+w/2}" cy="${y+h/2}" r="${r}" fill="${fillCol}" stroke="${accent}" stroke-width="${sw}"/><text x="${x+w/2}" y="${y+h/2+12.5*0.38}" text-anchor="middle" fill="${INK}" font-size="12.5" font-weight="700" font-family="system-ui,Segoe UI,Arial,sans-serif" letter-spacing="0.5">${lm[node.type]||""}</text>`;}
     }
     const ty=node.type==="dokument"?y+(h-11)/2:y+h/2;
     const lines=(node.label||"").split("\n");
     const lineH=14*1.4;
     const labelSVG=lines.length<=1
-      ?`<text x="${x+w/2}" y="${ty+1}" text-anchor="middle" dominant-baseline="middle" fill="${INK}" font-size="12.5" font-weight="600" font-family="system-ui,Segoe UI,Arial,sans-serif">${node.label||""}</text>`
-      :`<text x="${x+w/2}" text-anchor="middle" fill="${INK}" font-size="12.5" font-weight="600" font-family="system-ui,Segoe UI,Arial,sans-serif">${lines.map((l,i)=>`<tspan x="${x+w/2}" y="${ty-(lines.length-1)*lineH/2+i*lineH}">${l}</tspan>`).join("")}</text>`;
+      ?`<text x="${x+w/2}" y="${ty+12.5*0.38}" text-anchor="middle" fill="${INK}" font-size="12.5" font-weight="600" font-family="system-ui,Segoe UI,Arial,sans-serif">${node.label||""}</text>`
+      :`<text x="${x+w/2}" text-anchor="middle" fill="${INK}" font-size="12.5" font-weight="600" font-family="system-ui,Segoe UI,Arial,sans-serif">${lines.map((l,i)=>`<tspan x="${x+w/2}" y="${ty-((lines.length-1)*lineH/2)+(i*lineH)+(12.5*0.38)}">${l}</tspan>`).join("")}</text>`;
     return shape+labelSVG;
   }).join("\n");
 
@@ -1455,7 +1465,7 @@ export default function FlowraEditor(){
           </div>
           <div style={{padding:"4px 10px 10px",display:"flex",flexDirection:"column",gap:2}}>
             {PALETTE.map(item=>{const isOp=item.type.startsWith("operator");const w=isOp?42:92,h=isOp?42:36;return(
-              <div key={item.type} className="pal-item" draggable
+              <div key={item.type} className="pal-item" draggable 
                 onDragStart={e=>{
                   paletteDragRef.current=true;
                   setIsPaletteDrag(true);
@@ -1647,7 +1657,7 @@ export default function FlowraEditor(){
               </div>
               {node.color&&<div onClick={()=>{const nn=nodes.map(n=>n.id===node.id?(()=>{const{color,...rest}=n;return rest;})():n);setNodes(nn);pushHistory(nn,edges);}}
                 style={{fontSize:10.5,color:"var(--faint)",cursor:"pointer",textDecoration:"underline",marginTop:2}}>↺ auf Typfarbe zurücksetzen</div>}
-            </div>);})()}
+            </div>);})()} 
           {selected?.type==="edge"&&(()=>{const edge=edges.find(e=>e.id===selected.id);if(!edge)return null;
             const ls=edge.lineStyle||"arrow";
             const lineTypes=[{id:"arrow",label:"→ Pfeil"},{id:"dashed",label:"- - → Gestrichelt"},{id:"dashed-line",label:"- - - Gestrichelt (kein Pfeil)"},{id:"line",label:"—— Linie"}];
@@ -1669,7 +1679,7 @@ export default function FlowraEditor(){
               <div style={{fontSize:11,color:"var(--faint)"}}>Label</div>
               <input value={edge.label||""} onChange={e=>setEdges(prev=>prev.map(ed=>ed.id===edge.id?{...ed,label:e.target.value}:ed))} onBlur={()=>pushHistory(nodes,edges)} placeholder="optional…" style={{background:"var(--glass)",border:"1px solid var(--border)",borderRadius:8,color:"var(--text)",padding:"8px 10px",fontSize:12.5,width:"100%"}}/>
               <div style={{fontSize:10,color:"var(--dim)",marginTop:1}}>oder Doppelklick auf den Pfeil</div>
-            </div>);})()}
+            </div>);})()} 
           {!selected&&<div style={{fontSize:11.5,color:"var(--dim)",lineHeight:1.9}}>Element auswählen, um Eigenschaften zu bearbeiten.</div>}
           <div style={{marginTop:"auto",borderTop:"1px solid var(--border)",paddingTop:12,display:"flex",flexDirection:"column",gap:6}}>
             {[["Elemente",nodes.length],["Verbindungen",edges.length]].map(([l,v])=>(
