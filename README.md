@@ -1,7 +1,7 @@
 # Flowra
 
 Eine moderne, Open-Source-Webanwendung zur visuellen Prozess- und Systemmodellierung.  
-Flowra ist eine leichtgewichtige Alternative zu Tools wie draw.io oder Visio –
+Flowra soll in Zukunft eine leichtgewichtige Alternative zu Tools wie draw.io oder Visio –
 fokussiert, schnell und für echte Modellierungsstandards gebaut.
 
 ## Aktueller Stand
