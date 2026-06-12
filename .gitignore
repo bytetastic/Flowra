@@ -87,6 +87,7 @@ coverage.xml
 data/
 backend/flowra.db
 *.db
+CLAUDE.md
 
 # ─── PyInstaller Build ────────────────────────────────
 backend/build_tmp/
