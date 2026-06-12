@@ -1,7 +1,7 @@
 # Flowra
 
 Eine moderne, Open-Source-Webanwendung zur visuellen Prozess- und Systemmodellierung.  
-Flowra soll in Zukunft eine leichtgewichtige Alternative zu Tools wie draw.io oder Visio –
+Flowra soll eine leichtgewichtige Alternative zu Tools wie draw.io oder Visio sein –
 fokussiert, schnell und für echte Modellierungsstandards gebaut.
 
 ## Aktueller Stand
@@ -26,6 +26,7 @@ fokussiert, schnell und für echte Modellierungsstandards gebaut.
 - **Frontend:** React
 - **Backend:** Python (FastAPI)
 - **Datenbank:** SQLite
+- **Desktop:** pywebview (Qt)
 
 ## Download
 
@@ -34,10 +35,47 @@ Fertige Builds für alle Betriebssysteme sind unter [Releases](../../releases) v
 | Datei | System | Hinweis |
 |---|---|---|
 | `Flowra.exe` | Windows | Einfach starten, kein Install nötig |
-| `Flowra` + `flowra.sh` | Linux | Einmalig `chmod +x flowra.sh`, dann `./flowra.sh` starten (installiert GTK automatisch) |
+| `Flowra` | Linux | Einmalig `chmod +x Flowra`, dann `./Flowra` starten |
 | `Flowra-macOS.zip` | macOS | Entpacken, `Flowra.app` in Programme ziehen |
 
-Die Datenbank `flowra.db` wird beim ersten Start automatisch neben der Datei erstellt.
+Die Datenbank `flowra.db` wird beim ersten Start automatisch neben der Datei erstellt.  
+Exportierte Diagramme (PNG/JPEG/SVG) landen im persönlichen Downloads-Ordner.
+
+## Einrichtung für Entwicklung
+
+### 1. Backend-Abhängigkeiten installieren
+
+```bash
+cd backend
+pip install -r requirements.txt
+```
+
+### 2. Frontend bauen
+
+```bash
+cd frontend
+npm install
+npm run build
+```
+
+## Starten (Entwicklung)
+
+```bash
+cd backend
+python main.py
+```
+
+→ App läuft auf **http://localhost:9876**  
+→ API-Dokumentation unter **http://localhost:9876/docs**
+
+## Frontend-Entwicklung
+
+Nur nötig wenn du aktiv am Frontend-Code arbeitest:
+
+```bash
+cd frontend
+npm start   # läuft auf http://localhost:3000
+```
 
 ## Shortcuts
 
@@ -54,5 +92,6 @@ Die Datenbank `flowra.db` wird beim ersten Start automatisch neben der Datei ers
 | Alt+Drag | Canvas verschieben |
 | Mausrad | Zoom |
 
+---
 
-## Beim erstellen der App wurde KI zur Unterstützung genutzt
+*Teile dieses Projekts wurden mit Unterstützung von KI (Claude, Claude Design Anthropic) entwickelt.*
