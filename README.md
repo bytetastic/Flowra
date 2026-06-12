@@ -53,3 +53,6 @@ Die Datenbank `flowra.db` wird beim ersten Start automatisch neben der Datei ers
 | Strg+C / Strg+V | Kopieren / Einfügen |
 | Alt+Drag | Canvas verschieben |
 | Mausrad | Zoom |
+
+
+## Beim erstellen der App wurde KI zur Unterstützung genutzt
