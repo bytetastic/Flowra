@@ -1123,10 +1123,7 @@ function exportDiagram(nodes, edges, format, colors, diagramName, theme){
     return lineSVG+arrowSVG+startSVG+labelSVG;
   }).join("");
 
-  const shapeSVG=[...nodes].sort((a,b)=>{
-    const z=t=>t==="bpmn_pool"?0:t==="bpmn_lane"?1:2;
-    return z(a.type)-z(b.type);
-  }).map(node=>{
+  const renderNodeSVG=node=>{
     const{w,h}=getNodeSize(node);
     const cBase=col(node.type); const accent=node.color||cBase.accent;
     const x=node.x+offX,y=node.y+offY;
@@ -1162,9 +1159,11 @@ function exportDiagram(nodes, edges, format, colors, diagramName, theme){
       ?`<text x="${x+w/2}" y="${ty+12.5*0.38}" text-anchor="middle" fill="${INK}" font-size="12.5" font-weight="600" font-family="system-ui,Segoe UI,Arial,sans-serif">${node.label||""}</text>`
       :`<text x="${x+w/2}" text-anchor="middle" fill="${INK}" font-size="12.5" font-weight="600" font-family="system-ui,Segoe UI,Arial,sans-serif">${lines.map((l,i)=>`<tspan x="${x+w/2}" y="${ty-((lines.length-1)*lineH/2)+(i*lineH)+(12.5*0.38)}">${l}</tspan>`).join("")}</text>`;
     return shape+labelSVG;
-  }).join("\n");
+  };
+  const poolLaneSVG=nodes.filter(n=>n.type==="bpmn_pool"||n.type==="bpmn_lane").map(renderNodeSVG).join("\n");
+  const otherNodeSVG=nodes.filter(n=>n.type!=="bpmn_pool"&&n.type!=="bpmn_lane").map(renderNodeSVG).join("\n");
 
-  const svgStr=`<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="${BG}"/>${edgeSVG}${shapeSVG}</svg>`;
+  const svgStr=`<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="${BG}"/>${poolLaneSVG}${edgeSVG}${otherNodeSVG}</svg>`;
   const fname=(diagramName||"flowra-diagram").replace(/\s+/g,"-").toLowerCase();
 
   if(format==="svg"){
@@ -2002,8 +2001,8 @@ export default function FlowraEditor(){
       if(!r.ok) return;
       const data = await r.json();
       const snapNodes=(data.nodes||[]).map(n=>{
-        const isOp=n.type&&n.type.startsWith("operator");
-        const hw=isOp?24:NODE_W/2, hh=isOp?24:NODE_H/2;
+        const{w:nw,h:nh}=getNodeSize(n);
+        const hw=nw/2, hh=nh/2;
         return{...n,
           x:Math.round((n.x+hw)/GRID)*GRID-hw,
           y:Math.round((n.y+hh)/GRID)*GRID-hh
@@ -2190,8 +2189,8 @@ export default function FlowraEditor(){
       if(snapGrid&&!guides.active){
         setNodes(prev=>prev.map(n=>{
           if(n.id!==dragging.id)return n;
-          const isOp=n.type.startsWith("operator");
-          const hw=isOp?24:NODE_W/2, hh=isOp?24:NODE_H/2;
+          const{w:nw,h:nh}=getNodeSize(n);
+          const hw=nw/2, hh=nh/2;
           const sx=Math.round((n.x+hw)/GRID)*GRID-hw;
           const sy=Math.round((n.y+hh)/GRID)*GRID-hh;
           return{...n,x:sx,y:sy};
