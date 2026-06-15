@@ -1163,7 +1163,7 @@ function exportDiagram(nodes, edges, format, colors, diagramName, theme){
   const poolLaneSVG=nodes.filter(n=>n.type==="bpmn_pool"||n.type==="bpmn_lane").map(renderNodeSVG).join("\n");
   const otherNodeSVG=nodes.filter(n=>n.type!=="bpmn_pool"&&n.type!=="bpmn_lane").map(renderNodeSVG).join("\n");
 
-  const svgStr=`<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="${BG}"/>${poolLaneSVG}${edgeSVG}${otherNodeSVG}</svg>`;
+  const svgStr=`<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="${BG}"/>${poolLaneSVG}${otherNodeSVG}${edgeSVG}</svg>`;
   const fname=(diagramName||"flowra-diagram").replace(/\s+/g,"-").toLowerCase();
 
   if(format==="svg"){
@@ -2000,19 +2000,12 @@ export default function FlowraEditor(){
       const r = await fetch(`${API_BASE}/diagrams/${encodeURIComponent(name)}`);
       if(!r.ok) return;
       const data = await r.json();
-      const snapNodes=(data.nodes||[]).map(n=>{
-        const{w:nw,h:nh}=getNodeSize(n);
-        const hw=nw/2, hh=nh/2;
-        return{...n,
-          x:Math.round((n.x+hw)/GRID)*GRID-hw,
-          y:Math.round((n.y+hh)/GRID)*GRID-hh
-        };
-      });
-      setNodes(snapNodes);
-      setEdges(data.edges||[]);
+      const loadedNodes=data.nodes||[], loadedEdges=data.edges||[];
+      setNodes(loadedNodes);
+      setEdges(loadedEdges);
       setDiagramName(name);
       setSelected(null);
-      pushHistory(data.nodes||[], data.edges||[]);
+      pushHistory(loadedNodes, loadedEdges);
       setShowProjects(false);
     } catch(e) { alert('Fehler beim Laden'); }
   };
