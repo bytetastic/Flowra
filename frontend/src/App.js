@@ -280,7 +280,7 @@ function getNodeKind(type){
 function getNodeSize(node){
   const kind=getNodeKind(node.type);
   let dw,dh;
-  if(kind==="circle"){dw=48;dh=48;}
+  if(kind==="circle"){dw=50;dh=50;}
   else if(kind==="diamond"){dw=54;dh=54;}
   else if(node.type==="bpmn_data_object"||node.type==="bpmn_data_input"||node.type==="bpmn_data_output"){dw=60;dh=78;}
   else if(node.type==="bpmn_data_store"){dw=70;dh=60;}
@@ -904,7 +904,7 @@ function bpmnExportShape(node, x, y, w, h, accent, fillCol, sheenless, sw, INK, 
     const strokeWidth=type==="bpmn_call_activity"?sw*1.8:sw;
     let s=`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${fillCol}" stroke="${accent}" stroke-width="${strokeWidth}"${dasharray}/>`;
     if(type==="bpmn_transaction")s+=`<rect x="${x+4}" y="${y+4}" width="${w-8}" height="${h-8}" rx="${rx-2}" fill="none" stroke="${accent}" stroke-width="${sw*0.8}"/>`;
-    s+=labelCenter(x+w/2,y+h/2,12.5);
+    s+=labelCenter(x+w/2,y+h/2,label.length>16?11:12.5);
     // Marker
     const markers=(node.variant||"").split(",").filter(Boolean);
     const hasExpand=type==="bpmn_subprocess"||type==="bpmn_call_activity"||markers.includes("expand");
