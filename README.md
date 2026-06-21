@@ -7,9 +7,13 @@ fokussiert, schnell und für echte Modellierungsstandards gebaut.
 ## Aktueller Stand
 
 - ✅ EPK-Editor (Ereignisgesteuerte Prozessketten)
+- ✅ BPMN 2.0-Editor (Aktivitäten, Ereignisse, Gateways, Daten, Pool/Lane, Artefakte)
+- ✅ Freie Textelemente mit Markdown-Unterstützung
+- ✅ Bild-Elemente (PNG/JPEG einbetten)
 
 ## Funktionen
 
+### Allgemein
 - Drag & Drop aus der Palette auf den Canvas
 - Verbindungen per Port-Ziehen erstellen
 - Pfeile mit Labels beschriften
@@ -17,9 +21,18 @@ fokussiert, schnell und für echte Modellierungsstandards gebaut.
 - Snap-to-Grid für saubere Ausrichtung
 - Rückgängig / Wiederholen (Strg+Z / Strg+Y)
 - Kopieren & Einfügen (Strg+C / Strg+V)
+- Resize von Elementen per Maus
 - Diagramm-Name editierbar
 - Export als PNG, JPEG oder SVG
-- Einstellungen: Farben pro Element-Typ anpassbar
+- Einstellungen: Farben pro Element-Typ anpassbar, mehrere Themes
+- **Freier Text** – Markdown-formatierter Text direkt auf dem Canvas (`#` Überschriften, `**fett**`, `*kursiv*`, `- Listen`)
+- **Bilder einfügen** – PNG/JPEG lokal hochladen und als Canvas-Element platzieren, skalierbar und sperrbar
+- Position sperren für alle Elemente (verhindert versehentliches Verschieben)
+
+### BPMN 2.0
+- Vollständige BPMN-Palette: Aufgaben (Task, Subprocess, Transaction, …), Start-/Zwischen-/Endereignisse mit Varianten (Nachricht, Timer, Eskalation, Fehler, …), Gateways (XOR, AND, OR, Komplex, Event-basiert), Datenobjekte, Datenspeicher, Pool & Lane, Textannotation, Gruppe
+- BPMN-Linientypen: Sequenzfluss, Standardfluss, Bedingter Fluss, Nachrichtenfluss, Assoziation
+- Pool/Lane-Position sperren (verhindert versehentliches Verschieben)
 
 ## Technologie
 
@@ -94,4 +107,4 @@ npm start   # läuft auf http://localhost:3000
 
 ---
 
-*Teile dieses Projekts wurden mit Unterstützung von KI (Claude, Claude Design Anthropic) entwickelt.*
+*Teile dieses Projekts wurden mit Unterstützung von KI (Claude, Anthropic) entwickelt.*

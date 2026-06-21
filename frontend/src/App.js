@@ -91,6 +91,10 @@ const CSS = `
   .pal-item:active { cursor:grabbing; transform:translateX(5px) scale(.97); }
   .pal-preview { flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:filter .25s,transform .2s cubic-bezier(.34,1.56,.64,1); }
   [data-theme="matte"] .pal-item:hover .pal-preview { filter:none; }
+  .pal-lang-header { border-radius:var(--r-md); transition:background .2s; }
+  .pal-lang-header:hover { background:var(--glass-strong); }
+  .pal-group-header { border-radius:var(--r-sm); transition:background .2s; }
+  .pal-group-header:hover { background:var(--glass); }
   .canvas-shell { flex:1; border-radius:var(--r-xl); position:relative; overflow:hidden; background:radial-gradient(120% 90% at 50% 0%, color-mix(in oklab,var(--accent) 7%,transparent), transparent 55%), var(--bg-canvas); border:1px solid var(--border); box-shadow:var(--shadow), inset 0 1px 0 rgba(255,255,255,0.05); }
   .grid-dot { fill:var(--border); }
   .hint { position:absolute; bottom:14px; left:50%; transform:translateX(-50%); font-size:11.5px; color:var(--muted); background:color-mix(in oklab,var(--bg) 72%,transparent); padding:7px 16px; border-radius:22px; border:1px solid var(--border); backdrop-filter:blur(10px); box-shadow:var(--shadow-pop); white-space:nowrap; pointer-events:none; z-index:5; }
@@ -141,31 +145,36 @@ const THEMES = {
     id:"bloom", name:"Bloom", dot:"#a3e0bd", accent:"#a3e0bd", accent2:"#f4c4ac", ink:"#f6f5fa", danger:"#f6b3a4",
     bg:"#18171d", bgCanvas:"#1d1b24", edge:"#837c8e",
     fx:{ fill:0.22, strokeW:2.2, glow:5, glowAmt:0.45 },
-    elements:{ ereignis:"#9fe3b3", funktion:"#aac6f0", organisationseinheit:"#cdb8ef", informationsobjekt:"#a6e2e0", dokument:"#3dd6b5", prozesspfad:"#f6b3a4", operator:"#f6dd9c" },
+    elements:{ ereignis:"#9fe3b3", funktion:"#aac6f0", organisationseinheit:"#cdb8ef", informationsobjekt:"#a6e2e0", dokument:"#3dd6b5", prozesspfad:"#f6b3a4", operator:"#f6dd9c",
+      bpmn_task:"#aac6f0", bpmn_event_start:"#9fe3b3", bpmn_event_end:"#f6b3a4", bpmn_event_intermediate:"#f6dd9c", bpmn_gateway:"#f6dd9c", bpmn_data:"#a6e2e0", bpmn_artifact:"#cdb8ef", bpmn_pool:"#837c8e" },
   },
   eclipse: {
     id:"eclipse", name:"Eclipse", dot:"#7c8dff", accent:"#7c8dff", accent2:"#38d6e6", ink:"#f2f5fc", danger:"#ff7a8a",
     bg:"#080a14", bgCanvas:"#0a0c17", edge:"#6e7894",
     fx:{ fill:0.14, strokeW:1.9, glow:6, glowAmt:0.55 },
-    elements:{ ereignis:"#5fd07a", funktion:"#5b93ff", organisationseinheit:"#b07cff", informationsobjekt:"#34cfe0", dokument:"#1fc8a8", prozesspfad:"#ff7a8a", operator:"#ffc24b" },
+    elements:{ ereignis:"#5fd07a", funktion:"#5b93ff", organisationseinheit:"#b07cff", informationsobjekt:"#34cfe0", dokument:"#1fc8a8", prozesspfad:"#ff7a8a", operator:"#ffc24b",
+      bpmn_task:"#5b93ff", bpmn_event_start:"#5fd07a", bpmn_event_end:"#ff7a8a", bpmn_event_intermediate:"#ffc24b", bpmn_gateway:"#ffc24b", bpmn_data:"#34cfe0", bpmn_artifact:"#b07cff", bpmn_pool:"#6e7894" },
   },
   nocturne: {
     id:"nocturne", name:"Nocturne", dot:"#b37bff", accent:"#b37bff", accent2:"#ff5fa6", ink:"#f2f5fc", danger:"#ff5f9e",
     bg:"#0a0712", bgCanvas:"#0c0917", edge:"#73688f",
     fx:{ fill:0.14, strokeW:1.9, glow:7, glowAmt:0.6 },
-    elements:{ ereignis:"#4be3a0", funktion:"#6e8bff", organisationseinheit:"#c77dff", informationsobjekt:"#3ad6ff", dokument:"#2fe0c8", prozesspfad:"#ff5f9e", operator:"#ffce4a" },
+    elements:{ ereignis:"#4be3a0", funktion:"#6e8bff", organisationseinheit:"#c77dff", informationsobjekt:"#3ad6ff", dokument:"#2fe0c8", prozesspfad:"#ff5f9e", operator:"#ffce4a",
+      bpmn_task:"#6e8bff", bpmn_event_start:"#4be3a0", bpmn_event_end:"#ff5f9e", bpmn_event_intermediate:"#ffce4a", bpmn_gateway:"#ffce4a", bpmn_data:"#3ad6ff", bpmn_artifact:"#c77dff", bpmn_pool:"#73688f" },
   },
   graphite: {
     id:"graphite", name:"Graphite", dot:"#c6f24e", accent:"#c6f24e", accent2:"#c6f24e", ink:"#f0f1f4", danger:"#ff7a8a",
     bg:"#0b0b0d", bgCanvas:"#0d0d10", edge:"#6b6e78",
     fx:{ fill:0.13, strokeW:1.9, glow:5, glowAmt:0.5 },
-    elements:{ ereignis:"#5fd07a", funktion:"#5b93ff", organisationseinheit:"#b07cff", informationsobjekt:"#34cfe0", dokument:"#1fc8a8", prozesspfad:"#ff7a8a", operator:"#ffc24b" },
+    elements:{ ereignis:"#5fd07a", funktion:"#5b93ff", organisationseinheit:"#b07cff", informationsobjekt:"#34cfe0", dokument:"#1fc8a8", prozesspfad:"#ff7a8a", operator:"#ffc24b",
+      bpmn_task:"#5b93ff", bpmn_event_start:"#5fd07a", bpmn_event_end:"#ff7a8a", bpmn_event_intermediate:"#ffc24b", bpmn_gateway:"#ffc24b", bpmn_data:"#34cfe0", bpmn_artifact:"#b07cff", bpmn_pool:"#6b6e78" },
   },
   matte: {
     id:"matte", name:"Matte", dot:"#8b93bf", accent:"#8b93bf", accent2:"#8b93bf", ink:"#eceef4", danger:"#c8929a",
     bg:"#101118", bgCanvas:"#13141c", edge:"#6d7283",
     fx:{ fill:0.17, strokeW:2.0, glow:0, glowAmt:0 },
-    elements:{ ereignis:"#84ad8b", funktion:"#7e9ec4", organisationseinheit:"#a496c0", informationsobjekt:"#79b0b9", dokument:"#5bbfaa", prozesspfad:"#c8929a", operator:"#cbb27e" },
+    elements:{ ereignis:"#84ad8b", funktion:"#7e9ec4", organisationseinheit:"#a496c0", informationsobjekt:"#79b0b9", dokument:"#5bbfaa", prozesspfad:"#c8929a", operator:"#cbb27e",
+      bpmn_task:"#7e9ec4", bpmn_event_start:"#84ad8b", bpmn_event_end:"#c8929a", bpmn_event_intermediate:"#cbb27e", bpmn_gateway:"#cbb27e", bpmn_data:"#79b0b9", bpmn_artifact:"#a496c0", bpmn_pool:"#6d7283" },
   },
 };
 const THEME_ORDER = ["bloom","eclipse","nocturne","graphite","matte"];
@@ -174,10 +183,36 @@ const DEFAULT_FX = { fill:0.22, strokeW:2.2, glow:5, glowAmt:0.45 };
 function themeColors(themeId){
   const t = THEMES[themeId] || THEMES.bloom; const e = t.elements;
   return {
+    // EPK
     ereignis:{accent:e.ereignis,text:t.ink}, funktion:{accent:e.funktion,text:t.ink},
     organisationseinheit:{accent:e.organisationseinheit,text:t.ink}, informationsobjekt:{accent:e.informationsobjekt,text:t.ink},
     dokument:{accent:e.dokument,text:t.ink}, prozesspfad:{accent:e.prozesspfad,text:t.ink},
     operator_and:{accent:e.operator,text:t.ink}, operator_or:{accent:e.operator,text:t.ink}, operator_xor:{accent:e.operator,text:t.ink},
+    // BPMN – Aktivitäten
+    bpmn_task:{accent:e.bpmn_task,text:t.ink}, bpmn_subprocess:{accent:e.bpmn_task,text:t.ink},
+    bpmn_transaction:{accent:e.bpmn_task,text:t.ink}, bpmn_call_activity:{accent:e.bpmn_task,text:t.ink},
+    bpmn_event_subprocess:{accent:e.bpmn_task,text:t.ink},
+    // BPMN – Ereignisse (Start/Zwischen/Ende)
+    bpmn_start_event:{accent:e.bpmn_event_start,text:t.ink},
+    bpmn_intermediate_event:{accent:e.bpmn_event_intermediate,text:t.ink},
+    bpmn_end_event:{accent:e.bpmn_event_end,text:t.ink},
+    // BPMN – Gateways
+    bpmn_gateway_exclusive:{accent:e.bpmn_gateway,text:t.ink},
+    bpmn_gateway_parallel:{accent:e.bpmn_gateway,text:t.ink},
+    bpmn_gateway_inclusive:{accent:e.bpmn_gateway,text:t.ink},
+    bpmn_gateway_complex:{accent:e.bpmn_gateway,text:t.ink},
+    bpmn_gateway_event:{accent:e.bpmn_gateway,text:t.ink},
+    bpmn_gateway_exclusive_event:{accent:e.bpmn_gateway,text:t.ink},
+    bpmn_gateway_parallel_event:{accent:e.bpmn_gateway,text:t.ink},
+    // BPMN – Daten
+    bpmn_data_object:{accent:e.bpmn_data,text:t.ink}, bpmn_data_list:{accent:e.bpmn_data,text:t.ink},
+    bpmn_data_input:{accent:e.bpmn_data,text:t.ink}, bpmn_data_output:{accent:e.bpmn_data,text:t.ink},
+    bpmn_data_store:{accent:e.bpmn_data,text:t.ink},
+    // BPMN – Artefakte
+    bpmn_text_annotation:{accent:e.bpmn_artifact,text:t.ink}, bpmn_group:{accent:e.bpmn_artifact,text:t.ink},
+    bpmn_custom_artifact:{accent:e.bpmn_artifact,text:t.ink},
+    // BPMN – Teilnehmer
+    bpmn_pool:{accent:e.bpmn_pool,text:t.ink}, bpmn_lane:{accent:e.bpmn_pool,text:t.ink},
   };
 }
 function loadTheme(){ try{ const t=localStorage.getItem("flowra-theme"); if(t&&THEMES[t]) return t; }catch(e){} return "bloom"; }
@@ -225,6 +260,8 @@ const ICON_PATHS={
   save:<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2zM17 21v-8H7v8M7 3v5h8"/>,
   folder:<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>,
   palette:<><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.012 17.5 2 12 2z"/></>,
+  lock:<><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></>,
+  unlock:<><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></>,
 };
 function Icon({name,size=15,strokeWidth=2}){
   return (<svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor"
@@ -233,17 +270,100 @@ function Icon({name,size=15,strokeWidth=2}){
 
 
 
-function getNodeSize(node){const isOp=node.type.startsWith("operator");return{w:node.w||(isOp?48:NODE_W),h:node.h||(isOp?48:NODE_H)};}
+// Shape kind: "circle" (round ports), "diamond" (BPMN gateways), "rect" (default)
+// ─── Mini-Markdown-Parser für Freitext-Elemente ────────────────────────────
+// Unterstützt: # ## ### Überschriften, **fett**, *kursiv*, - / * Listen
+// Gibt pro Zeile { runs:[{text,bold,italic}], fontSize, fontWeight, bullet, indent } zurück
+function parseInlineMd(str){
+  // Zerlegt einen Zeilen-String in Runs mit bold/italic basierend auf ** und *
+  const runs=[];
+  let rest=str;
+  const re=/(\*\*\*([^*]+)\*\*\*)|(\*\*([^*]+)\*\*)|(\*([^*]+)\*)/;
+  while(rest.length){
+    const m=re.exec(rest);
+    if(!m){runs.push({text:rest,bold:false,italic:false});break;}
+    if(m.index>0)runs.push({text:rest.slice(0,m.index),bold:false,italic:false});
+    if(m[2]!==undefined)runs.push({text:m[2],bold:true,italic:true});
+    else if(m[4]!==undefined)runs.push({text:m[4],bold:true,italic:false});
+    else if(m[6]!==undefined)runs.push({text:m[6],bold:false,italic:true});
+    rest=rest.slice(m.index+m[0].length);
+  }
+  return runs.length?runs:[{text:"",bold:false,italic:false}];
+}
+function parseMarkdownLines(text){
+  const rawLines=(text||"").split("\n");
+  return rawLines.map(line=>{
+    let l=line;
+    let fontSize=1, fontWeight="600", bullet=false, indent=0;
+    // Führende Leerzeichen/Tabs vor Listenpunkten zulassen (verschachtelte Listen)
+    const trimmed=l.replace(/^[ \t]+/,"");
+    const leadWs=l.length-trimmed.length;
+    const h3=/^###\s+(.*)/.exec(l);
+    const h2=/^##\s+(.*)/.exec(l);
+    const h1=/^#\s+(.*)/.exec(l);
+    const li=/^[-*]\s+(.*)/.exec(trimmed);
+    if(h1){l=h1[1];fontSize=1.7;fontWeight="800";}
+    else if(h2){l=h2[1];fontSize=1.4;fontWeight="800";}
+    else if(h3){l=h3[1];fontSize=1.18;fontWeight="700";}
+    else if(li){l=li[1];bullet=true;const level=Math.round(leadWs/4);indent=16+level*24;}
+    return{runs:parseInlineMd(l),fontSize,fontWeight,bullet,indent};
+  });
+}
+// Berechnet die Gesamthöhe eines Markdown-Freitexts (für Auto-Resize der Node-Box)
+function measureTextNodeHeight(label,baseFs){
+  const mdLines=parseMarkdownLines(label||"Text");
+  let cursorY=baseFs*(mdLines[0]?.fontSize||1);
+  for(let i=0;i<mdLines.length;i++){
+    const fs=baseFs*mdLines[i].fontSize;
+    if(i<mdLines.length-1)cursorY+=fs*1.45;
+  }
+  return Math.ceil(cursorY+baseFs*0.5);
+}
+
+function getNodeKind(type){
+  if(type.startsWith("operator"))return"circle";
+  if(type.startsWith("bpmn_event_")||type==="bpmn_start_event"||type==="bpmn_end_event"||type==="bpmn_intermediate_event")return"circle";
+  if(type.startsWith("bpmn_gateway"))return"diamond";
+  return"rect";
+}
+function getNodeSize(node){
+  const kind=getNodeKind(node.type);
+  let dw,dh;
+  if(kind==="circle"){dw=50;dh=50;}
+  else if(kind==="diamond"){dw=54;dh=54;}
+  else if(node.type==="bpmn_data_object"||node.type==="bpmn_data_input"||node.type==="bpmn_data_output"){dw=60;dh=78;}
+  else if(node.type==="bpmn_data_store"){dw=70;dh=60;}
+  else if(node.type==="bpmn_text_annotation"){dw=140;dh=50;}
+  else if(node.type==="bpmn_group"){dw=200;dh=140;}
+  else if(node.type==="bpmn_pool"){dw=480;dh=160;}
+  else if(node.type==="bpmn_lane"){dw=480;dh=120;}
+  else if(node.type==="image"){dw=node.w||200;dh=node.h||150;}
+  else if(node.type==="text"){
+    dw=node.w||220;
+    // Höhe folgt automatisch dem Markdown-Inhalt, außer manuell per Resize fixiert
+    dh=node.hLocked?(node.h||24):measureTextNodeHeight(node.label,14);
+  }
+  else{dw=NODE_W;dh=NODE_H;}
+  return{w:node.w||dw,h:node.type==="text"?dh:(node.h||dh)};
+}
 
 function getPortPoint(node,dir){
   const{w,h}=getNodeSize(node);
   const cx=node.x+w/2,cy=node.y+h/2;
-  if(node.type.startsWith("operator")){
+  const kind=getNodeKind(node.type);
+  if(kind==="circle"){
     const r=Math.min(w,h)/2-2;
     if(dir==="top")    return{x:cx,y:cy-r};
     if(dir==="bottom") return{x:cx,y:cy+r};
     if(dir==="left")   return{x:cx-r,y:cy};
     if(dir==="right")  return{x:cx+r,y:cy};
+    return{x:cx,y:cy};
+  }
+  if(kind==="diamond"){
+    if(dir==="top")    return{x:cx,y:node.y};
+    if(dir==="bottom") return{x:cx,y:node.y+h};
+    if(dir==="left")   return{x:node.x,y:cy};
+    if(dir==="right")  return{x:node.x+w,y:cy};
     return{x:cx,y:cy};
   }
   if(dir==="top")    return{x:cx,y:node.y};
@@ -266,8 +386,8 @@ function getClosestPorts(a,b){
   const{w:bw,h:bh}=getNodeSize(b);
   const acx=a.x+aw/2,acy=a.y+ah/2;
   const bcx=b.x+bw/2,bcy=b.y+bh/2;
-  const p1=a.type.startsWith("operator")?getCircleEdge(a,bcx,bcy):null;
-  const p2=b.type.startsWith("operator")?getCircleEdge(b,acx,acy):null;
+  const p1=getNodeKind(a.type)==="circle"?getCircleEdge(a,bcx,bcy):null;
+  const p2=getNodeKind(b.type)==="circle"?getCircleEdge(b,acx,acy):null;
   if(p1&&p2)return{p1,p2};
   const dirs=["top","bottom","left","right"];
   let best=null,bestDist=Infinity;
@@ -283,7 +403,7 @@ function getClosestPorts(a,b){
 function getAllPorts(node){
   const{w,h}=getNodeSize(node);
   const cx=node.x+w/2,cy=node.y+h/2;
-  if(node.type.startsWith("operator")){
+  if(getNodeKind(node.type)==="circle"){
     const r=Math.min(w,h)/2-2;
     return[
       {dir:"top",    x:cx,   y:cy-r},
@@ -313,7 +433,7 @@ function snapAngle(fromX,fromY,toX,toY){
 }
 
 // ─── ShapeRenderer (transluzente Füllung + Glow, theme-FX-gesteuert) ───────
-function ShapeRenderer({type,label,width=NODE_W,height=NODE_H,selected,dimmed,colors,preview,override,fx}){
+function ShapeRenderer({type,label,width=NODE_W,height=NODE_H,selected,dimmed,colors,preview,override,fx,variant,noFilter,nodeSrc}){
   const F=fx||DEFAULT_FX;
   const base=(colors&&colors[type])||DEFAULT_COLORS[type]||{accent:"#aac6f0",text:"#f6f5fa"};
   const c=override?{...base,accent:override}:base;
@@ -322,7 +442,7 @@ function ShapeRenderer({type,label,width=NODE_W,height=NODE_H,selected,dimmed,co
   const fillId=`f${gid}`,sheenId=`s${gid}`;
   const opacity=dimmed?0.28:1;
   const isOp=type.startsWith("operator");
-  const fontSize=isOp?13:(label&&label.length>16?11:12.5);
+  const fontSize=type==="text"?14:isOp?13:(label&&label.length>16?11:12.5);
   const baseShadow=`drop-shadow(0 2px 6px rgba(0,0,0,0.35))`;
   const glow=selected
     ?`drop-shadow(0 0 2px ${rgba(accent,0.75)}) drop-shadow(0 0 11px ${rgba(accent,0.4)})`
@@ -356,11 +476,12 @@ function ShapeRenderer({type,label,width=NODE_W,height=NODE_H,selected,dimmed,co
           {lines.map((l,i)=><tspan key={i} x={width/2} y={startY+i*lineH}>{l}</tspan>)}
         </text>);
       })();
+  const selRingStyle=noFilter?{stroke:"var(--accent)"}:{stroke:"var(--accent)",filter:"drop-shadow(0 0 8px var(--accent-glow))"};
   const selRing=selected?(isOp
     ?<circle className="sel-ring" cx={width/2} cy={height/2} r={Math.min(width,height)/2+6}
-        fill="none" strokeWidth={1.6} opacity={0.9} style={{stroke:"var(--accent)",filter:"drop-shadow(0 0 8px var(--accent-glow))"}}/>
+        fill="none" strokeWidth={1.6} opacity={0.9} style={selRingStyle}/>
     :<rect className="sel-ring" x={-7} y={-7} width={width+14} height={height+14}
-        rx={16} fill="none" strokeWidth={1.6} opacity={0.9} style={{stroke:"var(--accent)",filter:"drop-shadow(0 0 8px var(--accent-glow))"}}/>
+        rx={16} fill="none" strokeWidth={1.6} opacity={0.9} style={selRingStyle}/>
   ):null;
   switch(type){
     case "ereignis":{
@@ -416,6 +537,353 @@ function ShapeRenderer({type,label,width=NODE_W,height=NODE_H,selected,dimmed,co
           fill={txt} fontSize={r>16?12.5:10.5} fontWeight="700" fontFamily={FONT}
           style={{pointerEvents:"none",userSelect:"none",letterSpacing:"0.5px"}}>{lm[type]}</text></svg>;
     }
+
+    // ─── BPMN: Aktivitäten (Task, Subprocess, Transaction, Call Activity) ───
+    case "bpmn_task": case "bpmn_subprocess": case "bpmn_transaction":
+    case "bpmn_call_activity": case "bpmn_event_subprocess":{
+      const rx=8;
+      const dashMap={bpmn_event_subprocess:"4 3"};
+      const dasharray=dashMap[type]||"none";
+      const doubleBorder=type==="bpmn_transaction";
+      const thickBorder=type==="bpmn_call_activity";
+      // Marker-Liste: kombinierbare Symbole unten mittig (Schleife, Mehrfachausführung, Ad-hoc, Kompensation, +)
+      const markers=(variant||"").split(",").filter(Boolean);
+      const hasExpand=type==="bpmn_subprocess"||type==="bpmn_call_activity"||markers.includes("expand");
+      const iconList=[...markers.filter(m=>m!=="expand")];
+      if(hasExpand)iconList.push("expand");
+      const iconW=12,iconGap=4;
+      const totalW=iconList.length*iconW+(iconList.length-1)*iconGap;
+      const startX=width/2-totalW/2;
+      const iconY=height-iconW-3;
+      const renderMarker=(m,x)=>{
+        switch(m){
+          case "loop": return(
+            <g key={m} transform={`translate(${x},${iconY})`} opacity={opacity}>
+              <path d="M1,7 A5,5 0 1 1 9.5,9.5" fill="none" stroke={accent} strokeWidth={1.4}/>
+              <path d="M9.5,9.5 L9.5,6 M9.5,9.5 L6,9.5" fill="none" stroke={accent} strokeWidth={1.4} strokeLinecap="round"/>
+            </g>
+          );
+          case "parallel_mi": return(
+            <g key={m} transform={`translate(${x},${iconY})`} stroke={accent} strokeWidth={1.6} opacity={opacity}>
+              <line x1={1.5} y1={0} x2={1.5} y2={12}/><line x1={6} y1={0} x2={6} y2={12}/><line x1={10.5} y1={0} x2={10.5} y2={12}/>
+            </g>
+          );
+          case "sequential_mi": return(
+            <g key={m} transform={`translate(${x},${iconY})`} stroke={accent} strokeWidth={1.6} opacity={opacity}>
+              <line x1={0} y1={1.5} x2={12} y2={1.5}/><line x1={0} y1={6} x2={12} y2={6}/><line x1={0} y1={10.5} x2={12} y2={10.5}/>
+            </g>
+          );
+          case "adhoc": return(
+            <g key={m} transform={`translate(${x},${iconY+6})`} opacity={opacity}>
+              <path d="M0,0 C3,-5 6,5 9,0 C10.5,-2 11,-1 12,0" fill="none" stroke={accent} strokeWidth={1.5}/>
+            </g>
+          );
+          case "compensation": return(
+            <g key={m} transform={`translate(${x},${iconY+1})`} fill="none" stroke={accent} strokeWidth={1.2} opacity={opacity}>
+              <path d="M6,0 L0,5 L6,10 Z"/><path d="M12,0 L6,5 L12,10 Z"/>
+            </g>
+          );
+          case "expand": return(
+            <g key={m} transform={`translate(${x},${iconY})`} opacity={opacity}>
+              <rect x={0} y={0} width={12} height={12} rx={2} fill="none" stroke={accent} strokeWidth={1.4}/>
+              <line x1={6} y1={2.5} x2={6} y2={9.5} stroke={accent} strokeWidth={1.4}/>
+              <line x1={2.5} y1={6} x2={9.5} y2={6} stroke={accent} strokeWidth={1.4}/>
+            </g>
+          );
+          default: return null;
+        }
+      };
+      return <svg width={width} height={height} overflow="visible">{defs}{selRing}
+        <rect x={0} y={0} width={width} height={height} rx={rx} fill={fill} stroke={accent}
+          strokeWidth={thickBorder?strokeW*1.8:strokeW} strokeDasharray={dasharray} style={ss}/>
+        {doubleBorder&&<rect x={4} y={4} width={width-8} height={height-8} rx={rx-2} fill="none" stroke={accent} strokeWidth={strokeW*0.8} opacity={opacity}/>}
+        <rect x={0} y={0} width={width} height={height} rx={rx} fill={`url(#${sheenId})`} opacity={opacity}/>
+        {textEl}
+        {iconList.map((m,i)=>renderMarker(m,startX+i*(iconW+iconGap)))}
+      </svg>;
+    }
+
+    // ─── BPMN: Ereignisse (Start/Zwischen/Ende) ───────────────────────────
+    case "bpmn_start_event": case "bpmn_intermediate_event": case "bpmn_end_event":{
+      const r=Math.min(width,height)/2-2;
+      const cx=width/2,cy=height/2;
+      const v=variant||"standard";
+      const isStart=type==="bpmn_start_event";
+      const isEnd=type==="bpmn_end_event";
+      const isInter=type==="bpmn_intermediate_event";
+      const ringStroke=isEnd?strokeW*1.8:strokeW;
+      const dashed=v.includes("non_interrupting");
+      const dasharray=dashed?"3 2":"none";
+      // Innerer Ring bei Intermediate-Events (Doppelkreis)
+      const innerRing=isInter?<circle cx={cx} cy={cy} r={r-4} fill="none" stroke={accent} strokeWidth={strokeW*0.8} opacity={opacity}/>:null;
+      // Marker-Icons je nach Variante
+      const markerSize=r*0.85;
+      let marker=null;
+      const mStroke=accent, mFill=v.includes("filled")?accent:"none";
+      if(v.includes("message")){
+        const mw=markerSize*1.15, mh=markerSize*0.8;
+        marker=<g transform={`translate(${cx-mw/2},${cy-mh/2})`} opacity={opacity}>
+          <rect x={0} y={0} width={mw} height={mh} fill={mFill} stroke={mStroke} strokeWidth={1.4} rx={1}/>
+          <path d={`M0,0 L${mw/2},${mh*0.55} L${mw},0`} fill="none" stroke={mStroke} strokeWidth={1.4}/>
+        </g>;
+      }else if(v.includes("timer")){
+        marker=<g opacity={opacity}>
+          <circle cx={cx} cy={cy} r={markerSize/2} fill="none" stroke={mStroke} strokeWidth={1.3}/>
+          <line x1={cx} y1={cy} x2={cx} y2={cy-markerSize*0.32} stroke={mStroke} strokeWidth={1.4}/>
+          <line x1={cx} y1={cy} x2={cx+markerSize*0.22} y2={cy+markerSize*0.12} stroke={mStroke} strokeWidth={1.4}/>
+          {[...Array(12)].map((_,i)=>{const a=(i/12)*2*Math.PI;const x1=cx+Math.cos(a)*markerSize*0.5,y1=cy+Math.sin(a)*markerSize*0.5;const x2=cx+Math.cos(a)*markerSize*0.42,y2=cy+Math.sin(a)*markerSize*0.42;return<line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke={mStroke} strokeWidth={1}/>;})}
+        </g>;
+      }else if(v.includes("escalation")){
+        const s=markerSize*0.5;
+        marker=<path d={`M${cx-s},${cy+s*0.7} L${cx},${cy-s} L${cx+s},${cy+s*0.7} L${cx},${cy+s*0.1} Z`} fill={mFill} stroke={mStroke} strokeWidth={1.4} opacity={opacity}/>;
+      }else if(v.includes("error")){
+        const s=markerSize*0.55;
+        marker=<path d={`M${cx-s},${cy+s*0.6} L${cx-s*0.15},${cy-s*0.5} L${cx+s*0.15},${cy+s*0.05} L${cx+s},${cy-s*0.6} L${cx+s*0.05},${cy+s*0.55} L${cx-s*0.15},${cy}Z`} fill={mFill} stroke={mStroke} strokeWidth={1.3} opacity={opacity}/>;
+      }else if(v.includes("cancel")){
+        const s=markerSize*0.5;
+        marker=<g stroke={mStroke} strokeWidth={2} opacity={opacity}>
+          <line x1={cx-s} y1={cy-s} x2={cx+s} y2={cy+s}/>
+          <line x1={cx-s} y1={cy+s} x2={cx+s} y2={cy-s}/>
+        </g>;
+      }else if(v.includes("compensation")){
+        const s=markerSize*0.45;
+        marker=<g fill={mFill} stroke={mStroke} strokeWidth={1.2} opacity={opacity}>
+          <path d={`M${cx},${cy-s*0.6} L${cx-s},${cy} L${cx},${cy+s*0.6} Z`}/>
+          <path d={`M${cx+s},${cy-s*0.6} L${cx},${cy} L${cx+s},${cy+s*0.6} Z`}/>
+        </g>;
+      }else if(v.includes("signal")){
+        const s=markerSize*0.55;
+        marker=<path d={`M${cx},${cy-s} L${cx+s*0.87},${cy+s*0.5} L${cx-s*0.87},${cy+s*0.5} Z`} fill={mFill} stroke={mStroke} strokeWidth={1.4} opacity={opacity}/>;
+      }else if(v.includes("conditional")){
+        const bw=markerSize*0.9, bh=markerSize*0.7;
+        marker=<g opacity={opacity}>
+          <rect x={cx-bw/2} y={cy-bh/2} width={bw} height={bh} fill={mFill} stroke={mStroke} strokeWidth={1.3}/>
+          {[0.28,0.5,0.72].map((f,i)=><line key={i} x1={cx-bw/2+2} y1={cy-bh/2+bh*f} x2={cx+bw/2-2} y2={cy-bh/2+bh*f} stroke={mStroke} strokeWidth={1}/>)}
+        </g>;
+      }else if(v.includes("link")){
+        const s=markerSize*0.45;
+        marker=<path d={`M${cx-s},${cy-s*0.35} L${cx+s*0.2},${cy-s*0.35} L${cx+s*0.2},${cy-s*0.65} L${cx+s},${cy} L${cx+s*0.2},${cy+s*0.65} L${cx+s*0.2},${cy+s*0.35} L${cx-s},${cy+s*0.35} Z`} fill={mFill} stroke={mStroke} strokeWidth={1.3} opacity={opacity}/>;
+      }else if(v.includes("termination")){
+        marker=<circle cx={cx} cy={cy} r={markerSize*0.42} fill={accent} opacity={opacity}/>;
+      }else if(v.includes("parallel_mi")){
+        const s=markerSize*0.45;
+        marker=<g stroke={mStroke} strokeWidth={1.6} opacity={opacity}>
+          <line x1={cx-s*0.6} y1={cy-s} x2={cx-s*0.6} y2={cy+s}/>
+          <line x1={cx} y1={cy-s} x2={cx} y2={cy+s}/>
+          <line x1={cx+s*0.6} y1={cy-s} x2={cx+s*0.6} y2={cy+s}/>
+        </g>;
+      }
+      return <svg width={width} height={height} overflow="visible">{defs}{selRing}
+        <circle cx={cx} cy={cy} r={r} fill={fill} stroke={accent} strokeWidth={ringStroke} strokeDasharray={dasharray} style={ss}/>
+        <circle cx={cx} cy={cy} r={r} fill={`url(#${sheenId})`} opacity={opacity}/>
+        {innerRing}
+        {marker}
+        {label&&(
+          <text x={width/2} y={height+12} textAnchor="middle"
+            fill={txt} fontSize={10.5} fontWeight="600" fontFamily={FONT}
+            style={{pointerEvents:"none",userSelect:"none"}}>{label}</text>
+        )}
+      </svg>;
+    }
+
+    // ─── BPMN: Gateways (Rauten) ───────────────────────────────────────────
+    case "bpmn_gateway_exclusive": case "bpmn_gateway_parallel": case "bpmn_gateway_inclusive":
+    case "bpmn_gateway_complex": case "bpmn_gateway_event":
+    case "bpmn_gateway_exclusive_event": case "bpmn_gateway_parallel_event":{
+      const w=width,h=height;
+      const pts=[[w/2,0],[w,h/2],[w/2,h],[0,h/2]].map(p=>p.join(",")).join(" ");
+      const cx=w/2,cy=h/2,s=Math.min(w,h)*0.22;
+      let marker=null;
+      if(type==="bpmn_gateway_exclusive"){
+        marker=<g stroke={accent} strokeWidth={2.2} opacity={opacity}>
+          <line x1={cx-s*0.6} y1={cy-s*0.6} x2={cx+s*0.6} y2={cy+s*0.6}/>
+          <line x1={cx-s*0.6} y1={cy+s*0.6} x2={cx+s*0.6} y2={cy-s*0.6}/>
+        </g>;
+      }else if(type==="bpmn_gateway_parallel"){
+        marker=<g stroke={accent} strokeWidth={2.2} opacity={opacity}>
+          <line x1={cx} y1={cy-s} x2={cx} y2={cy+s}/>
+          <line x1={cx-s} y1={cy} x2={cx+s} y2={cy}/>
+        </g>;
+      }else if(type==="bpmn_gateway_inclusive"){
+        marker=<circle cx={cx} cy={cy} r={s*0.85} fill="none" stroke={accent} strokeWidth={2.2} opacity={opacity}/>;
+      }else if(type==="bpmn_gateway_complex"){
+        marker=<g stroke={accent} strokeWidth={2} opacity={opacity}>
+          <line x1={cx} y1={cy-s} x2={cx} y2={cy+s}/>
+          <line x1={cx-s} y1={cy} x2={cx+s} y2={cy}/>
+          <line x1={cx-s*0.7} y1={cy-s*0.7} x2={cx+s*0.7} y2={cy+s*0.7}/>
+          <line x1={cx-s*0.7} y1={cy+s*0.7} x2={cx+s*0.7} y2={cy-s*0.7}/>
+        </g>;
+      }else if(type.startsWith("bpmn_gateway_event")||type==="bpmn_gateway_exclusive_event"||type==="bpmn_gateway_parallel_event"){
+        const r1=s*0.95,r2=s*0.62;
+        // Pentagon-Punkte für das Standard ereignisbasierte Gateway
+        const pentaPts=[...Array(5)].map((_,i)=>{
+          const a=(i/5)*2*Math.PI-Math.PI/2;
+          return `${cx+Math.cos(a)*r2},${cy+Math.sin(a)*r2}`;
+        }).join(" ");
+        marker=<g opacity={opacity}>
+          <circle cx={cx} cy={cy} r={r1} fill="none" stroke={accent} strokeWidth={1.6}/>
+          {type==="bpmn_gateway_exclusive_event"
+            ?<path d={`M${cx},${cy-r2} L${cx+r2*0.87},${cy+r2*0.5} L${cx-r2*0.87},${cy+r2*0.5} Z`} fill="none" stroke={accent} strokeWidth={1.6}/>
+            :type==="bpmn_gateway_parallel_event"
+            ?<g stroke={accent} strokeWidth={1.8}><line x1={cx} y1={cy-r2} x2={cx} y2={cy+r2}/><line x1={cx-r2} y1={cy} x2={cx+r2} y2={cy}/></g>
+            :<polygon points={pentaPts} fill="none" stroke={accent} strokeWidth={1.6} strokeLinejoin="round"/>
+          }
+        </g>;
+      }
+      return <svg width={width} height={height} overflow="visible">{defs}{selRing}
+        <polygon points={pts} fill={fill} stroke={accent} strokeWidth={strokeW} strokeLinejoin="round" style={ss}/>
+        <polygon points={pts} fill={`url(#${sheenId})`} opacity={opacity}/>
+        {marker}
+        {label&&(
+          <text x={width/2} y={height+12} textAnchor="middle"
+            fill={txt} fontSize={10.5} fontWeight="600" fontFamily={FONT}
+            style={{pointerEvents:"none",userSelect:"none"}}>{label}</text>
+        )}
+      </svg>;
+    }
+
+    // ─── BPMN: Daten ────────────────────────────────────────────────────────
+    case "bpmn_data_object": case "bpmn_data_list": case "bpmn_data_input": case "bpmn_data_output":{
+      const fold=12;
+      const path=`M4,0 H${width-fold} L${width},${fold} V${height} H4 Q0,${height} 0,${height-4} V4 Q0,0 4,0 Z`;
+      const arrowMap={bpmn_data_input:true,bpmn_data_output:true};
+      return <svg width={width} height={height+14} overflow="visible">{defs}{selRing}
+        <path d={path} fill={fill} stroke={accent} strokeWidth={strokeW} strokeLinejoin="round" style={ss}/>
+        <path d={`M${width-fold},0 V${fold} H${width}`} fill="none" stroke={accent} strokeWidth={strokeW*0.8} opacity={opacity}/>
+        {type==="bpmn_data_list"&&(
+          <g stroke={accent} strokeWidth={1.4} opacity={opacity}>
+            <line x1={6} y1={height-14} x2={width-6} y2={height-14}/>
+            <line x1={6} y1={height-10} x2={width-6} y2={height-10}/>
+            <line x1={6} y1={height-6} x2={width-6} y2={height-6}/>
+          </g>
+        )}
+        {arrowMap[type]&&(
+          <g transform="translate(-4,-12)" opacity={opacity}>
+            <path d="M0,4 H12 M8,0 L12,4 L8,8" fill="none" stroke={accent} strokeWidth={1.6}/>
+          </g>
+        )}
+        <text x={width/2} y={height+12} textAnchor="middle"
+          fill={txt} fontSize={10.5} fontWeight="600" fontFamily={FONT}
+          style={{pointerEvents:"none",userSelect:"none"}}>{label}</text>
+      </svg>;
+    }
+    case "bpmn_data_store":{
+      const ry=height*0.14;
+      return <svg width={width} height={height+14} overflow="visible">{defs}{selRing}
+        <path d={`M0,${ry} A${width/2},${ry} 0 0 1 ${width},${ry} V${height-ry} A${width/2},${ry} 0 0 1 0,${height-ry} Z`}
+          fill={fill} stroke={accent} strokeWidth={strokeW} style={ss}/>
+        <path d={`M0,${ry} A${width/2},${ry} 0 0 0 ${width},${ry}`} fill="none" stroke={accent} strokeWidth={strokeW*0.8} opacity={opacity}/>
+        <path d={`M0,${ry*2.3} A${width/2},${ry} 0 0 0 ${width},${ry*2.3}`} fill="none" stroke={rgba(accent,0.5)} strokeWidth={1} opacity={opacity}/>
+        <path d={`M0,${ry*3.6} A${width/2},${ry} 0 0 0 ${width},${ry*3.6}`} fill="none" stroke={rgba(accent,0.5)} strokeWidth={1} opacity={opacity}/>
+        <text x={width/2} y={height+12} textAnchor="middle"
+          fill={txt} fontSize={10.5} fontWeight="600" fontFamily={FONT}
+          style={{pointerEvents:"none",userSelect:"none"}}>{label}</text>
+      </svg>;
+    }
+
+    // ─── BPMN: Artefakte ────────────────────────────────────────────────────
+    case "bpmn_text_annotation":{
+      return <svg width={width} height={height} overflow="visible">{defs}{selRing}
+        <path d={`M14,1 H2 V${height-1} H14`} fill="none" stroke={accent} strokeWidth={strokeW} style={ss}/>
+        <text x={22} y={height/2+fontSize*0.38} textAnchor="start"
+          fill={txt} fontSize={fontSize} fontWeight="500" fontFamily={FONT}
+          style={{pointerEvents:"none",userSelect:"none"}}>{label}</text>
+      </svg>;
+    }
+    case "bpmn_group":{
+      return <svg width={width} height={height} overflow="visible">{defs}{selRing}
+        <rect x={1} y={1} width={width-2} height={height-2} rx={12} fill="none" stroke={accent} strokeWidth={strokeW} strokeDasharray="6 4" style={ss}/>
+        <text x={width/2} y={18} textAnchor="middle"
+          fill={txt} fontSize={11} fontWeight="700" fontFamily={FONT}
+          style={{pointerEvents:"none",userSelect:"none",letterSpacing:"0.5px"}}>{label}</text>
+      </svg>;
+    }
+    case "bpmn_custom_artifact":{
+      const cx=width/2,cy=height/2;
+      const spikes=10,outerR=Math.min(width,height)/2,innerR=outerR*0.78;
+      const pts=[...Array(spikes*2)].map((_,i)=>{const r=i%2===0?outerR:innerR;const a=(i/(spikes*2))*2*Math.PI-Math.PI/2;return`${cx+Math.cos(a)*r},${cy+Math.sin(a)*r}`;}).join(" ");
+      return <svg width={width} height={height} overflow="visible">{defs}{selRing}
+        <polygon points={pts} fill={fill} stroke={accent} strokeWidth={strokeW} strokeLinejoin="round" style={ss}/>
+        {textEl}
+      </svg>;
+    }
+
+    // ─── BPMN: Pool / Lane ──────────────────────────────────────────────────
+    case "bpmn_pool": case "bpmn_lane":{
+      const isPool=type==="bpmn_pool";
+      const headerW=28;
+      if(isPool){
+        // Pool: dickerer Außenrahmen, kräftiger gefüllter Header
+        return <svg width={width} height={height} overflow="visible">{defs}{selRing}
+          <rect x={0} y={0} width={width} height={height} fill={fill} stroke={accent} strokeWidth={strokeW*1.7} style={ss}/>
+          <rect x={0} y={0} width={headerW} height={height} fill={rgba(accent,0.32)} stroke={accent} strokeWidth={strokeW*1.7}/>
+          <line x1={headerW} y1={0} x2={headerW} y2={height} stroke={accent} strokeWidth={strokeW} opacity={opacity}/>
+          <text x={headerW/2} y={height/2} textAnchor="middle"
+            fill={txt} fontSize={12} fontWeight="800" fontFamily={FONT}
+            transform={`rotate(-90 ${headerW/2} ${height/2})`}
+            style={{pointerEvents:"none",userSelect:"none",letterSpacing:"1px"}}>{label}</text>
+        </svg>;
+      }
+      // Lane: nur dünne Trennlinie oben + schmaler, unauffälliger Header (kein eigener Rahmen/Füllung)
+      return <svg width={width} height={height} overflow="visible">{defs}{selRing}
+        <line x1={0} y1={0} x2={width} y2={0} stroke={accent} strokeWidth={strokeW*0.6} opacity={0.6} style={ss}/>
+        <rect x={0} y={0} width={headerW} height={height} fill={rgba(accent,0.12)} stroke="none"/>
+        <line x1={headerW} y1={0} x2={headerW} y2={height} stroke={accent} strokeWidth={strokeW*0.4} opacity={0.45}/>
+        <text x={headerW/2} y={height/2} textAnchor="middle"
+          fill={txt} fontSize={10.5} fontWeight="600" fontFamily={FONT}
+          transform={`rotate(-90 ${headerW/2} ${height/2})`}
+          style={{pointerEvents:"none",userSelect:"none",letterSpacing:"0.5px",opacity:0.85}}>{label}</text>
+      </svg>;
+    }
+
+    case "text":{
+      const baseFs=fontSize||14;
+      const mdLines=parseMarkdownLines(label||"Text");
+      const lineHs=mdLines.map(ml=>baseFs*ml.fontSize*1.45);
+      let cursorY=baseFs*(mdLines[0]?.fontSize||1);
+      const tspanRows=mdLines.map((ml,i)=>{
+        const fs=baseFs*ml.fontSize;
+        const y=cursorY;
+        cursorY+=lineHs[i];
+        const bulletPrefix=ml.bullet?"•  ":"";
+        return(
+          <tspan key={i} x={ml.indent} y={y} fontSize={fs} fontWeight={ml.fontWeight}>
+            {bulletPrefix}
+            {ml.runs.map((r,j)=>(
+              <tspan key={j}
+                fontWeight={r.bold?"800":ml.fontWeight}
+                fontStyle={r.italic?"italic":"normal"}>
+                {r.text}
+              </tspan>
+            ))}
+          </tspan>
+        );
+      });
+      return(
+        <svg width={width} height={height} overflow="visible">
+          {selected&&<rect x={-4} y={-4} width={width+8} height={height+8} rx={4} fill="none" stroke={accent} strokeWidth={1.4} strokeDasharray="3 3" opacity={0.7}/>}
+          {/* Unsichtbare Klick-/Drag-Fläche, da reiner Text sonst keine Hit-Area hat */}
+          <rect x={-2} y={-2} width={width+4} height={height+4} fill="transparent" style={{pointerEvents:"all"}}/>
+          <text x={0} y={0} textAnchor="start"
+            fill={txt} fontFamily={FONT}
+            style={{pointerEvents:"none",userSelect:"none"}}>
+            {tspanRows}
+          </text>
+        </svg>);
+    }
+    case "image":{
+      const src=nodeSrc||"";
+      if(!src)return(
+        <svg width={width} height={height} overflow="visible">{defs}{selRing}
+          <rect x={0} y={0} width={width} height={height} rx={6} fill={rgba("#888",0.15)} stroke={rgba("#888",0.4)} strokeWidth={1.5} style={ss}/>
+          <text x={width/2} y={height/2+5} textAnchor="middle" fill="var(--faint)" fontSize={11} fontFamily={FONT}>Bild</text>
+        </svg>);
+      return(
+        <svg width={width} height={height} overflow="visible">{defs}{selRing}
+          <image href={src} x={0} y={0} width={width} height={height} preserveAspectRatio="xMidYMid meet" style={{...ss,borderRadius:6}}/>
+          <rect x={0} y={0} width={width} height={height} rx={0} fill="none" stroke={selected?accent:"transparent"} strokeWidth={selected?2:0} style={{pointerEvents:"none"}}/>
+        </svg>);
+    }
     default: return null;
   }
 }
@@ -423,8 +891,13 @@ function ShapeRenderer({type,label,width=NODE_W,height=NODE_H,selected,dimmed,co
 // ─── Arrow / Edge Renderer ─────────────────────────────────────────────────
 function Arrow({from,to,selected,label,onClickEdge,onDblClickLabel,drawing,lineStyle,isSnapped,waypoints,ortho}){
   const ls=lineStyle||"arrow";
-  const isDashed=ls==="dashed"||ls==="dashed-line";
-  const hasArrow=ls==="arrow"||ls==="dashed";
+  const isDashed=ls==="dashed"||ls==="dashed-line"||ls==="message";
+  const isDotted=ls==="association"||ls==="association-line";
+  const hasArrowClosed=ls==="arrow"||ls==="dashed"||ls==="default-flow"||ls==="conditional-flow";
+  const hasArrowOpen=ls==="message"||ls==="association";
+  const startCircle=ls==="message";
+  const startSlash=ls==="default-flow";
+  const startDiamond=ls==="conditional-flow";
   const colorVar=selected?"var(--accent)":(drawing?(isSnapped?"var(--accent-2)":"#64748b"):"var(--edge)");
   const glow=selected?"drop-shadow(0 0 6px var(--accent-glow))":"none";
 
@@ -457,24 +930,61 @@ function Arrow({from,to,selected,label,onClickEdge,onDblClickLabel,drawing,lineS
   const ax=to.x-ux*as, ay=to.y-uy*as;
   const px=-uy*(as/2.4), py=ux*(as/2.4);
 
-  // Label: geometric midpoint between from and to (ignoring waypoints for label placement)
-  const labelX=(from.x+to.x)/2, labelY=(from.y+to.y)/2;
+  // Start direction: first segment (für Start-Marker: Slash/Diamond/Circle)
+  const first=pts[0], second=pts[1];
+  const sdx=second.x-first.x, sdy=second.y-first.y;
+  const slen=Math.sqrt(sdx*sdx+sdy*sdy)||1;
+  const sux=sdx/slen, suy=sdy/slen;
+
+  // Label: Mitte des längsten Segments (korrekt auch bei L-Linien/Waypoints)
+  const allPts=pts;
+  let bestSegLen=0, labelX=(from.x+to.x)/2, labelY=(from.y+to.y)/2;
+  for(let i=0;i<allPts.length-1;i++){
+    const sl=Math.hypot(allPts[i+1].x-allPts[i].x,allPts[i+1].y-allPts[i].y);
+    if(sl>bestSegLen){bestSegLen=sl;
+      labelX=(allPts[i].x+allPts[i+1].x)/2;
+      labelY=(allPts[i].y+allPts[i+1].y)/2;
+    }
+  }
+
+  // Start-Marker SVG
+  let startMarker=null;
+  if(startCircle){
+    const r=4.5, cx=from.x+sux*r, cy=from.y+suy*r;
+    startMarker=<circle cx={cx} cy={cy} r={r} fill="var(--bg-canvas)" stroke={colorVar} strokeWidth={1.6} style={{filter:glow}}/>;
+  }else if(startSlash){
+    const len2=9, cx=from.x+sux*len2*0.6, cy=from.y+suy*len2*0.6;
+    const nx=-suy, ny=sux;
+    startMarker=<line x1={cx-nx*len2/2} y1={cy-ny*len2/2} x2={cx+nx*len2/2} y2={cy+ny*len2/2}
+      stroke={colorVar} strokeWidth={2} style={{filter:glow}} transform={`rotate(35 ${cx} ${cy})`}/>;
+  }else if(startDiamond){
+    const dl=7, cx=from.x+sux*dl, cy=from.y+suy*dl;
+    const nx=-suy*dl*0.6, ny=sux*dl*0.6;
+    const bx=-sux*dl*0.6, by=-suy*dl*0.6;
+    startMarker=<polygon points={`${from.x},${from.y} ${cx+nx},${cy+ny} ${cx+sux*dl+bx},${cy+suy*dl+by} ${cx-nx},${cy-ny}`}
+      fill="var(--bg-canvas)" stroke={colorVar} strokeWidth={1.4} style={{filter:glow}}/>;
+  }
 
   return(
     <g onClick={onClickEdge} style={{cursor:"pointer"}}>
       <path d={pathD} stroke="transparent" strokeWidth={16} fill="none"/>
       <path d={pathD} fill="none"
         strokeWidth={selected?2.4:1.9}
-        strokeDasharray={isDashed?"7 5":undefined}
-        strokeLinejoin="round" strokeLinecap="round"
+        strokeDasharray={isDotted?"1.5 4":isDashed?"7 5":undefined}
+        strokeLinecap={isDotted?"round":"round"}
+        strokeLinejoin="round"
         style={{stroke:colorVar,filter:glow,transition:"stroke .15s ease"}}/>
-      {hasArrow&&<polygon points={`${to.x},${to.y} ${ax+px},${ay+py} ${ax-px},${ay-py}`}
+      {hasArrowClosed&&<polygon points={`${to.x},${to.y} ${ax+px},${ay+py} ${ax-px},${ay-py}`}
         style={{fill:colorVar,filter:glow}}/>}
+      {hasArrowOpen&&<polyline points={`${ax+px},${ay+py} ${to.x},${to.y} ${ax-px},${ay-py}`}
+        fill="none" strokeWidth={1.8} strokeLinejoin="round" strokeLinecap="round"
+        style={{stroke:colorVar,filter:glow}}/>}
+      {startMarker}
       {label&&(
         <g onDoubleClick={e=>{e.stopPropagation();onDblClickLabel&&onDblClickLabel();}}>
           <rect x={labelX-label.length*3.6-7} y={labelY-11} width={label.length*7.2+14} height={21}
             rx={10} style={{fill:"var(--bg-canvas)",stroke:"var(--border-strong)",strokeWidth:1}}/>
-          <text x={labelX} y={labelY+0.5} textAnchor="middle" dominantBaseline="middle"
+          <text x={labelX} y={labelY+10.5*0.38} textAnchor="middle"
             fontSize={10.5} fontFamily={FONT} fontWeight={500}
             style={{fill:"var(--muted)",pointerEvents:"none",userSelect:"none"}}>{label}</text>
         </g>
@@ -484,6 +994,195 @@ function Arrow({from,to,selected,label,onClickEdge,onDblClickLabel,drawing,lineS
 }
 
 // ─── Export (theme-getreu + fromDir/toDir + lineStyle + per-node color) ─────
+
+// ─── Export-Helfer: BPMN-Formen als SVG-String ─────────────────────────────
+function bpmnExportShape(node, x, y, w, h, accent, fillCol, sheenless, sw, INK, opacity){
+  const type=node.type, variant=node.variant||"standard", label=escXml(node.label||"");
+  const v=variant;
+  const fontFam="system-ui,Segoe UI,Arial,sans-serif";
+  const labelBelow=(ty)=>label?`<text x="${x+w/2}" y="${ty}" text-anchor="middle" fill="${INK}" font-size="10.5" font-weight="600" font-family="${fontFam}">${label}</text>`:"";
+  const labelCenter=(cx,cy,fs)=>{
+    const lines=label.split("\n");
+    const lineH=fs*1.45;
+    if(!label)return"";
+    if(lines.length<=1)return`<text x="${cx}" y="${cy+fs*0.38}" text-anchor="middle" fill="${INK}" font-size="${fs}" font-weight="600" font-family="${fontFam}">${label}</text>`;
+    const startY=cy-((lines.length-1)*lineH)/2+fs*0.38;
+    return `<text x="${cx}" text-anchor="middle" fill="${INK}" font-size="${fs}" font-weight="600" font-family="${fontFam}">${lines.map((l,i)=>`<tspan x="${cx}" y="${startY+i*lineH}">${l}</tspan>`).join("")}</text>`;
+  };
+
+  // ── Aktivitäten (Aufgaben, Teilprozess, Transaktion, Aufruf-Aktivität, Ereignis-Teilprozess) ──
+  if(type==="bpmn_task"||type==="bpmn_subprocess"||type==="bpmn_transaction"||type==="bpmn_call_activity"||type==="bpmn_event_subprocess"){
+    const rx=8;
+    const dasharray=type==="bpmn_event_subprocess"?` stroke-dasharray="4 3"`:"";
+    const strokeWidth=type==="bpmn_call_activity"?sw*1.8:sw;
+    let s=`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${fillCol}" stroke="${accent}" stroke-width="${strokeWidth}"${dasharray}/>`;
+    if(type==="bpmn_transaction")s+=`<rect x="${x+4}" y="${y+4}" width="${w-8}" height="${h-8}" rx="${rx-2}" fill="none" stroke="${accent}" stroke-width="${sw*0.8}"/>`;
+    s+=labelCenter(x+w/2,y+h/2,label.length>16?11:12.5);
+    // Marker
+    const markers=(node.variant||"").split(",").filter(Boolean);
+    const hasExpand=type==="bpmn_subprocess"||type==="bpmn_call_activity"||markers.includes("expand");
+    const iconList=[...markers.filter(m=>m!=="expand")];
+    if(hasExpand)iconList.push("expand");
+    const iconW=12,iconGap=4;
+    const totalW=iconList.length*iconW+(iconList.length-1)*iconGap;
+    const startX=x+w/2-totalW/2, iconY=y+h-iconW-3;
+    for(let i=0;i<iconList.length;i++){
+      const m=iconList[i], ix=startX+i*(iconW+iconGap);
+      if(m==="loop")s+=`<path d="M${ix+1},${iconY+7} A5,5 0 1 1 ${ix+9.5},${iconY+9.5}" fill="none" stroke="${accent}" stroke-width="1.4"/><path d="M${ix+9.5},${iconY+9.5} L${ix+9.5},${iconY+6} M${ix+9.5},${iconY+9.5} L${ix+6},${iconY+9.5}" fill="none" stroke="${accent}" stroke-width="1.4" stroke-linecap="round"/>`;
+      else if(m==="parallel_mi")s+=`<g stroke="${accent}" stroke-width="1.6"><line x1="${ix+1.5}" y1="${iconY}" x2="${ix+1.5}" y2="${iconY+12}"/><line x1="${ix+6}" y1="${iconY}" x2="${ix+6}" y2="${iconY+12}"/><line x1="${ix+10.5}" y1="${iconY}" x2="${ix+10.5}" y2="${iconY+12}"/></g>`;
+      else if(m==="sequential_mi")s+=`<g stroke="${accent}" stroke-width="1.6"><line x1="${ix}" y1="${iconY+1.5}" x2="${ix+12}" y2="${iconY+1.5}"/><line x1="${ix}" y1="${iconY+6}" x2="${ix+12}" y2="${iconY+6}"/><line x1="${ix}" y1="${iconY+10.5}" x2="${ix+12}" y2="${iconY+10.5}"/></g>`;
+      else if(m==="adhoc")s+=`<path d="M${ix},${iconY+6} C${ix+3},${iconY+1} ${ix+6},${iconY+11} ${ix+9},${iconY+6} C${ix+10.5},${iconY+4} ${ix+11},${iconY+5} ${ix+12},${iconY+6}" fill="none" stroke="${accent}" stroke-width="1.5"/>`;
+      else if(m==="compensation")s+=`<g fill="none" stroke="${accent}" stroke-width="1.2"><path d="M${ix+6},${iconY+1} L${ix},${iconY+6} L${ix+6},${iconY+11} Z"/><path d="M${ix+12},${iconY+1} L${ix+6},${iconY+6} L${ix+12},${iconY+11} Z"/></g>`;
+      else if(m==="expand")s+=`<g stroke="${accent}" stroke-width="1.4" fill="none"><rect x="${ix}" y="${iconY}" width="12" height="12" rx="2"/><line x1="${ix+6}" y1="${iconY+2.5}" x2="${ix+6}" y2="${iconY+9.5}"/><line x1="${ix+2.5}" y1="${iconY+6}" x2="${ix+9.5}" y2="${iconY+6}"/></g>`;
+    }
+    return s;
+  }
+
+  // ── Ereignisse (Start/Zwischen/Ende) ──
+  if(type==="bpmn_start_event"||type==="bpmn_intermediate_event"||type==="bpmn_end_event"){
+    const r=Math.min(w,h)/2-2, cx=x+w/2, cy=y+h/2;
+    const isEnd=type==="bpmn_end_event", isInter=type==="bpmn_intermediate_event";
+    const ringStroke=isEnd?sw*1.8:sw;
+    const dashed=v.includes("non_interrupting")?` stroke-dasharray="3 2"`:"";
+    let s=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fillCol}" stroke="${accent}" stroke-width="${ringStroke}"${dashed}/>`;
+    if(isInter)s+=`<circle cx="${cx}" cy="${cy}" r="${r-4}" fill="none" stroke="${accent}" stroke-width="${sw*0.8}"/>`;
+    const markerSize=r*0.85;
+    const mFill=v.includes("filled")?accent:"none";
+    let marker="";
+    if(v.includes("message")){
+      const mw=markerSize*1.15, mh=markerSize*0.8, mx=cx-mw/2, my=cy-mh/2;
+      marker=`<rect x="${mx}" y="${my}" width="${mw}" height="${mh}" fill="${mFill}" stroke="${accent}" stroke-width="1.4" rx="1"/><path d="M${mx},${my} L${mx+mw/2},${my+mh*0.55} L${mx+mw},${my}" fill="none" stroke="${accent}" stroke-width="1.4"/>`;
+    }else if(v.includes("timer")){
+      let ticks="";
+      for(let i=0;i<12;i++){const a=(i/12)*2*Math.PI;const x1=cx+Math.cos(a)*markerSize*0.5,y1=cy+Math.sin(a)*markerSize*0.5;const x2=cx+Math.cos(a)*markerSize*0.42,y2=cy+Math.sin(a)*markerSize*0.42;ticks+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${accent}" stroke-width="1"/>`;}
+      marker=`<circle cx="${cx}" cy="${cy}" r="${markerSize/2}" fill="none" stroke="${accent}" stroke-width="1.3"/><line x1="${cx}" y1="${cy}" x2="${cx}" y2="${cy-markerSize*0.32}" stroke="${accent}" stroke-width="1.4"/><line x1="${cx}" y1="${cy}" x2="${cx+markerSize*0.22}" y2="${cy+markerSize*0.12}" stroke="${accent}" stroke-width="1.4"/>${ticks}`;
+    }else if(v.includes("escalation")){
+      const s2=markerSize*0.5;
+      marker=`<path d="M${cx-s2},${cy+s2*0.7} L${cx},${cy-s2} L${cx+s2},${cy+s2*0.7} L${cx},${cy+s2*0.1} Z" fill="${mFill}" stroke="${accent}" stroke-width="1.4"/>`;
+    }else if(v.includes("error")){
+      const s2=markerSize*0.55;
+      marker=`<path d="M${cx-s2},${cy+s2*0.6} L${cx-s2*0.15},${cy-s2*0.5} L${cx+s2*0.15},${cy+s2*0.05} L${cx+s2},${cy-s2*0.6} L${cx+s2*0.05},${cy+s2*0.55} L${cx-s2*0.15},${cy}Z" fill="${mFill}" stroke="${accent}" stroke-width="1.3"/>`;
+    }else if(v.includes("cancel")){
+      const s2=markerSize*0.5;
+      marker=`<g stroke="${accent}" stroke-width="2"><line x1="${cx-s2}" y1="${cy-s2}" x2="${cx+s2}" y2="${cy+s2}"/><line x1="${cx-s2}" y1="${cy+s2}" x2="${cx+s2}" y2="${cy-s2}"/></g>`;
+    }else if(v.includes("compensation")){
+      const s2=markerSize*0.45;
+      marker=`<g fill="${mFill}" stroke="${accent}" stroke-width="1.2"><path d="M${cx},${cy-s2*0.6} L${cx-s2},${cy} L${cx},${cy+s2*0.6} Z"/><path d="M${cx+s2},${cy-s2*0.6} L${cx},${cy} L${cx+s2},${cy+s2*0.6} Z"/></g>`;
+    }else if(v.includes("signal")){
+      const s2=markerSize*0.55;
+      marker=`<path d="M${cx},${cy-s2} L${cx+s2*0.87},${cy+s2*0.5} L${cx-s2*0.87},${cy+s2*0.5} Z" fill="${mFill}" stroke="${accent}" stroke-width="1.4"/>`;
+    }else if(v.includes("conditional")){
+      const bw=markerSize*0.9, bh=markerSize*0.7, bx=cx-bw/2, by=cy-bh/2;
+      let lines="";
+      [0.28,0.5,0.72].forEach(f=>{lines+=`<line x1="${bx+2}" y1="${by+bh*f}" x2="${bx+bw-2}" y2="${by+bh*f}" stroke="${accent}" stroke-width="1"/>`;});
+      marker=`<rect x="${bx}" y="${by}" width="${bw}" height="${bh}" fill="${mFill}" stroke="${accent}" stroke-width="1.3"/>${lines}`;
+    }else if(v.includes("link")){
+      const s2=markerSize*0.45;
+      marker=`<path d="M${cx-s2},${cy-s2*0.35} L${cx+s2*0.2},${cy-s2*0.35} L${cx+s2*0.2},${cy-s2*0.65} L${cx+s2},${cy} L${cx+s2*0.2},${cy+s2*0.65} L${cx+s2*0.2},${cy+s2*0.35} L${cx-s2},${cy+s2*0.35} Z" fill="${mFill}" stroke="${accent}" stroke-width="1.3"/>`;
+    }else if(v.includes("termination")){
+      marker=`<circle cx="${cx}" cy="${cy}" r="${markerSize*0.42}" fill="${accent}"/>`;
+    }
+    s+=marker;
+    if(label)s+=labelBelow(y+h+12);
+    return s;
+  }
+
+  // ── Gateways (Rauten) ──
+  if(type.startsWith("bpmn_gateway")){
+    const pts=`${x+w/2},${y} ${x+w},${y+h/2} ${x+w/2},${y+h} ${x},${y+h/2}`;
+    let s=`<polygon points="${pts}" fill="${fillCol}" stroke="${accent}" stroke-width="${sw}" stroke-linejoin="round"/>`;
+    const cx=x+w/2,cy=y+h/2,sz=Math.min(w,h)*0.22;
+    if(type==="bpmn_gateway_exclusive"){
+      s+=`<g stroke="${accent}" stroke-width="2.2"><line x1="${cx-sz*0.6}" y1="${cy-sz*0.6}" x2="${cx+sz*0.6}" y2="${cy+sz*0.6}"/><line x1="${cx-sz*0.6}" y1="${cy+sz*0.6}" x2="${cx+sz*0.6}" y2="${cy-sz*0.6}"/></g>`;
+    }else if(type==="bpmn_gateway_parallel"){
+      s+=`<g stroke="${accent}" stroke-width="2.2"><line x1="${cx}" y1="${cy-sz}" x2="${cx}" y2="${cy+sz}"/><line x1="${cx-sz}" y1="${cy}" x2="${cx+sz}" y2="${cy}"/></g>`;
+    }else if(type==="bpmn_gateway_inclusive"){
+      s+=`<circle cx="${cx}" cy="${cy}" r="${sz*0.85}" fill="none" stroke="${accent}" stroke-width="2.2"/>`;
+    }else if(type==="bpmn_gateway_complex"){
+      s+=`<g stroke="${accent}" stroke-width="2"><line x1="${cx}" y1="${cy-sz}" x2="${cx}" y2="${cy+sz}"/><line x1="${cx-sz}" y1="${cy}" x2="${cx+sz}" y2="${cy}"/><line x1="${cx-sz*0.7}" y1="${cy-sz*0.7}" x2="${cx+sz*0.7}" y2="${cy+sz*0.7}"/><line x1="${cx-sz*0.7}" y1="${cy+sz*0.7}" x2="${cx+sz*0.7}" y2="${cy-sz*0.7}"/></g>`;
+    }else if(type.startsWith("bpmn_gateway_event")||type==="bpmn_gateway_exclusive_event"||type==="bpmn_gateway_parallel_event"){
+      const r1=sz*0.95,r2=sz*0.62;
+      s+=`<circle cx="${cx}" cy="${cy}" r="${r1}" fill="none" stroke="${accent}" stroke-width="1.6"/>`;
+      if(type==="bpmn_gateway_exclusive_event")s+=`<path d="M${cx},${cy-r2} L${cx+r2*0.87},${cy+r2*0.5} L${cx-r2*0.87},${cy+r2*0.5} Z" fill="none" stroke="${accent}" stroke-width="1.6"/>`;
+      else if(type==="bpmn_gateway_parallel_event")s+=`<g stroke="${accent}" stroke-width="1.8"><line x1="${cx}" y1="${cy-r2}" x2="${cx}" y2="${cy+r2}"/><line x1="${cx-r2}" y1="${cy}" x2="${cx+r2}" y2="${cy}"/></g>`;
+      else{
+        const pentaPts=[...Array(5)].map((_,i)=>{const a=(i/5)*2*Math.PI-Math.PI/2;return `${cx+Math.cos(a)*r2},${cy+Math.sin(a)*r2}`;}).join(" ");
+        s+=`<polygon points="${pentaPts}" fill="none" stroke="${accent}" stroke-width="1.6" stroke-linejoin="round"/>`;
+      }
+    }
+    s+=labelBelow(y+h+12);
+    return s;
+  }
+
+  // ── Daten ──
+  if(type==="bpmn_data_object"||type==="bpmn_data_list"||type==="bpmn_data_input"||type==="bpmn_data_output"){
+    const fold=12;
+    const path=`M${x+4},${y} H${x+w-fold} L${x+w},${y+fold} V${y+h} H${x+4} Q${x},${y+h} ${x},${y+h-4} V${y+4} Q${x},${y} ${x+4},${y} Z`;
+    let s=`<path d="${path}" fill="${fillCol}" stroke="${accent}" stroke-width="${sw}" stroke-linejoin="round"/>`;
+    s+=`<path d="M${x+w-fold},${y} V${y+fold} H${x+w}" fill="none" stroke="${accent}" stroke-width="${sw*0.8}"/>`;
+    if(type==="bpmn_data_list"){
+      s+=`<g stroke="${accent}" stroke-width="1.4"><line x1="${x+6}" y1="${y+h-14}" x2="${x+w-6}" y2="${y+h-14}"/><line x1="${x+6}" y1="${y+h-10}" x2="${x+w-6}" y2="${y+h-10}"/><line x1="${x+6}" y1="${y+h-6}" x2="${x+w-6}" y2="${y+h-6}"/></g>`;
+    }
+    if(type==="bpmn_data_input"||type==="bpmn_data_output"){
+      s+=`<path d="M${x-4},${y-8} H${x+8} M${x+4},${y-12} L${x+8},${y-8} L${x+4},${y-4}" fill="none" stroke="${accent}" stroke-width="1.6"/>`;
+    }
+    s+=labelBelow(y+h+12);
+    return s;
+  }
+  if(type==="bpmn_data_store"){
+    const ry=h*0.14;
+    let s=`<path d="M${x},${y+ry} A${w/2},${ry} 0 0 1 ${x+w},${y+ry} V${y+h-ry} A${w/2},${ry} 0 0 1 ${x},${y+h-ry} Z" fill="${fillCol}" stroke="${accent}" stroke-width="${sw}"/>`;
+    s+=`<path d="M${x},${y+ry} A${w/2},${ry} 0 0 0 ${x+w},${y+ry}" fill="none" stroke="${accent}" stroke-width="${sw*0.8}"/>`;
+    s+=`<path d="M${x},${y+ry*2.3} A${w/2},${ry} 0 0 0 ${x+w},${y+ry*2.3}" fill="none" stroke="${rgba(accent,0.5)}" stroke-width="1"/>`;
+    s+=`<path d="M${x},${y+ry*3.6} A${w/2},${ry} 0 0 0 ${x+w},${y+ry*3.6}" fill="none" stroke="${rgba(accent,0.5)}" stroke-width="1"/>`;
+    s+=labelBelow(y+h+12);
+    return s;
+  }
+
+  // ── Artefakte ──
+  if(type==="bpmn_text_annotation"){
+    return `<path d="M${x+14},${y+1} H${x+2} V${y+h-1} H${x+14}" fill="none" stroke="${accent}" stroke-width="${sw}"/><text x="${x+22}" y="${y+h/2+12.5*0.38}" text-anchor="start" fill="${INK}" font-size="12.5" font-weight="500" font-family="${fontFam}">${label}</text>`;
+  }
+  if(type==="bpmn_group"){
+    return `<rect x="${x+1}" y="${y+1}" width="${w-2}" height="${h-2}" rx="12" fill="none" stroke="${accent}" stroke-width="${sw}" stroke-dasharray="6 4"/><text x="${x+w/2}" y="${y+18}" text-anchor="middle" fill="${INK}" font-size="11" font-weight="700" font-family="${fontFam}" letter-spacing="0.5">${label}</text>`;
+  }
+  if(type==="bpmn_custom_artifact"){
+    const cx=x+w/2,cy=y+h/2,spikes=10,outerR=Math.min(w,h)/2,innerR=outerR*0.78;
+    let pts=[];
+    for(let i=0;i<spikes*2;i++){const r=i%2===0?outerR:innerR;const a=(i/(spikes*2))*2*Math.PI-Math.PI/2;pts.push(`${cx+Math.cos(a)*r},${cy+Math.sin(a)*r}`);}
+    return `<polygon points="${pts.join(" ")}" fill="${fillCol}" stroke="${accent}" stroke-width="${sw}" stroke-linejoin="round"/>${labelCenter(cx,cy,12.5)}`;
+  }
+
+  // ── Pool / Lane ──
+  if(type==="bpmn_pool"||type==="bpmn_lane"){
+    const isPool=type==="bpmn_pool";
+    const headerW=28;
+    if(isPool){
+      return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fillCol}" stroke="${accent}" stroke-width="${sw*1.7}"/>`
+        +`<rect x="${x}" y="${y}" width="${headerW}" height="${h}" fill="${rgba(accent,0.32)}" stroke="${accent}" stroke-width="${sw*1.7}"/>`
+        +`<line x1="${x+headerW}" y1="${y}" x2="${x+headerW}" y2="${y+h}" stroke="${accent}" stroke-width="${sw}"/>`
+        +`<text x="${x+headerW/2}" y="${y+h/2}" text-anchor="middle" fill="${INK}" font-size="12" font-weight="800" font-family="${fontFam}" letter-spacing="1" transform="rotate(-90 ${x+headerW/2} ${y+h/2})">${label}</text>`;
+    }
+    return `<line x1="${x}" y1="${y}" x2="${x+w}" y2="${y}" stroke="${accent}" stroke-width="${sw*0.6}" opacity="0.6"/>`
+      +`<rect x="${x}" y="${y}" width="${headerW}" height="${h}" fill="${rgba(accent,0.12)}" stroke="none"/>`
+      +`<line x1="${x+headerW}" y1="${y}" x2="${x+headerW}" y2="${y+h}" stroke="${accent}" stroke-width="${sw*0.4}" opacity="0.45"/>`
+      +`<text x="${x+headerW/2}" y="${y+h/2}" text-anchor="middle" fill="${INK}" font-size="10.5" font-weight="600" font-family="${fontFam}" letter-spacing="0.5" opacity="0.85" transform="rotate(-90 ${x+headerW/2} ${y+h/2})">${label}</text>`;
+  }
+
+  return "";
+}
+
+// XML/SVG-Escaping für alle eingebetteten Texte (verhindert kaputtes SVG bei &, <, >, " in Labels)
+function escXml(str){
+  if(str==null)return "";
+  return String(str)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&apos;");
+}
+
 function exportDiagram(nodes, edges, format, colors, diagramName, theme){
   if(nodes.length===0){ alert("Canvas ist leer!"); return; }
   const T = theme || (typeof THEMES!=="undefined"?THEMES.bloom:null);
@@ -506,22 +1205,74 @@ function exportDiagram(nodes, edges, format, colors, diagramName, theme){
     const p1=edge.fromDir?getPortPoint(a,edge.fromDir):cp.p1;
     const p2=edge.toDir?getPortPoint(b,edge.toDir):cp.p2;
     const wps=(edge.waypoints||[]);
-    const dx=p2.x-p1.x,dy=p2.y-p1.y,len=Math.sqrt(dx*dx+dy*dy)||1;
-    const ux=dx/len,uy=dy/len,as=11;
+    // Ortho-Routing: Port-Richtungen beachten, wie im Editor
+    let ePts;
+    if(wps.length===0){
+      const ddx=Math.abs(p2.x-p1.x),ddy=Math.abs(p2.y-p1.y);
+      if(ddx<4||ddy<4){ePts=[p1,p2];}
+      else{
+        const fd=edge.fromDir,td=edge.toDir;
+        let via;
+        if(fd==="top"||fd==="bottom")via={x:p1.x,y:p2.y};
+        else if(fd==="left"||fd==="right")via={x:p2.x,y:p1.y};
+        else if(td==="top"||td==="bottom")via={x:p2.x,y:p1.y};
+        else if(td==="left"||td==="right")via={x:p1.x,y:p2.y};
+        else{
+          const vV={x:p1.x,y:p2.y},vH={x:p2.x,y:p1.y};
+          via=Math.hypot(p2.x-vV.x,p2.y-vV.y)>=Math.hypot(p2.x-vH.x,p2.y-vH.y)?vV:vH;
+        }
+        ePts=[p1,via,p2];
+      }
+    } else {ePts=[p1,...wps,p2];}
+    // Pfeilrichtung vom letzten Segment
+    const eLast=ePts[ePts.length-1],ePrev=ePts[ePts.length-2];
+    const edx=eLast.x-ePrev.x,edy=eLast.y-ePrev.y,elen=Math.sqrt(edx*edx+edy*edy)||1;
+    const ux=edx/elen,uy=edy/elen,as=11;
     const ax=p2.x-ux*as,ay=p2.y-uy*as,px=-uy*(as/2.4),py=ux*(as/2.4);
-    const midX=(p1.x+p2.x)/2+offX,midY=(p1.y+p2.y)/2+offY;
+    // Label-Mitte: längsten Segment nehmen
+    let bestSL=0,midX=(p1.x+p2.x)/2+offX,midY=(p1.y+p2.y)/2+offY;
+    for(let i=0;i<ePts.length-1;i++){
+      const sl=Math.hypot(ePts[i+1].x-ePts[i].x,ePts[i+1].y-ePts[i].y);
+      if(sl>bestSL){bestSL=sl;midX=(ePts[i].x+ePts[i+1].x)/2+offX;midY=(ePts[i].y+ePts[i+1].y)/2+offY;}
+    }
     const ls=edge.lineStyle||"arrow";
-    const dash=(ls==="dashed"||ls==="dashed-line")?` stroke-dasharray="7 5"`:"";
-    const hasArrow=(ls==="arrow"||ls==="dashed");
-    const pts=[p1,...wps,p2];
-    const pathData=pts.map((p,i)=>`${i===0?"M":"L"}${p.x+offX},${p.y+offY}`).join(" ");
+    const isDashed=(ls==="dashed"||ls==="dashed-line"||ls==="message");
+    const isDotted=(ls==="association"||ls==="association-line");
+    const dash=isDotted?` stroke-dasharray="1.5 4"`:isDashed?` stroke-dasharray="7 5"`:"";
+    const hasArrowClosed=(ls==="arrow"||ls==="dashed"||ls==="default-flow"||ls==="conditional-flow");
+    const hasArrowOpen=(ls==="message"||ls==="association");
+    const pathData=ePts.map((p,i)=>`${i===0?"M":"L"}${p.x+offX},${p.y+offY}`).join(" ");
     const lineSVG=`<path d="${pathData}" fill="none" stroke="${EDGE}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"${dash}/>`;
-    const arrowSVG=hasArrow?`<polygon points="${p2.x+offX},${p2.y+offY} ${ax+px+offX},${ay+py+offY} ${ax-px+offX},${ay-py+offY}" fill="${EDGE}"/>`:"";
-    const labelSVG=edge.label?`<rect x="${midX-edge.label.length*3.6-5}" y="${midY-10}" width="${edge.label.length*7.2+10}" height="18" rx="6" fill="${BG}" stroke="${rgba('#ffffff',0.16)}"/><text x="${midX}" y="${midY+1}" text-anchor="middle" fill="${INK}" font-size="10.5" font-family="system-ui,Segoe UI,Arial,sans-serif">${edge.label}</text>`:"";
-    return lineSVG+arrowSVG+labelSVG;
+    let arrowSVG="";
+    if(hasArrowClosed)arrowSVG=`<polygon points="${p2.x+offX},${p2.y+offY} ${ax+px+offX},${ay+py+offY} ${ax-px+offX},${ay-py+offY}" fill="${EDGE}"/>`;
+    else if(hasArrowOpen)arrowSVG=`<polyline points="${ax+px+offX},${ay+py+offY} ${p2.x+offX},${p2.y+offY} ${ax-px+offX},${ay-py+offY}" fill="none" stroke="${EDGE}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>`;
+    // Start-Marker (Standardfluss / Bedingter Fluss / Nachrichtenfluss)
+    let startSVG="";
+    {
+      const first=ePts[0], second=ePts[1]||ePts[0];
+      const sdx=second.x-first.x, sdy=second.y-first.y;
+      const slen=Math.sqrt(sdx*sdx+sdy*sdy)||1;
+      const sux=sdx/slen, suy=sdy/slen;
+      const fx=p1.x+offX, fy=p1.y+offY;
+      if(ls==="message"){
+        const r=4.5, cx=fx+sux*r, cy=fy+suy*r;
+        startSVG=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${BG}" stroke="${EDGE}" stroke-width="1.6"/>`;
+      }else if(ls==="default-flow"){
+        const len2=9, cx=fx+sux*len2*0.6, cy=fy+suy*len2*0.6;
+        const nx=-suy, ny=sux;
+        startSVG=`<line x1="${cx-nx*len2/2}" y1="${cy-ny*len2/2}" x2="${cx+nx*len2/2}" y2="${cy+ny*len2/2}" stroke="${EDGE}" stroke-width="2" transform="rotate(35 ${cx} ${cy})"/>`;
+      }else if(ls==="conditional-flow"){
+        const dl=7, cx=fx+sux*dl, cy=fy+suy*dl;
+        const nx=-suy*dl*0.6, ny=sux*dl*0.6;
+        const bx=-sux*dl*0.6, by=-suy*dl*0.6;
+        startSVG=`<polygon points="${fx},${fy} ${cx+nx},${cy+ny} ${cx+sux*dl+bx},${cy+suy*dl+by} ${cx-nx},${cy-ny}" fill="${BG}" stroke="${EDGE}" stroke-width="1.4"/>`;
+      }
+    }
+    const labelSVG=edge.label?`<rect x="${midX-edge.label.length*3.6-7}" y="${midY-11}" width="${edge.label.length*7.2+14}" height="21" rx="10" fill="${BG}" stroke="${rgba('#ffffff',0.18)}"/><text x="${midX}" y="${midY+0.5}" text-anchor="middle" fill="${rgba(INK,0.72)}" font-size="10.5" font-weight="500" font-family="system-ui,Segoe UI,Arial,sans-serif">${escXml(edge.label)}</text>`:"";
+    return lineSVG+arrowSVG+startSVG+labelSVG;
   }).join("");
 
-  const shapeSVG=nodes.map(node=>{
+  const renderNodeSVG=node=>{
     const{w,h}=getNodeSize(node);
     const cBase=col(node.type); const accent=node.color||cBase.accent;
     const x=node.x+offX,y=node.y+offY;
@@ -529,14 +1280,37 @@ function exportDiagram(nodes, edges, format, colors, diagramName, theme){
     const fillR=parseInt(accent.slice(1,3),16)||0;
     const fillG=parseInt(accent.slice(3,5),16)||0;
     const fillB=parseInt(accent.slice(5,7),16)||0;
-    // Mische Accent mit dunklem Hintergrund (BG ~18,27,36) für sichtbare Füllung
-    const bgR=18,bgG=23,bgB=36;
-    const mix=0.28;
+    // BG-Farbe aus Theme-String parsen (nicht hardcoden!)
+    const bgR=parseInt(BG.slice(1,3),16)||0, bgG=parseInt(BG.slice(3,5),16)||0, bgB=parseInt(BG.slice(5,7),16)||0;
+    const mix=0.32;
     const mr=Math.round(bgR*(1-mix)+fillR*mix);
     const mg=Math.round(bgG*(1-mix)+fillG*mix);
     const mb=Math.round(bgB*(1-mix)+fillB*mix);
     const fillCol=`rgb(${mr},${mg},${mb})`;
     const sw=FX.strokeW;
+    if(node.type==="image"){
+      return node.src?`<image href="${node.src}" xlink:href="${node.src}" x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid meet"/>`:"";    }
+    if(node.type==="text"){
+      const baseFs=14;
+      const mdLines=parseMarkdownLines(node.label||"");
+      let cursorY=baseFs*(mdLines[0]?.fontSize||1);
+      const tspans=mdLines.map((ml,i)=>{
+        const fs=baseFs*ml.fontSize;
+        const ty=y+cursorY;
+        cursorY+=fs*1.45;
+        const bulletPrefix=ml.bullet?"&#8226;&#160;&#160;":"";
+        const innerRuns=ml.runs.map(r=>{
+          const fw=r.bold?"800":ml.fontWeight;
+          const fs2=r.italic?"italic":"normal";
+          return `<tspan font-weight="${fw}" font-style="${fs2}">${escXml(r.text)}</tspan>`;
+        }).join("");
+        return `<tspan x="${x+ml.indent}" y="${ty}" font-size="${fs}" font-weight="${ml.fontWeight}">${bulletPrefix}${innerRuns}</tspan>`;
+      }).join("");
+      return `<text x="${x}" y="${y}" text-anchor="start" fill="${INK}" font-family="system-ui,Segoe UI,Arial,sans-serif">${tspans}</text>`;
+    }
+    if(node.type.startsWith("bpmn_")){
+      return bpmnExportShape(node,x,y,w,h,accent,fillCol,null,sw,INK,1);
+    }
     let shape="";
     switch(node.type){
       case "ereignis":{const ind=20;const pts=[[ind,0],[w-ind,0],[w,h/2],[w-ind,h],[ind,h],[0,h/2]].map(p=>`${p[0]+x},${p[1]+y}`).join(" ");shape=`<polygon points="${pts}" fill="${fillCol}" stroke="${accent}" stroke-width="${sw}" stroke-linejoin="round"/>`;break;}
@@ -548,15 +1322,17 @@ function exportDiagram(nodes, edges, format, colors, diagramName, theme){
       default:{const lm={operator_and:"AND",operator_or:"OR",operator_xor:"XOR"};const r=Math.min(w,h)/2-2;return `<circle cx="${x+w/2}" cy="${y+h/2}" r="${r}" fill="${fillCol}" stroke="${accent}" stroke-width="${sw}"/><text x="${x+w/2}" y="${y+h/2+12.5*0.38}" text-anchor="middle" fill="${INK}" font-size="12.5" font-weight="700" font-family="system-ui,Segoe UI,Arial,sans-serif" letter-spacing="0.5">${lm[node.type]||""}</text>`;}
     }
     const ty=node.type==="dokument"?y+(h-11)/2:y+h/2;
-    const lines=(node.label||"").split("\n");
+    const lines=escXml(node.label||"").split("\n");
     const lineH=14*1.4;
     const labelSVG=lines.length<=1
-      ?`<text x="${x+w/2}" y="${ty+12.5*0.38}" text-anchor="middle" fill="${INK}" font-size="12.5" font-weight="600" font-family="system-ui,Segoe UI,Arial,sans-serif">${node.label||""}</text>`
+      ?`<text x="${x+w/2}" y="${ty+12.5*0.38}" text-anchor="middle" fill="${INK}" font-size="12.5" font-weight="600" font-family="system-ui,Segoe UI,Arial,sans-serif">${lines[0]||""}</text>`
       :`<text x="${x+w/2}" text-anchor="middle" fill="${INK}" font-size="12.5" font-weight="600" font-family="system-ui,Segoe UI,Arial,sans-serif">${lines.map((l,i)=>`<tspan x="${x+w/2}" y="${ty-((lines.length-1)*lineH/2)+(i*lineH)+(12.5*0.38)}">${l}</tspan>`).join("")}</text>`;
     return shape+labelSVG;
-  }).join("\n");
+  };
+  const poolLaneSVG=nodes.filter(n=>n.type==="bpmn_pool"||n.type==="bpmn_lane").map(renderNodeSVG).join("\n");
+  const otherNodeSVG=nodes.filter(n=>n.type!=="bpmn_pool"&&n.type!=="bpmn_lane").map(renderNodeSVG).join("\n");
 
-  const svgStr=`<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="${BG}"/>${edgeSVG}${shapeSVG}</svg>`;
+  const svgStr=`<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="${BG}"/>${poolLaneSVG}${otherNodeSVG}${edgeSVG}</svg>`;
   const fname=(diagramName||"flowra-diagram").replace(/\s+/g,"-").toLowerCase();
 
   if(format==="svg"){
@@ -570,25 +1346,34 @@ function exportDiagram(nodes, edges, format, colors, diagramName, theme){
   const reader=new FileReader();
   reader.onload=()=>{
     img.onload=()=>{
-      const canvas=document.createElement("canvas");
-      canvas.width=W*scale;canvas.height=H*scale;
-      const ctx=canvas.getContext("2d");
-      if(format==="jpeg"){ctx.fillStyle=BG;ctx.fillRect(0,0,canvas.width,canvas.height);}
-      ctx.scale(scale,scale);ctx.drawImage(img,0,0);
-      canvas.toBlob(b=>{
-        // PNG/JPEG: Base64 ans Backend zum Speichern
-        const fr=new FileReader();
-        fr.onload=()=>{
-          const b64=fr.result.split(",")[1];
-          const ext=format==="jpeg"?"jpg":"png";
-          fetch(`${API_BASE}/export`,{method:"POST",headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({data:b64,filename:`${fname}.${ext}`,mime:format==="jpeg"?"image/jpeg":"image/png"})});
-        };
-        fr.readAsDataURL(b);
-      },format==="jpeg"?"image/jpeg":"image/png",0.95);
+      try{
+        const canvas=document.createElement("canvas");
+        canvas.width=W*scale;canvas.height=H*scale;
+        const ctx=canvas.getContext("2d");
+        if(format==="jpeg"){ctx.fillStyle=BG;ctx.fillRect(0,0,canvas.width,canvas.height);}
+        ctx.scale(scale,scale);ctx.drawImage(img,0,0);
+        canvas.toBlob(b=>{
+          if(!b){console.error("Export fehlgeschlagen: canvas.toBlob lieferte kein Ergebnis (evtl. tainted canvas durch eingebettetes Bild).");return;}
+          // PNG/JPEG: Base64 ans Backend zum Speichern
+          const fr=new FileReader();
+          fr.onload=()=>{
+            const b64=fr.result.split(",")[1];
+            const ext=format==="jpeg"?"jpg":"png";
+            fetch(`${API_BASE}/export`,{method:"POST",headers:{"Content-Type":"application/json"},
+              body:JSON.stringify({data:b64,filename:`${fname}.${ext}`,mime:format==="jpeg"?"image/jpeg":"image/png"})})
+              .catch(err=>console.error("Export-Upload fehlgeschlagen:",err));
+          };
+          fr.onerror=()=>console.error("FileReader Fehler beim Export-Blob");
+          fr.readAsDataURL(b);
+        },format==="jpeg"?"image/jpeg":"image/png",0.95);
+      }catch(err){
+        console.error("Export-Canvas Fehler (evtl. tainted durch eingebettetes Bild):",err);
+      }
     };
+    img.onerror=(err)=>{console.error("SVG konnte nicht als Bild geladen werden (img.onerror):",err);};
     img.src=reader.result;
   };
+  reader.onerror=()=>console.error("FileReader Fehler beim SVG-Laden");
   reader.readAsDataURL(blob);
 }
 
@@ -754,11 +1539,11 @@ function OnboardingScreen({onDone}){
             <h2 style={{margin:0,fontSize:23,fontWeight:700,color:"var(--text)",lineHeight:1.35}}>Willkommen bei Flowra ✦</h2>
             <p style={{margin:0,fontSize:14.5,color:"var(--muted)",lineHeight:1.75}}>
               Dein modernes Tool für visuelle Prozessmodellierung.<br/>
-              Starte mit <strong style={{color:"var(--emerald)"}}>EPK</strong> — BPMN, UML und ER folgen bald.
+              Starte mit <strong style={{color:"var(--emerald)"}}>EPK</strong> und <strong style={{color:"var(--emerald)"}}>BPMN 2.0</strong> — UML und ER folgen bald.
             </p>
             <div style={{display:"flex",gap:20,justifyContent:"center",marginTop:4,flexWrap:"wrap"}}>
-              {[["✅","EPK"],["🔜","BPMN"],["🔜","UML"],["🔜","ER"]].map(([ic,lb])=>(
-                <span key={lb} style={{fontSize:12.5,color:lb==="EPK"?"var(--emerald)":"var(--faint)",fontWeight:600}}>{ic} {lb}</span>
+              {[["✅","EPK"],["✅","BPMN"],["🔜","UML"],["🔜","ER"]].map(([ic,lb])=>(
+                <span key={lb} style={{fontSize:12.5,color:ic==="✅"?"var(--emerald)":"var(--faint)",fontWeight:600}}>{ic} {lb}</span>
               ))}
             </div>
           </div>
@@ -1063,17 +1848,28 @@ function SettingsPanel({theme,onTheme,colors,onColorsChange,snapGrid,onSnapGrid,
         <Row title="Gerade Linien" sub="Verbindungen snappen auf 90°"><Toggle on={snapLines} onClick={()=>onSnapLines(!snapLines)}/></Row>
         <Row title="Gitter anzeigen" sub="Punktraster auf dem Canvas"><Toggle on={showGrid} onClick={()=>onShowGrid(!showGrid)}/></Row>
         <Row title="Wobble-Effekt" sub="Gummi-Physik beim Ziehen"><Toggle on={wobble>0} onClick={()=>onWobble(wobble>0?0:10)}/></Row>
-        <div style={{fontSize:11,fontWeight:700,color:"var(--faint)",letterSpacing:1.4,margin:"18px 0 10px"}}>ELEMENT-AKZENTE</div>
-        {Object.entries(colors).filter(([t])=>t!=="operator_or"&&t!=="operator_xor").map(([type,c])=>(
+        <div style={{fontSize:11,fontWeight:700,color:"var(--faint)",letterSpacing:1.4,margin:"18px 0 6px"}}>EPK-AKZENTE</div>
+        {ACCENT_GROUPS.epk.map(([type,name])=>{const c=colors[type]||DEFAULT_COLORS[type];if(!c)return null;return(
           <div key={type} style={{display:"flex",alignItems:"center",gap:14,marginBottom:8,padding:"9px 14px",background:"var(--glass)",borderRadius:"var(--r-md)",border:"1px solid var(--border)"}}>
             <div style={{width:26,height:26,borderRadius:7,flexShrink:0,background:rgba(c.accent,0.18),border:`1.6px solid ${c.accent}`,boxShadow:`0 0 10px ${rgba(c.accent,0.5)}`}}/>
-            <span style={{flex:1,fontSize:12.5,fontWeight:600,color:"var(--text)"}}>{type==="operator_and"?"Operatoren":LABEL_MAP[type]}</span>
+            <span style={{flex:1,fontSize:12.5,fontWeight:600,color:"var(--text)"}}>{name}</span>
             <label style={{position:"relative",cursor:"pointer"}} title="Akzentfarbe">
               <input type="color" value={c.accent} onChange={e=>onColorsChange(type,"accent",e.target.value)} style={{position:"absolute",inset:0,opacity:0,cursor:"pointer",width:"100%",height:"100%"}}/>
               <span className="swatch" style={{display:"block",width:34,height:26,borderRadius:7,background:c.accent,border:"1px solid var(--border-strong)"}}/>
             </label>
           </div>
-        ))}
+        );})}
+        <div style={{fontSize:11,fontWeight:700,color:"var(--faint)",letterSpacing:1.4,margin:"18px 0 6px"}}>BPMN-AKZENTE</div>
+        {ACCENT_GROUPS.bpmn.map(([type,name])=>{const c=colors[type]||DEFAULT_COLORS[type];if(!c)return null;return(
+          <div key={type} style={{display:"flex",alignItems:"center",gap:14,marginBottom:8,padding:"9px 14px",background:"var(--glass)",borderRadius:"var(--r-md)",border:"1px solid var(--border)"}}>
+            <div style={{width:26,height:26,borderRadius:7,flexShrink:0,background:rgba(c.accent,0.18),border:`1.6px solid ${c.accent}`,boxShadow:`0 0 10px ${rgba(c.accent,0.5)}`}}/>
+            <span style={{flex:1,fontSize:12.5,fontWeight:600,color:"var(--text)"}}>{name}</span>
+            <label style={{position:"relative",cursor:"pointer"}} title="Akzentfarbe">
+              <input type="color" value={c.accent} onChange={e=>onColorsChange(type,"accent",e.target.value)} style={{position:"absolute",inset:0,opacity:0,cursor:"pointer",width:"100%",height:"100%"}}/>
+              <span className="swatch" style={{display:"block",width:34,height:26,borderRadius:7,background:c.accent,border:"1px solid var(--border-strong)"}}/>
+            </label>
+          </div>
+        );})}
         <button className="tbtn" onClick={()=>onColorsChange("__reset__")} style={{marginTop:12,width:"100%",padding:"10px",color:"var(--rose)",borderColor:rgba("#fb7185",0.3),background:rgba("#fb7185",0.08),fontSize:12.5,fontWeight:600}}>Akzente auf Theme zurücksetzen</button>
         <button className="tbtn" onClick={onFAQ} style={{marginTop:8,width:"100%",padding:"10px",fontSize:12.5,fontWeight:600}}>❓ Hilfe & FAQ öffnen</button>
       </div>
@@ -1082,7 +1878,8 @@ function SettingsPanel({theme,onTheme,colors,onColorsChange,snapGrid,onSnapGrid,
 }
 
 
-const PALETTE=[
+// ─── Paletten: gruppiert nach Modellierungssprache ─────────────────────────
+const PALETTE_EPK=[
   {type:"ereignis",label:"Ereignis"},
   {type:"funktion",label:"Funktion"},
   {type:"organisationseinheit",label:"Org.-Einheit"},
@@ -1093,7 +1890,149 @@ const PALETTE=[
   {type:"operator_or",label:"OR"},
   {type:"operator_xor",label:"XOR"},
 ];
+
+const PALETTE_BPMN=[
+  // Aktivitäten
+  {type:"bpmn_task",label:"Aufgabe",group:"Aktivitäten"},
+  {type:"bpmn_subprocess",label:"Teilprozess",group:"Aktivitäten"},
+  {type:"bpmn_transaction",label:"Transaktion",group:"Aktivitäten"},
+  {type:"bpmn_call_activity",label:"Aufruf-Aktivität",group:"Aktivitäten"},
+  {type:"bpmn_event_subprocess",label:"Ereignis-Teilprozess",group:"Aktivitäten"},
+  // Markierungen (Ausführungsverhalten)
+  {type:"bpmn_task",label:"Aufgabe: Schleife",group:"Markierungen",variant:"loop"},
+  {type:"bpmn_task",label:"Aufgabe: Parallele Mehrfachausf.",group:"Markierungen",variant:"parallel_mi"},
+  {type:"bpmn_task",label:"Aufgabe: Sequentielle Mehrfachausf.",group:"Markierungen",variant:"sequential_mi"},
+  {type:"bpmn_task",label:"Aufgabe: Ad-hoc",group:"Markierungen",variant:"adhoc"},
+  {type:"bpmn_task",label:"Aufgabe: Kompensation",group:"Markierungen",variant:"compensation"},
+  // Start-Ereignisse
+  {type:"bpmn_start_event",label:"Start (Standard)",group:"Start-Ereignisse",variant:"standard"},
+  {type:"bpmn_start_event",label:"Start: Nachricht",group:"Start-Ereignisse",variant:"message"},
+  {type:"bpmn_start_event",label:"Start: Timer",group:"Start-Ereignisse",variant:"timer"},
+  {type:"bpmn_start_event",label:"Start: Bedingung",group:"Start-Ereignisse",variant:"conditional"},
+  {type:"bpmn_start_event",label:"Start: Signal",group:"Start-Ereignisse",variant:"signal"},
+  {type:"bpmn_start_event",label:"Ereignis-Teilpr.: Nachricht (unterbr.)",group:"Start-Ereignisse",variant:"message_filled"},
+  {type:"bpmn_start_event",label:"Ereignis-Teilpr.: Nachricht (nicht unterbr.)",group:"Start-Ereignisse",variant:"message_non_interrupting"},
+  {type:"bpmn_start_event",label:"Ereignis-Teilpr.: Timer (unterbr.)",group:"Start-Ereignisse",variant:"timer_filled"},
+  {type:"bpmn_start_event",label:"Ereignis-Teilpr.: Timer (nicht unterbr.)",group:"Start-Ereignisse",variant:"timer_non_interrupting"},
+  {type:"bpmn_start_event",label:"Ereignis-Teilpr.: Bedingung (unterbr.)",group:"Start-Ereignisse",variant:"conditional_filled"},
+  {type:"bpmn_start_event",label:"Ereignis-Teilpr.: Bedingung (nicht unterbr.)",group:"Start-Ereignisse",variant:"conditional_non_interrupting"},
+  {type:"bpmn_start_event",label:"Ereignis-Teilpr.: Signal (unterbr.)",group:"Start-Ereignisse",variant:"signal_filled"},
+  {type:"bpmn_start_event",label:"Ereignis-Teilpr.: Signal (nicht unterbr.)",group:"Start-Ereignisse",variant:"signal_non_interrupting"},
+  {type:"bpmn_start_event",label:"Ereignis-Teilpr.: Eskalation (unterbr.)",group:"Start-Ereignisse",variant:"escalation_filled"},
+  {type:"bpmn_start_event",label:"Ereignis-Teilpr.: Eskalation (nicht unterbr.)",group:"Start-Ereignisse",variant:"escalation_non_interrupting"},
+  // Zwischen-Ereignisse (eingetreten)
+  {type:"bpmn_intermediate_event",label:"Zwischen (eintretend)",group:"Zwischen-Ereignisse",variant:"standard"},
+  {type:"bpmn_intermediate_event",label:"Nachricht (eintretend)",group:"Zwischen-Ereignisse",variant:"message"},
+  {type:"bpmn_intermediate_event",label:"Timer (eintretend)",group:"Zwischen-Ereignisse",variant:"timer"},
+  {type:"bpmn_intermediate_event",label:"Eskalation (eintretend)",group:"Zwischen-Ereignisse",variant:"escalation"},
+  {type:"bpmn_intermediate_event",label:"Bedingung (eintretend)",group:"Zwischen-Ereignisse",variant:"conditional"},
+  {type:"bpmn_intermediate_event",label:"Link (eintretend)",group:"Zwischen-Ereignisse",variant:"link"},
+  {type:"bpmn_intermediate_event",label:"Signal (eintretend)",group:"Zwischen-Ereignisse",variant:"signal"},
+  // Zwischen-Ereignisse (auslösend/erzeugend)
+  {type:"bpmn_intermediate_event",label:"Nachricht (auslösend)",group:"Zwischen-Ereignisse",variant:"message_filled"},
+  {type:"bpmn_intermediate_event",label:"Eskalation (auslösend)",group:"Zwischen-Ereignisse",variant:"escalation_filled"},
+  {type:"bpmn_intermediate_event",label:"Link (auslösend)",group:"Zwischen-Ereignisse",variant:"link_filled"},
+  {type:"bpmn_intermediate_event",label:"Signal (auslösend)",group:"Zwischen-Ereignisse",variant:"signal_filled"},
+  {type:"bpmn_intermediate_event",label:"Kompensation (auslösend)",group:"Zwischen-Ereignisse",variant:"compensation_filled"},
+  // Angeheftete Zwischen-Ereignisse (an Aktivitätsrand)
+  {type:"bpmn_intermediate_event",label:"Angeheftet: Nachricht (unterbr.)",group:"Angeheftete Ereignisse",variant:"message_filled"},
+  {type:"bpmn_intermediate_event",label:"Angeheftet: Nachricht (nicht unterbr.)",group:"Angeheftete Ereignisse",variant:"message_non_interrupting"},
+  {type:"bpmn_intermediate_event",label:"Angeheftet: Timer (unterbr.)",group:"Angeheftete Ereignisse",variant:"timer_filled"},
+  {type:"bpmn_intermediate_event",label:"Angeheftet: Timer (nicht unterbr.)",group:"Angeheftete Ereignisse",variant:"timer_non_interrupting"},
+  {type:"bpmn_intermediate_event",label:"Angeheftet: Eskalation (unterbr.)",group:"Angeheftete Ereignisse",variant:"escalation_filled"},
+  {type:"bpmn_intermediate_event",label:"Angeheftet: Eskalation (nicht unterbr.)",group:"Angeheftete Ereignisse",variant:"escalation_non_interrupting"},
+  {type:"bpmn_intermediate_event",label:"Angeheftet: Bedingung (unterbr.)",group:"Angeheftete Ereignisse",variant:"conditional_filled"},
+  {type:"bpmn_intermediate_event",label:"Angeheftet: Bedingung (nicht unterbr.)",group:"Angeheftete Ereignisse",variant:"conditional_non_interrupting"},
+  {type:"bpmn_intermediate_event",label:"Angeheftet: Fehler",group:"Angeheftete Ereignisse",variant:"error_filled"},
+  {type:"bpmn_intermediate_event",label:"Angeheftet: Abbruch",group:"Angeheftete Ereignisse",variant:"cancel_filled"},
+  {type:"bpmn_intermediate_event",label:"Angeheftet: Kompensation",group:"Angeheftete Ereignisse",variant:"compensation_filled"},
+  {type:"bpmn_intermediate_event",label:"Angeheftet: Signal (unterbr.)",group:"Angeheftete Ereignisse",variant:"signal_filled"},
+  {type:"bpmn_intermediate_event",label:"Angeheftet: Signal (nicht unterbr.)",group:"Angeheftete Ereignisse",variant:"signal_non_interrupting"},
+  // End-Ereignisse
+  {type:"bpmn_end_event",label:"Ende (Standard)",group:"End-Ereignisse",variant:"standard"},
+  {type:"bpmn_end_event",label:"Ende: Nachricht",group:"End-Ereignisse",variant:"message_filled"},
+  {type:"bpmn_end_event",label:"Ende: Eskalation",group:"End-Ereignisse",variant:"escalation_filled"},
+  {type:"bpmn_end_event",label:"Ende: Fehler",group:"End-Ereignisse",variant:"error_filled"},
+  {type:"bpmn_end_event",label:"Ende: Abbruch",group:"End-Ereignisse",variant:"cancel_filled"},
+  {type:"bpmn_end_event",label:"Ende: Kompensation",group:"End-Ereignisse",variant:"compensation_filled"},
+  {type:"bpmn_end_event",label:"Ende: Signal",group:"End-Ereignisse",variant:"signal_filled"},
+  {type:"bpmn_end_event",label:"Ende: Link",group:"End-Ereignisse",variant:"link_filled"},
+  {type:"bpmn_end_event",label:"Terminierung",group:"End-Ereignisse",variant:"termination"},
+  // Gateways
+  {type:"bpmn_gateway_exclusive",label:"Exklusives Gateway",group:"Gateways"},
+  {type:"bpmn_gateway_parallel",label:"Paralleles Gateway",group:"Gateways"},
+  {type:"bpmn_gateway_inclusive",label:"Inklusives Gateway",group:"Gateways"},
+  {type:"bpmn_gateway_complex",label:"Komplexes Gateway",group:"Gateways"},
+  {type:"bpmn_gateway_event",label:"Ereignisbasiertes Gateway",group:"Gateways"},
+  {type:"bpmn_gateway_exclusive_event",label:"Exkl. ereignisbasiert (Instanz.)",group:"Gateways"},
+  {type:"bpmn_gateway_parallel_event",label:"Parallel ereignisbasiert (Instanz.)",group:"Gateways"},
+  // Daten
+  {type:"bpmn_data_object",label:"Datenobjekt",group:"Daten"},
+  {type:"bpmn_data_list",label:"Listen-Datenobjekt",group:"Daten"},
+  {type:"bpmn_data_input",label:"Dateninput",group:"Daten"},
+  {type:"bpmn_data_output",label:"Datenoutput",group:"Daten"},
+  {type:"bpmn_data_store",label:"Datenspeicher",group:"Daten"},
+  // Artefakte
+  {type:"bpmn_text_annotation",label:"Text-Anmerkung",group:"Artefakte"},
+  {type:"bpmn_group",label:"Gruppierung",group:"Artefakte"},
+  {type:"bpmn_custom_artifact",label:"Individuelles Symbol",group:"Artefakte"},
+  // Teilnehmer
+  {type:"bpmn_pool",label:"Pool",group:"Teilnehmer"},
+  {type:"bpmn_lane",label:"Lane",group:"Teilnehmer"},
+];
+
+// Default-Beschriftung beim Ablegen auf den Canvas.
+// Aktivitäten/Pools bekommen Platzhaltertext, Icons (Ereignisse/Gateways/Daten) bleiben leer.
+const BPMN_DEFAULT_LABEL={
+  bpmn_task:"Aufgabe", bpmn_subprocess:"Teilprozess", bpmn_transaction:"Transaktion",
+  bpmn_call_activity:"Aufruf-Aktivität", bpmn_event_subprocess:"Ereignis-Teilprozess",
+  bpmn_pool:"Pool", bpmn_lane:"Lane",
+  bpmn_text_annotation:"Anmerkung", bpmn_group:"Gruppe",
+  bpmn_start_event:"", bpmn_intermediate_event:"", bpmn_end_event:"",
+  bpmn_gateway_exclusive:"", bpmn_gateway_parallel:"", bpmn_gateway_inclusive:"",
+  bpmn_gateway_complex:"", bpmn_gateway_event:"", bpmn_gateway_exclusive_event:"", bpmn_gateway_parallel_event:"",
+  bpmn_data_object:"", bpmn_data_list:"", bpmn_data_input:"", bpmn_data_output:"", bpmn_data_store:"",
+  bpmn_custom_artifact:"",
+  image:"",
+  text:"Text",
+};
+
+const PALETTE=[...PALETTE_EPK,...PALETTE_BPMN];
 const LABEL_MAP=Object.fromEntries(PALETTE.map(p=>[p.type,p.label]));
+const LANGUAGES=[
+  {id:"epk",name:"EPK",items:PALETTE_EPK},
+  {id:"bpmn",name:"BPMN 2.0",items:PALETTE_BPMN},
+];
+
+// Welche Typen teilen sich eine Akzentfarbe (für Einstellungen + Reset)
+const ACCENT_LINKED={
+  operator_and:["operator_and","operator_or","operator_xor"],
+  operator_or:["operator_and","operator_or","operator_xor"],
+  operator_xor:["operator_and","operator_or","operator_xor"],
+  bpmn_task:["bpmn_task","bpmn_subprocess","bpmn_transaction","bpmn_call_activity","bpmn_event_subprocess"],
+  bpmn_start_event:["bpmn_start_event"],
+  bpmn_intermediate_event:["bpmn_intermediate_event"],
+  bpmn_end_event:["bpmn_end_event"],
+  bpmn_gateway_exclusive:["bpmn_gateway_exclusive","bpmn_gateway_parallel","bpmn_gateway_inclusive","bpmn_gateway_complex","bpmn_gateway_event","bpmn_gateway_exclusive_event","bpmn_gateway_parallel_event"],
+  bpmn_data_object:["bpmn_data_object","bpmn_data_list","bpmn_data_input","bpmn_data_output","bpmn_data_store"],
+  bpmn_text_annotation:["bpmn_text_annotation","bpmn_group","bpmn_custom_artifact"],
+  bpmn_pool:["bpmn_pool","bpmn_lane"],
+};
+
+// Repräsentative Typen für die Akzent-Liste in den Einstellungen
+const ACCENT_GROUPS={
+  epk:[
+    ["ereignis","Ereignis"],["funktion","Funktion"],["organisationseinheit","Org.-Einheit"],
+    ["informationsobjekt","Info.-Objekt"],["dokument","Dokument"],["prozesspfad","Prozesspfad"],
+    ["operator_and","Operatoren (AND/OR/XOR)"],
+  ],
+  bpmn:[
+    ["bpmn_task","Aktivitäten"],["bpmn_start_event","Start-Ereignisse"],
+    ["bpmn_intermediate_event","Zwischen-Ereignisse"],["bpmn_end_event","End-Ereignisse"],
+    ["bpmn_gateway_exclusive","Gateways"],["bpmn_data_object","Daten"],
+    ["bpmn_text_annotation","Artefakte"],["bpmn_pool","Pool / Lane"],
+  ],
+};
 // ─── Main Editor ───────────────────────────────────────────────────────────
 const uid=()=>`n${Date.now().toString(36)}${Math.random().toString(36).slice(2,7)}`;
 const MAX_HISTORY=50;
@@ -1103,6 +2042,8 @@ export default function FlowraEditor(){
   const [edges,setEdges]=useState([]);
   const [selected,setSelected]=useState(null);
   const [dragging,setDragging]=useState(null);
+  const [resizing,setResizing]=useState(null);
+  const resizeNodesRef=useRef(null);
   const [editingId,setEditingId]=useState(null);
   const [editText,setEditText]=useState("");
   const [editingEdgeId,setEditingEdgeId]=useState(null);
@@ -1122,6 +2063,10 @@ export default function FlowraEditor(){
   const [showGrid,setShowGrid]=useState(false);
   const [wobble,setWobble]=useState(10);
   const [diagramName,setDiagramName]=useState("Unbenanntes Diagramm");
+  const [openLangs,setOpenLangs]=useState(()=>{try{const s=localStorage.getItem("flowra-open-langs");if(s)return JSON.parse(s);}catch(e){}return{epk:true,bpmn:false};});
+  const [openGroups,setOpenGroups]=useState(()=>{try{const s=localStorage.getItem("flowra-open-groups");if(s)return JSON.parse(s);}catch(e){}return{};});
+  const toggleLang=(id)=>setOpenLangs(prev=>{const n={...prev,[id]:!prev[id]};try{localStorage.setItem("flowra-open-langs",JSON.stringify(n));}catch(e){}return n;});
+  const toggleGroup=(key)=>setOpenGroups(prev=>{const n={...prev,[key]:!prev[key]};try{localStorage.setItem("flowra-open-groups",JSON.stringify(n));}catch(e){}return n;});
   const [editingName,setEditingName]=useState(false);
   const [drawingEdge,setDrawingEdge]=useState(null);
   const setDrawingEdgeSynced=(val)=>{const v=typeof val==='function'?val(drawingEdgeRef.current):val;drawingEdgeRef.current=v;setDrawingEdge(v);};
@@ -1165,7 +2110,10 @@ export default function FlowraEditor(){
         const el=wobbleRefs.current[id];
         const settled=Math.abs(s.Sx)<0.04&&Math.abs(s.Sy)<0.04&&Math.abs(s.Vx)<0.04&&Math.abs(s.Vy)<0.04&&Math.abs(s.Tx)<0.04&&Math.abs(s.Ty)<0.04;
         if(settled&&!(draggingRef.current&&draggingRef.current.id===id)){if(el)el.removeAttribute("transform");delete springs.current[id];continue;}
-        if(el){const node=nodesRef.current[id];if(!node)continue;const{w,h}=getNodeSize(node);const cx=w/2,cy=h/2;const skewX=clamp(s.Sx*0.34*W,-24,24),skewY=clamp(s.Sy*0.34*W,-24,24);const sclx=1+clamp(Math.abs(s.Sx)*0.0045*W,0,0.18),scly=1+clamp(Math.abs(s.Sy)*0.0045*W,0,0.18);el.setAttribute("transform",`translate(${cx} ${cy}) skewX(${skewX.toFixed(2)}) skewY(${skewY.toFixed(2)}) scale(${sclx.toFixed(3)} ${scly.toFixed(3)}) translate(${-cx} ${-cy})`);}}
+        if(el){const node=nodesRef.current[id];if(!node)continue;const{w,h}=getNodeSize(node);const cx=w/2,cy=h/2;
+          // Pool/Lane: Wobble stark begrenzen (max. Faktor 1 statt bis zu 10)
+          const Wn=(node.type==="bpmn_pool"||node.type==="bpmn_lane")?Math.min(W,0.1):W;
+          const skewX=clamp(s.Sx*0.34*Wn,-24,24),skewY=clamp(s.Sy*0.34*Wn,-24,24);const sclx=1+clamp(Math.abs(s.Sx)*0.0045*Wn,0,0.18),scly=1+clamp(Math.abs(s.Sy)*0.0045*Wn,0,0.18);el.setAttribute("transform",`translate(${cx} ${cy}) skewX(${skewX.toFixed(2)}) skewY(${skewY.toFixed(2)}) scale(${sclx.toFixed(3)} ${scly.toFixed(3)}) translate(${-cx} ${-cy})`);}}
       raf=requestAnimationFrame(tick);};
     raf=requestAnimationFrame(tick);
     return()=>cancelAnimationFrame(raf);
@@ -1232,19 +2180,12 @@ export default function FlowraEditor(){
       const r = await fetch(`${API_BASE}/diagrams/${encodeURIComponent(name)}`);
       if(!r.ok) return;
       const data = await r.json();
-      const snapNodes=(data.nodes||[]).map(n=>{
-        const isOp=n.type&&n.type.startsWith("operator");
-        const hw=isOp?24:NODE_W/2, hh=isOp?24:NODE_H/2;
-        return{...n,
-          x:Math.round((n.x+hw)/GRID)*GRID-hw,
-          y:Math.round((n.y+hh)/GRID)*GRID-hh
-        };
-      });
-      setNodes(snapNodes);
-      setEdges(data.edges||[]);
+      const loadedNodes=data.nodes||[], loadedEdges=data.edges||[];
+      setNodes(loadedNodes);
+      setEdges(loadedEdges);
       setDiagramName(name);
       setSelected(null);
-      pushHistory(data.nodes||[], data.edges||[]);
+      pushHistory(loadedNodes, loadedEdges);
       setShowProjects(false);
     } catch(e) { alert('Fehler beim Laden'); }
   };
@@ -1260,17 +2201,63 @@ export default function FlowraEditor(){
 
   const toCanvas=(cx,cy)=>({x:(cx-canvasOffset.x)/zoom,y:(cy-canvasOffset.y)/zoom});
 
-  const handleCanvasDrop=e=>{e.preventDefault();paletteDragRef.current=false;setIsPaletteDrag(false);setDrawingEdgeSynced(null);const type=e.dataTransfer.getData("epk-type"),label=e.dataTransfer.getData("epk-label");if(!type)return;const rect=svgRef.current.getBoundingClientRect();let{x,y}=toCanvas(e.clientX-rect.left,e.clientY-rect.top);const isOp=type.startsWith("operator");
-      // Snap the CENTER of the dropped element to grid, then get top-left
-      const hw=isOp?24:NODE_W/2, hh=isOp?24:NODE_H/2;
+  const handleCanvasDrop=e=>{e.preventDefault();paletteDragRef.current=false;setIsPaletteDrag(false);setDrawingEdgeSynced(null);
+      const type=e.dataTransfer.getData("epk-type"),paletteLabel=e.dataTransfer.getData("epk-label"),variant=e.dataTransfer.getData("epk-variant")||undefined;
+      if(!type)return;
+      const label=BPMN_DEFAULT_LABEL[type]!==undefined?BPMN_DEFAULT_LABEL[type]:paletteLabel;
+      const rect=svgRef.current.getBoundingClientRect();let{x,y}=toCanvas(e.clientX-rect.left,e.clientY-rect.top);
+      const{w:dw,h:dh}=getNodeSize({type});
+      const hw=dw/2, hh=dh/2;
       if(snapGrid){const g=GRID;x=Math.round(x/g)*g;y=Math.round(y/g)*g;}
-      x-=hw; y-=hh;const id=uid();const newNodes=[...nodes,{id,type,label,x,y}];setNodes(newNodes);pushHistory(newNodes,edges);setSelected({type:"node",id});nodesRef.current[id]={id,type,x,y};kick(id,0,26);};
+      x-=hw; y-=hh;const id=uid();
+      const node={id,type,label,x,y};
+      if(variant)node.variant=variant;
+      const newNodes=[...nodes,node];setNodes(newNodes);pushHistory(newNodes,edges);setSelected({type:"node",id});nodesRef.current[id]={id,type,x,y};kick(id,0,26);};
 
-  const handleNodeMouseDown=(e,id)=>{if(e.button!==0)return;e.stopPropagation();setSelected({type:"node",id});const node=nodes.find(n=>n.id===id);const rect=svgRef.current.getBoundingClientRect();const{x,y}=toCanvas(e.clientX-rect.left,e.clientY-rect.top);setDragging({id,offX:x-node.x,offY:y-node.y,moved:false});if(!springs.current[id])springs.current[id]={Sx:0,Sy:0,Vx:0,Vy:0,Tx:0,Ty:0};};
+  const handleNodeMouseDown=(e,id)=>{if(e.button!==0)return;e.stopPropagation();setSelected({type:"node",id});const node=nodes.find(n=>n.id===id);if(node.locked)return;const rect=svgRef.current.getBoundingClientRect();const{x,y}=toCanvas(e.clientX-rect.left,e.clientY-rect.top);setDragging({id,offX:x-node.x,offY:y-node.y,moved:false});if(!springs.current[id])springs.current[id]={Sx:0,Sy:0,Vx:0,Vy:0,Tx:0,Ty:0};};
   const handlePortMouseDown=(e,nodeId,dir)=>{e.stopPropagation();if(paletteDragRef.current)return;if(drawingEdgeRef.current)return;const rect=svgRef.current.getBoundingClientRect();const{x,y}=toCanvas(e.clientX-rect.left,e.clientY-rect.top);setDrawingEdgeSynced({fromId:nodeId,fromDir:dir,mouseX:x,mouseY:y,snapped:false,waypoints:[],snapLines});};
+  const handleResizeMouseDown=(e,node,handle)=>{
+    if(node.locked)return;
+    e.stopPropagation();e.preventDefault();
+    const rect=svgRef.current.getBoundingClientRect();
+    const{x,y}=toCanvas(e.clientX-rect.left,e.clientY-rect.top);
+    const{w,h}=getNodeSize(node);
+    const kind=getNodeKind(node.type);
+    const lockAspect=kind==="circle"||kind==="diamond";
+    resizeNodesRef.current=nodes;
+    setResizing({id:node.id,handle,startX:x,startY:y,startW:w,startH:h,startNX:node.x,startNY:node.y,lockAspect});
+  };
   const handlePortMouseUp=(e,nodeId,dir)=>{e.stopPropagation();portHandledRef.current=true;setTimeout(()=>{portHandledRef.current=false;},50);if(drawingEdge&&drawingEdge.fromId!==nodeId){const newEdges=[...edges,{id:uid(),from:drawingEdge.fromId,to:nodeId,fromDir:drawingEdge.fromDir,toDir:dir,label:"",waypoints:drawingEdge.waypoints||[]}];setEdges(newEdges);pushHistory(nodes,newEdges);kick(nodeId,0,14);}setDrawingEdgeSynced(null);setHoveredPort(null);};
 
-  const handleSVGMouseMove=e=>{const rect=svgRef.current.getBoundingClientRect();const{x,y}=toCanvas(e.clientX-rect.left,e.clientY-rect.top);if(dragging){let nx=x-dragging.offX,ny=y-dragging.offY;
+  const handleSVGMouseMove=e=>{const rect=svgRef.current.getBoundingClientRect();const{x,y}=toCanvas(e.clientX-rect.left,e.clientY-rect.top);
+    if(resizing){
+      const{id,handle,startX,startY,startW,startH,startNX,startNY,lockAspect}=resizing;
+      const dx=x-startX, dy=y-startY;
+      const MIN=24;
+      let nx=startNX, ny=startNY, nw=startW, nh=startH;
+      // Horizontal
+      if(handle.includes("e")) nw=Math.max(MIN,startW+dx);
+      if(handle.includes("w")){ nw=Math.max(MIN,startW-dx); nx=startNX+(startW-nw); }
+      // Vertikal
+      if(handle.includes("s")) nh=Math.max(MIN,startH+dy);
+      if(handle.includes("n")){ nh=Math.max(MIN,startH-dy); ny=startNY+(startH-nh); }
+      if(lockAspect){
+        // Quadratisch halten: größere Dimension gewinnt, Ankerpunkt bleibt erhalten
+        const size=Math.max(nw,nh);
+        nw=size; nh=size;
+        if(handle.includes("w"))nx=startNX+(startW-nw);
+        if(handle.includes("n"))ny=startNY+(startH-nh);
+      }
+      if(snapGrid){
+        const g=GRID;
+        nw=Math.round(nw/g)*g; nh=Math.round(nh/g)*g;
+        nx=Math.round(nx/g)*g; ny=Math.round(ny/g)*g;
+      }
+      setNodes(prev=>{const next=prev.map(n=>n.id===id?{...n,x:nx,y:ny,w:nw,h:nh,...(n.type==="text"?{hLocked:true}:{})}:n);resizeNodesRef.current=next;return next;});
+      return;
+    }
+    if(dragging){let nx=x-dragging.offX,ny=y-dragging.offY;
+      let snapW=null;
       // Alignment guides
       const dn=nodes.find(n=>n.id===dragging.id);
       if(dn){
@@ -1301,9 +2288,31 @@ export default function FlowraEditor(){
             else if(Math.abs(db-nb)<SNAP){gH=nb;ny=nb-dh;}
           }
         }
+        // Lane→Pool / Lane→Lane Snapping (großzügigere Snap-Distanz)
+        if(dn.type==="bpmn_lane"){
+          const PSNAP=20;
+          for(const n of nodes){
+            if(n.id===dragging.id) continue;
+            const{w:nw,h:nh}=getNodeSize(n);
+            if(n.type==="bpmn_pool"){
+              // Linke Kante der Lane an linke Kante des Pools + Breite übernehmen
+              if(Math.abs(nx-n.x)<PSNAP){nx=n.x;snapW=nw;if(gV===null)gV=n.x;}
+              // y: obere/untere Kante an Pool-Rand
+              if(gH===null&&Math.abs(ny-n.y)<PSNAP){ny=n.y;gH=n.y;}
+              if(gH===null&&Math.abs(ny-(n.y+nh))<PSNAP){ny=n.y+nh;gH=n.y+nh;}
+            } else if(n.type==="bpmn_lane"){
+              // Obere Kante der Lane an untere Kante einer anderen Lane (stapeln)
+              if(gH===null&&Math.abs(ny-(n.y+nh))<PSNAP){ny=n.y+nh;gH=n.y+nh;}
+              // Untere Kante der Lane an obere Kante einer anderen Lane
+              if(gH===null&&Math.abs(ny+dh-n.y)<PSNAP){ny=n.y-dh;gH=n.y;}
+              // Linke Kante + Breite an andere Lane angleichen
+              if(snapW===null&&Math.abs(nx-n.x)<PSNAP){nx=n.x;snapW=nw;if(gV===null)gV=n.x;}
+            }
+          }
+        }
         setGuides({h:gH,v:gV,active:gH!==null||gV!==null});
       }
-      setNodes(prev=>prev.map(n=>n.id===dragging.id?{...n,x:nx,y:ny}:n));if(!dragging.moved)setDragging(d=>({...d,moved:true}));const s=springs.current[dragging.id];if(s){s.Tx=clamp((e.movementX/zoom)*1.7,-80,80);s.Ty=clamp((e.movementY/zoom)*1.7,-80,80);}}if(panStart)setCanvasOffset({x:panStart.ox+(e.clientX-panStart.x),y:panStart.oy+(e.clientY-panStart.y)});if(drawingEdge){
+      setNodes(prev=>prev.map(n=>n.id===dragging.id?{...n,x:nx,y:ny,...(snapW!==null?{w:snapW}:{})}:n));if(!dragging.moved)setDragging(d=>({...d,moved:true}));const s=springs.current[dragging.id];if(s){s.Tx=clamp((e.movementX/zoom)*1.7,-80,80);s.Ty=clamp((e.movementY/zoom)*1.7,-80,80);}}if(panStart)setCanvasOffset({x:panStart.ox+(e.clientX-panStart.x),y:panStart.oy+(e.clientY-panStart.y)});if(drawingEdge){
     const wps=drawingEdge.waypoints||[];
     const useSnap=drawingEdge.snapLines; // stored at draw-start, no stale closure
     let ref;
@@ -1343,13 +2352,18 @@ export default function FlowraEditor(){
     setDrawingEdgeSynced(d=>({...d,mouseX:snapped.x,mouseY:snapped.y,snapped:!!snapped.straight,snapAxis:snapped.straight?snapped.axis:null,snapVal:snapped.straight?snapped.val:null}));
   }};
   const handleSVGMouseUp=()=>{
+    if(resizing){
+      pushHistory(resizeNodesRef.current||nodes,edges);
+      setResizing(null);
+      return;
+    }
     if(dragging&&dragging.moved){
       // Grid-Snap nur wenn kein Alignment-Guide aktiv war (sonst springt Element weg)
       if(snapGrid&&!guides.active){
         setNodes(prev=>prev.map(n=>{
           if(n.id!==dragging.id)return n;
-          const isOp=n.type.startsWith("operator");
-          const hw=isOp?24:NODE_W/2, hh=isOp?24:NODE_H/2;
+          const{w:nw,h:nh}=getNodeSize(n);
+          const hw=nw/2, hh=nh/2;
           const sx=Math.round((n.x+hw)/GRID)*GRID-hw;
           const sy=Math.round((n.y+hh)/GRID)*GRID-hh;
           return{...n,x:sx,y:sy};
@@ -1391,7 +2405,7 @@ export default function FlowraEditor(){
   };
   useEffect(()=>{const el=svgRef.current;if(!el)return;el.addEventListener("wheel",handleWheel,{passive:false});return()=>el.removeEventListener("wheel",handleWheel);});
 
-  const handleNodeDblClick=(e,id)=>{e.stopPropagation();const node=nodes.find(n=>n.id===id);setEditingId(id);setEditText(node.label);};
+  const handleNodeDblClick=(e,id)=>{e.stopPropagation();const node=nodes.find(n=>n.id===id);if(node.type==="image")return;setEditingId(id);setEditText(node.label);};
   const commitNodeEdit=()=>{if(!editingId)return;const newNodes=nodes.map(n=>n.id===editingId?{...n,label:editText}:n);setNodes(newNodes);pushHistory(newNodes,edges);setEditingId(null);};
   const commitEdgeEdit=()=>{if(!editingEdgeId)return;const newEdges=edges.map(e=>e.id===editingEdgeId?{...e,label:editEdgeText}:e);setEdges(newEdges);pushHistory(nodes,newEdges);setEditingEdgeId(null);};
 
@@ -1420,11 +2434,13 @@ export default function FlowraEditor(){
 
   const handleColorsChange=(type,key,val)=>{
     if(type==="__reset__"){setColors(themeColors(theme));return;}
-    if(type.startsWith("operator")){
-      setColors(prev=>({...prev,
-        operator_and:{...prev.operator_and,[key]:val},
-        operator_or:{...prev.operator_or,[key]:val},
-        operator_xor:{...prev.operator_xor,[key]:val}}));
+    const linked=ACCENT_LINKED[type];
+    if(linked){
+      setColors(prev=>{
+        const next={...prev};
+        for(const t of linked)next[t]={...prev[t],[key]:val};
+        return next;
+      });
       return;
     }
     setColors(prev=>({...prev,[type]:{...prev[type],[key]:val}}));
@@ -1458,31 +2474,142 @@ export default function FlowraEditor(){
         {showSettings&&<SettingsPanel theme={theme} onTheme={applyTheme} colors={colors} onColorsChange={handleColorsChange} snapGrid={snapGrid} onSnapGrid={setSnapGrid} showGrid={showGrid} onShowGrid={setShowGrid} wobble={wobble} onWobble={setWobble} snapLines={snapLines} onSnapLines={setSnapLines} onClose={()=>setShowSettings(false)} onFAQ={()=>{setShowSettings(false);setShowFAQ(true);}}/>}
 
         {/* PALETTE */}
-        <aside className="glass" style={{width:220,display:"flex",flexDirection:"column",overflowY:"auto",flexShrink:0,borderTop:"none",borderBottom:"none",borderLeft:"none",margin:12,marginRight:0,borderRadius:"var(--r-lg)"}}>
-          <div style={{padding:"18px 18px 12px",display:"flex",alignItems:"center",gap:9}}>
-            <span style={{width:9,height:9,borderRadius:3,background:"var(--emerald)",boxShadow:`0 0 10px ${rgba("#ddb878",0.8)}`}}/>
-            <span style={{fontSize:11,fontWeight:700,letterSpacing:2,color:"var(--muted)"}}>EPK ELEMENTE</span>
-          </div>
-          <div style={{padding:"4px 10px 10px",display:"flex",flexDirection:"column",gap:2}}>
-            {PALETTE.map(item=>{const isOp=item.type.startsWith("operator");const w=isOp?42:92,h=isOp?42:36;return(
-              <div key={item.type} className="pal-item" draggable 
-                onDragStart={e=>{
-                  paletteDragRef.current=true;
-                  setIsPaletteDrag(true);
-                  e.dataTransfer.setData("epk-type",item.type);
-                  e.dataTransfer.setData("epk-label",item.label);
-                  setDrawingEdgeSynced(null);
-                  setDragging(null);
-                  setHoveredPort(null);
-                }}
-                onDragEnd={()=>{paletteDragRef.current=false;setIsPaletteDrag(false);setDrawingEdgeSynced(null);}}
-                onMouseDown={e=>e.stopPropagation()} style={{padding:"8px 10px",display:"flex",alignItems:"center",gap:12}}>
-                <div style={{flexShrink:0,width:96,display:"flex",justifyContent:"center"}}><ShapeRenderer type={item.type} label="" width={w} height={h} colors={colors} fx={T.fx} preview/></div>
-                <div style={{minWidth:0}}><div style={{fontSize:12.5,fontWeight:600,color:"var(--text)"}}>{item.label}</div><div style={{fontSize:10.5,color:"var(--faint)",marginTop:1}}>{item.desc}</div></div>
-              </div>);
+        <aside className="glass" style={{width:240,display:"flex",flexDirection:"column",overflowY:"auto",flexShrink:0,borderTop:"none",borderBottom:"none",borderLeft:"none",margin:12,marginRight:0,borderRadius:"var(--r-lg)"}}>
+          <div style={{padding:"4px 6px 10px",display:"flex",flexDirection:"column",gap:4}}>
+            {LANGUAGES.map(lang=>{
+              const isOpen=!!openLangs[lang.id];
+              // BPMN: in Untergruppen (group) clustern; EPK: flache Liste
+              const grouped=lang.items.some(it=>it.group);
+              let groups=null;
+              if(grouped){
+                groups=[];
+                const seen=new Map();
+                for(const it of lang.items){
+                  const g=it.group||"";
+                  if(!seen.has(g)){seen.set(g,[]);groups.push([g,seen.get(g)]);}
+                  seen.get(g).push(it);
+                }
+              }
+              return(
+                <div key={lang.id} style={{borderRadius:"var(--r-md)",overflow:"hidden"}}>
+                  <div className="pal-lang-header" onClick={()=>toggleLang(lang.id)}
+                    style={{padding:"12px 14px",display:"flex",alignItems:"center",gap:9,cursor:"pointer",userSelect:"none"}}>
+                    <span style={{width:9,height:9,borderRadius:3,background:"var(--emerald)",boxShadow:`0 0 10px ${rgba("#ddb878",0.8)}`,flexShrink:0}}/>
+                    <span style={{fontSize:11,fontWeight:700,letterSpacing:2,color:"var(--muted)",flex:1}}>{lang.name.toUpperCase()}</span>
+                    <span style={{color:"var(--faint)",fontSize:11,transform:isOpen?"rotate(90deg)":"rotate(0deg)",transition:"transform .18s ease",display:"inline-block"}}>▸</span>
+                  </div>
+                  {isOpen&&(
+                    <div style={{padding:"2px 10px 10px",display:"flex",flexDirection:"column",gap:2}}>
+                      {!grouped&&lang.items.map((item,idx)=>{const isOp=item.type.startsWith("operator");const w=isOp?42:92,h=isOp?42:36;return(
+                        <div key={item.type+idx} className="pal-item" draggable
+                          onDragStart={e=>{
+                            paletteDragRef.current=true;
+                            setIsPaletteDrag(true);
+                            e.dataTransfer.setData("epk-type",item.type);
+                            e.dataTransfer.setData("epk-label",item.label);
+                            if(item.variant)e.dataTransfer.setData("epk-variant",item.variant);
+                            setDrawingEdgeSynced(null);
+                            setDragging(null);
+                            setHoveredPort(null);
+                          }}
+                          onDragEnd={()=>{paletteDragRef.current=false;setIsPaletteDrag(false);setDrawingEdgeSynced(null);}}
+                          onMouseDown={e=>e.stopPropagation()} style={{padding:"8px 10px",display:"flex",alignItems:"center",gap:12}}>
+                          <div style={{flexShrink:0,width:96,display:"flex",justifyContent:"center"}}><ShapeRenderer type={item.type} label="" width={w} height={h} colors={colors} fx={T.fx} variant={item.variant} preview/></div>
+                          <div style={{minWidth:0}}><div style={{fontSize:12.5,fontWeight:600,color:"var(--text)"}}>{item.label}</div></div>
+                        </div>);
+                      })}
+                      {grouped&&groups.map(([groupName,items])=>{
+                        const gKey=lang.id+":"+groupName;
+                        const gOpen=openGroups[gKey]!==false; // default open
+                        return(
+                          <div key={gKey} style={{marginTop:2}}>
+                            <div className="pal-group-header" onClick={()=>toggleGroup(gKey)}
+                              style={{padding:"7px 6px",display:"flex",alignItems:"center",gap:6,cursor:"pointer",userSelect:"none"}}>
+                              <span style={{color:"var(--faint)",fontSize:9,transform:gOpen?"rotate(90deg)":"rotate(0deg)",transition:"transform .18s ease",display:"inline-block"}}>▸</span>
+                              <span style={{fontSize:10,fontWeight:700,letterSpacing:1.2,color:"var(--faint)"}}>{groupName.toUpperCase()}</span>
+                            </div>
+                            {gOpen&&items.map((item,idx)=>{const w=64,h=64;return(
+                              <div key={item.type+(item.variant||"")+idx} className="pal-item" draggable
+                                onDragStart={e=>{
+                                  paletteDragRef.current=true;
+                                  setIsPaletteDrag(true);
+                                  e.dataTransfer.setData("epk-type",item.type);
+                                  e.dataTransfer.setData("epk-label",item.label);
+                                  if(item.variant)e.dataTransfer.setData("epk-variant",item.variant);
+                                  setDrawingEdgeSynced(null);
+                                  setDragging(null);
+                                  setHoveredPort(null);
+                                }}
+                                onDragEnd={()=>{paletteDragRef.current=false;setIsPaletteDrag(false);setDrawingEdgeSynced(null);}}
+                                onMouseDown={e=>e.stopPropagation()} style={{padding:"6px 10px",display:"flex",alignItems:"center",gap:12}}>
+                                <div style={{flexShrink:0,width:48,height:48,display:"flex",justifyContent:"center",alignItems:"center"}}><ShapeRenderer type={item.type} label="" width={w} height={h} colors={colors} fx={T.fx} variant={item.variant} preview/></div>
+                                <div style={{minWidth:0}}><div style={{fontSize:12,fontWeight:600,color:"var(--text)"}}>{item.label}</div></div>
+                              </div>);
+                            })}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
             })}
           </div>
           <div style={{marginTop:"auto",padding:"14px 18px",borderTop:"1px solid var(--border)"}}>
+            {/* Bild hochladen */}
+            <label className="pal-item" style={{display:"flex",alignItems:"center",gap:8,padding:"9px 12px",borderRadius:"var(--r-md)",background:"var(--glass)",border:"1px solid var(--border)",cursor:"pointer",marginBottom:10,color:"var(--muted)",fontSize:12.5,fontWeight:600}}>
+              <span style={{fontSize:16}}>🖼</span>
+              <span>Bild einfügen</span>
+              <input type="file" accept="image/png,image/jpeg" style={{display:"none"}}
+                onChange={e=>{
+                  const file=e.target.files?.[0];
+                  if(!file)return;
+                  const reader=new FileReader();
+                  reader.onload=ev=>{
+                    try{
+                      const src=ev.target.result;
+                      const imgEl=document.createElement('img');
+                      imgEl.onload=()=>{
+                        try{
+                          const maxW=400,maxH=300;
+                          let iw=imgEl.naturalWidth||200,ih=imgEl.naturalHeight||150;
+                          if(iw>maxW){ih=Math.round(ih*(maxW/iw));iw=maxW;}
+                          if(ih>maxH){iw=Math.round(iw*(maxH/ih));ih=maxH;}
+                          const id=`n${Date.now().toString(36)}${Math.random().toString(36).slice(2,7)}`;
+                          const cvx=Math.round(-canvasOffset.x/zoom)+40;
+                          const cvy=Math.round(-canvasOffset.y/zoom)+40;
+                          const newNode={id,type:"image",label:"",src,x:cvx,y:cvy,w:iw,h:ih};
+                          const newNodes=[...nodes,newNode];
+                          setNodes(newNodes);
+                          pushHistory(newNodes,edges);
+                          setSelected({type:"node",id});
+                        }catch(err){console.error("image insert error:",err);}
+                      };
+                      imgEl.onerror=()=>{console.error("image load error");};
+                      imgEl.src=src;
+                    }catch(err){console.error("reader error:",err);}
+                  };
+                  reader.readAsDataURL(file);
+                  e.target.value="";
+                }}/>
+            </label>
+            {/* Freier Text */}
+            <div className="pal-item" onClick={()=>{
+                const cvx=Math.round(-canvasOffset.x/zoom)+40;
+                const cvy=Math.round(-canvasOffset.y/zoom)+40;
+                const id=`n${Date.now().toString(36)}${Math.random().toString(36).slice(2,7)}`;
+                const newNode={id,type:"text",label:"Text",x:cvx,y:cvy,w:140,h:24};
+                const newNodes=[...nodes,newNode];
+                setNodes(newNodes);
+                pushHistory(newNodes,edges);
+                setSelected({type:"node",id});
+                setEditingId(id);
+                setEditText("Text");
+              }}
+              style={{display:"flex",alignItems:"center",gap:8,padding:"9px 12px",borderRadius:"var(--r-md)",background:"var(--glass)",border:"1px solid var(--border)",cursor:"pointer",marginBottom:14,color:"var(--muted)",fontSize:12.5,fontWeight:600}}>
+              <span style={{fontSize:15,fontWeight:800,fontFamily:"serif"}}>T</span>
+              <span>Freier Text</span>
+            </div>
             <div style={{fontSize:10,color:"var(--faint)",lineHeight:1.9}}>
               <div style={{color:"var(--muted)",fontWeight:700,marginBottom:5,letterSpacing:1}}>SHORTCUTS</div>
               {[["Drag","→ Canvas"],["Port ziehen","Verbinden"],["Doppelklick","Umbenennen"],["Entf","Löschen"],["Strg+S","Speichern"],["Strg+Z / Y","Undo / Redo"],["Strg+C / V","Kopieren"],["Ziehen / Pfeiltasten","Pan"],["Scroll","Zoom"]].map(([k,v])=>(
@@ -1578,13 +2705,61 @@ export default function FlowraEditor(){
               })()}
               {showGrid&&<rect className="pan-bg" width="100%" height="100%" fill="url(#grid)"/>}
               <g transform={`translate(${canvasOffset.x},${canvasOffset.y}) scale(${zoom})`}>
+                {/* Schicht 1: Pools und Lanes – immer ganz hinten, ohne filter (verhindert Compositing-Layer-Promotion in Qt-WebEngine) */}
+                {nodes.filter(n=>n.type==="bpmn_pool"||n.type==="bpmn_lane").map(node=>{
+                  const{w,h}=getNodeSize(node);
+                  const isSel=selected?.type==="node"&&selected.id===node.id;
+                  const showPorts=(node.type!=="image")&&!isPaletteDrag&&(isSel||!!drawingEdge||hoverNode===node.id);
+                  const isDrawTarget=drawingEdge&&!isSel&&hoverNode===node.id&&drawingEdge.fromId!==node.id;
+                  return(
+                    <g key={node.id} transform={`translate(${node.x},${node.y})`}
+                      onMouseDown={e=>handleNodeMouseDown(e,node.id)}
+                      onDoubleClick={e=>handleNodeDblClick(e,node.id)}
+                      onMouseEnter={()=>setHoverNode(node.id)}
+                      onMouseLeave={()=>setHoverNode(h=>h===node.id?null:h)}
+                      style={{cursor:node.locked?"default":"move"}}>
+                      {isDrawTarget&&<rect x={-10} y={-10} width={w+20} height={h+20} rx={18} fill="none" stroke="var(--accent)" strokeWidth={2} opacity={0.7} style={{animation:"ringpulse 1s ease-in-out infinite"}}/>}
+                      <g ref={el=>{if(el)wobbleRefs.current[node.id]=el;else delete wobbleRefs.current[node.id];}}>
+                        <ShapeRenderer type={node.type} label={editingId===node.id?"":node.label} width={w} height={h} selected={isSel} colors={colors} fx={T.fx} override={node.color} variant={node.variant} noFilter={true}/>
+                        {node.locked&&<g transform={`translate(${w-22},6)`} style={{pointerEvents:"none"}}>
+                          <rect x={-3} y={-3} width={20} height={20} rx={4} fill="rgba(0,0,0,0.45)"/>
+                          <svg viewBox="0 0 24 24" width={14} height={14} fill="none" stroke="rgba(255,255,255,0.85)" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" x={0} y={0}>{ICON_PATHS.lock}</svg>
+                        </g>}
+                        {showPorts&&getAllPorts(node).map(port=>{
+                          const hov=hoveredPort?.nodeId===node.id&&hoveredPort?.dir===port.dir;
+                          return(<circle key={port.dir} className="port-dot" cx={port.x-node.x} cy={port.y-node.y} r={hov?8.5:6}
+                            fill={drawingEdge?"#dd9189":accentOf(node.type)} stroke="#05060a" strokeWidth={1.6}
+                            onMouseDown={e=>handlePortMouseDown(e,node.id,port.dir)}
+                            onMouseUp={e=>handlePortMouseUp(e,node.id,port.dir)}
+                            onMouseEnter={()=>setHoveredPort({nodeId:node.id,dir:port.dir})}
+                            onMouseLeave={()=>setHoveredPort(null)}/>);
+                        })}
+                        {isSel&&!drawingEdge&&(()=>{
+                          const handles=[
+                            {h:"nw",x:0,y:0,cursor:"nwse-resize"},{h:"ne",x:w,y:0,cursor:"nesw-resize"},
+                            {h:"sw",x:0,y:h,cursor:"nesw-resize"},{h:"se",x:w,y:h,cursor:"nwse-resize"},
+                            {h:"n",x:w/2,y:0,cursor:"ns-resize"},{h:"s",x:w/2,y:h,cursor:"ns-resize"},
+                            {h:"w",x:0,y:h/2,cursor:"ew-resize"},{h:"e",x:w,y:h/2,cursor:"ew-resize"},
+                          ];
+                          return handles.map(hd=>(
+                            <rect key={hd.h} x={hd.x-5} y={hd.y-5} width={10} height={10} rx={2}
+                              fill="var(--bg)" stroke="var(--accent)" strokeWidth={1.6}
+                              style={{cursor:hd.cursor}}
+                              onMouseDown={e=>handleResizeMouseDown(e,node,hd.h)}/>
+                          ));
+                        })()}
+                      </g>
+                    </g>);
+                })}
+                {/* Schicht 2: Pfeile/Kanten – über Pools/Lanes, unter normalen Elementen */}
                 {edges.map(edge=>{const a=nodeMap[edge.from],b=nodeMap[edge.to];if(!a||!b)return null;const p1=edge.fromDir?getPortPoint(a,edge.fromDir):getClosestPorts(a,b).p1;const p2=edge.toDir?getPortPoint(b,edge.toDir):getClosestPorts(a,b).p2;return<Arrow key={edge.id} from={p1} to={p2} selected={selected?.type==="edge"&&selected.id===edge.id} label={edge.label||""} lineStyle={edge.lineStyle||"arrow"} isSnapped={false} waypoints={edge.waypoints||[]} ortho={snapLines} onClickEdge={e=>{e.stopPropagation();setSelected({type:"edge",id:edge.id});}} onDblClickLabel={()=>{setEditingEdgeId(edge.id);setEditEdgeText(edge.label||"");}}/>;
                 })}
                 {drawingEdge&&(()=>{const fromNode=nodes.find(n=>n.id===drawingEdge.fromId);if(!fromNode)return null;const fp=getPortPoint(fromNode,drawingEdge.fromDir);return<Arrow from={fp} to={{x:drawingEdge.mouseX,y:drawingEdge.mouseY}} drawing selected={false} isSnapped={drawingEdge.snapped} waypoints={drawingEdge.waypoints||[]} label="" onClickEdge={()=>{}}/>;})()}
-                {nodes.map(node=>{
+                {/* Schicht 3: Alle anderen Elemente – immer vor Pools/Lanes */}
+                {nodes.filter(n=>n.type!=="bpmn_pool"&&n.type!=="bpmn_lane").map(node=>{
                   const{w,h}=getNodeSize(node);
                   const isSel=selected?.type==="node"&&selected.id===node.id;
-                  const showPorts=!isPaletteDrag&&(isSel||!!drawingEdge||hoverNode===node.id);
+                  const showPorts=(node.type!=="image")&&!isPaletteDrag&&(isSel||!!drawingEdge||hoverNode===node.id);
                   const isDrawTarget=drawingEdge&&!isSel&&hoverNode===node.id&&drawingEdge.fromId!==node.id;
                   return(
                     <g key={node.id} transform={`translate(${node.x},${node.y})`}
@@ -1598,7 +2773,7 @@ export default function FlowraEditor(){
                       :<rect x={-10} y={-10} width={(node.w||NODE_W)+20} height={(node.h||NODE_H)+20} rx={18} fill="none" stroke="var(--accent)" strokeWidth={2} opacity={0.7} style={{animation:"ringpulse 1s ease-in-out infinite"}}/>
                     )}
                     <g ref={el=>{if(el)wobbleRefs.current[node.id]=el;else delete wobbleRefs.current[node.id];}}>
-                        <ShapeRenderer type={node.type} label={editingId===node.id?"":node.label} width={w} height={h} selected={isSel} colors={colors} fx={T.fx} override={node.color}/>
+                        <ShapeRenderer type={node.type} label={editingId===node.id?"":node.label} width={w} height={h} selected={isSel} colors={colors} fx={T.fx} override={node.color} variant={node.variant} nodeSrc={node.src}/>
                         {showPorts&&getAllPorts(node).map(port=>{
                           const hov=hoveredPort?.nodeId===node.id&&hoveredPort?.dir===port.dir;
                           return(<circle key={port.dir} className="port-dot" cx={port.x-node.x} cy={port.y-node.y} r={hov?8.5:6}
@@ -1609,6 +2784,28 @@ export default function FlowraEditor(){
                             onMouseEnter={()=>setHoveredPort({nodeId:node.id,dir:port.dir})}
                             onMouseLeave={()=>setHoveredPort(null)}/>);
                         })}
+                        {isSel&&!drawingEdge&&(()=>{
+                          const kind=getNodeKind(node.type);
+                          const corners=[
+                            {h:"nw",x:0,y:0,cursor:"nwse-resize"},
+                            {h:"ne",x:w,y:0,cursor:"nesw-resize"},
+                            {h:"sw",x:0,y:h,cursor:"nesw-resize"},
+                            {h:"se",x:w,y:h,cursor:"nwse-resize"},
+                          ];
+                          const edgesH=kind==="rect"?[
+                            {h:"n",x:w/2,y:0,cursor:"ns-resize"},
+                            {h:"s",x:w/2,y:h,cursor:"ns-resize"},
+                            {h:"w",x:0,y:h/2,cursor:"ew-resize"},
+                            {h:"e",x:w,y:h/2,cursor:"ew-resize"},
+                          ]:[];
+                          const handles=[...corners,...edgesH];
+                          return handles.map(hd=>(
+                            <rect key={hd.h} x={hd.x-5} y={hd.y-5} width={10} height={10} rx={2}
+                              fill="var(--bg)" stroke="var(--accent)" strokeWidth={1.6}
+                              style={{cursor:hd.cursor,filter:"drop-shadow(0 0 4px var(--accent-glow))"}}
+                              onMouseDown={e=>handleResizeMouseDown(e,node,hd.h)}/>
+                          ));
+                        })()}
                       </g>
                     </g>);
                 })}
@@ -1623,7 +2820,7 @@ export default function FlowraEditor(){
         {/* PROPERTIES */}
         <aside className="glass" style={{width:208,display:"flex",flexDirection:"column",gap:12,flexShrink:0,margin:12,marginLeft:0,padding:"18px 16px",borderRadius:"var(--r-lg)"}}>
           <div style={{fontSize:11,fontWeight:700,letterSpacing:2,color:"var(--muted)"}}>EIGENSCHAFTEN</div>
-          {selected?.type==="node"&&(()=>{const node=nodes.find(n=>n.id===selected.id);if(!node)return null;const item=PALETTE.find(p=>p.type===node.type);const acc=accentOf(node.type);return(
+          {selected?.type==="node"&&(()=>{const node=nodes.find(n=>n.id===selected.id);if(!node)return null;const item=PALETTE.find(p=>p.type===node.type&&p.variant===node.variant)||PALETTE.find(p=>p.type===node.type);const acc=accentOf(node.type);if(node.type==="image")return(<div style={{padding:"18px 16px",display:"flex",flexDirection:"column",gap:10}}><div style={{fontSize:11,fontWeight:700,letterSpacing:1.4,color:"var(--faint)",marginBottom:4}}>BILD</div><div style={{fontSize:12,color:"var(--muted)"}}>Bild-Elemente können verschoben, skaliert und gelöscht werden.</div><label style={{display:"flex",alignItems:"center",gap:8,padding:"8px 12px",borderRadius:"var(--r-md)",background:"var(--glass)",border:"1px solid var(--border)",cursor:"pointer",color:"var(--muted)",fontSize:12,fontWeight:600}}><span>🔄 Bild ersetzen</span><input type="file" accept="image/png,image/jpeg" style={{display:"none"}} onChange={ev=>{const file=ev.target.files?.[0];if(!file)return;const rd=new FileReader();rd.onload=e2=>{const nn=nodes.map(n=>n.id===node.id?{...n,src:e2.target.result}:n);setNodes(nn);pushHistory(nn,edges);};rd.readAsDataURL(file);ev.target.value="";}}/></label><div onClick={()=>{const nn=nodes.map(n=>n.id===node.id?{...n,locked:!n.locked}:n);setNodes(nn);pushHistory(nn,edges);}} style={{display:"flex",alignItems:"center",gap:8,padding:"8px 11px",borderRadius:8,cursor:"pointer",background:node.locked?"color-mix(in oklab,var(--accent) 12%,var(--glass))":"var(--glass)",border:`1px solid ${node.locked?"var(--accent)":"var(--border)"}`,color:node.locked?"var(--accent)":"var(--muted)",transition:"all .15s",userSelect:"none"}}><Icon name={node.locked?"lock":"unlock"} size={13}/><span style={{fontSize:12,fontWeight:600}}>{node.locked?"Gesperrt – klicken zum Entsperren":"Position sperren"}</span></div></div>);return(
             <div className="pop-in" style={{display:"flex",flexDirection:"column",gap:9}}>
               <div style={{display:"flex",alignItems:"center",gap:9,padding:"10px 12px",background:"var(--glass)",borderRadius:"var(--r-md)",border:"1px solid var(--border)"}}>
                 <span style={{width:10,height:10,borderRadius:3,background:acc,boxShadow:`0 0 8px ${rgba(acc,0.8)}`}}/>
@@ -1632,6 +2829,14 @@ export default function FlowraEditor(){
               <div style={{fontSize:11,color:"var(--faint)",marginTop:2}}>Bezeichnung</div>
               <textarea value={node.label} onChange={e=>setNodes(prev=>prev.map(n=>n.id===node.id?{...n,label:e.target.value}:n))} onBlur={()=>pushHistory(nodes,edges)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey)e.preventDefault();}} rows={Math.max(2,(node.label.match(/\n/g)||[]).length+1)} style={{background:"var(--glass)",border:"1px solid var(--border)",borderRadius:8,color:"var(--text)",padding:"8px 10px",fontSize:12.5,width:"100%",resize:"none",lineHeight:1.4,fontFamily:FONT}}/>
               <div style={{fontSize:10,color:"var(--dim)"}}>Shift+Enter = neue Zeile</div>
+              <div onClick={()=>{const nn=nodes.map(n=>n.id===node.id?{...n,locked:!n.locked}:n);setNodes(nn);pushHistory(nn,edges);}}
+                style={{display:"flex",alignItems:"center",gap:8,padding:"8px 11px",borderRadius:8,cursor:"pointer",
+                  background:node.locked?"color-mix(in oklab,var(--accent) 12%,var(--glass))":"var(--glass)",
+                  border:`1px solid ${node.locked?"var(--accent)":"var(--border)"}`,
+                  color:node.locked?"var(--accent)":"var(--muted)",transition:"all .15s",marginTop:4,userSelect:"none"}}>
+                <Icon name={node.locked?"lock":"unlock"} size={13}/>
+                <span style={{fontSize:12,fontWeight:600}}>{node.locked?"Gesperrt – klicken zum Entsperren":"Position sperren"}</span>
+              </div>
               <div style={{fontSize:11,color:"var(--faint)",marginTop:4}}>Breite</div>
               <div style={{display:"flex",alignItems:"center",gap:6}}>
                 <input type="range" min={80} max={300} value={node.w||NODE_W} step={5} onChange={e=>setNodes(prev=>prev.map(n=>n.id===node.id?{...n,w:Number(e.target.value)}:n))} onMouseUp={()=>pushHistory(nodes,edges)} style={{flex:1,accentColor:"var(--emerald)",cursor:"pointer"}}/>
@@ -1660,19 +2865,39 @@ export default function FlowraEditor(){
             </div>);})()} 
           {selected?.type==="edge"&&(()=>{const edge=edges.find(e=>e.id===selected.id);if(!edge)return null;
             const ls=edge.lineStyle||"arrow";
-            const lineTypes=[{id:"arrow",label:"→ Pfeil"},{id:"dashed",label:"- - → Gestrichelt"},{id:"dashed-line",label:"- - - Gestrichelt (kein Pfeil)"},{id:"line",label:"—— Linie"}];
+            const lineTypes=[
+              {id:"arrow",label:"→ Sequenzfluss",group:"EPK / BPMN"},
+              {id:"dashed",label:"- - → Gestrichelt",group:"EPK"},
+              {id:"dashed-line",label:"- - - Gestrichelt (kein Pfeil)",group:"EPK"},
+              {id:"line",label:"—— Linie",group:"EPK"},
+              {id:"default-flow",label:"/→ Standardfluss",group:"BPMN"},
+              {id:"conditional-flow",label:"◇→ Bedingter Fluss",group:"BPMN"},
+              {id:"message",label:"o- -▷ Nachrichtenfluss",group:"BPMN"},
+              {id:"association",label:"··▷ Assoziation (gerichtet)",group:"BPMN"},
+              {id:"association-line",label:"···· Assoziation",group:"BPMN"},
+            ];
+            const ltGroups=[];
+            const seenG=new Map();
+            for(const lt of lineTypes){if(!seenG.has(lt.group)){seenG.set(lt.group,[]);ltGroups.push([lt.group,seenG.get(lt.group)]);}seenG.get(lt.group).push(lt);}
             return(
             <div className="pop-in" style={{display:"flex",flexDirection:"column",gap:9}}>
               <div style={{fontSize:13,fontWeight:600,color:"var(--text)"}}>Kontrollfluss</div>
               <div style={{fontSize:11,color:"var(--faint)"}}>Linientyp</div>
-              <div style={{display:"flex",flexDirection:"column",gap:4}}>
-                {lineTypes.map(lt=>(
-                  <div key={lt.id} onClick={()=>{const ne=edges.map(ed=>ed.id===edge.id?{...ed,lineStyle:lt.id}:ed);setEdges(ne);pushHistory(nodes,ne);}}
-                    style={{padding:"7px 10px",borderRadius:8,cursor:"pointer",fontSize:12,fontWeight:600,
-                      background:ls===lt.id?rgba("#ddb878",0.15):"var(--glass)",
-                      border:`1px solid ${ls===lt.id?"#ddb878":"var(--border)"}`,
-                      color:ls===lt.id?"#ddb878":"var(--muted)",transition:"all .15s"}}>
-                    {lt.label}
+              <div style={{display:"flex",flexDirection:"column",gap:6}}>
+                {ltGroups.map(([groupName,items])=>(
+                  <div key={groupName}>
+                    <div style={{fontSize:9.5,fontWeight:700,letterSpacing:1,color:"var(--dim)",margin:"4px 0 3px"}}>{groupName.toUpperCase()}</div>
+                    <div style={{display:"flex",flexDirection:"column",gap:4}}>
+                      {items.map(lt=>(
+                        <div key={lt.id} onClick={()=>{const ne=edges.map(ed=>ed.id===edge.id?{...ed,lineStyle:lt.id}:ed);setEdges(ne);pushHistory(nodes,ne);}}
+                          style={{padding:"7px 10px",borderRadius:8,cursor:"pointer",fontSize:12,fontWeight:600,
+                            background:ls===lt.id?rgba("#ddb878",0.15):"var(--glass)",
+                            border:`1px solid ${ls===lt.id?"#ddb878":"var(--border)"}`,
+                            color:ls===lt.id?"#ddb878":"var(--muted)",transition:"all .15s"}}>
+                          {lt.label}
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 ))}
               </div>
