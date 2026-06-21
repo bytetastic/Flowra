@@ -271,6 +271,55 @@ function Icon({name,size=15,strokeWidth=2}){
 
 
 // Shape kind: "circle" (round ports), "diamond" (BPMN gateways), "rect" (default)
+// ─── Mini-Markdown-Parser für Freitext-Elemente ────────────────────────────
+// Unterstützt: # ## ### Überschriften, **fett**, *kursiv*, - / * Listen
+// Gibt pro Zeile { runs:[{text,bold,italic}], fontSize, fontWeight, bullet, indent } zurück
+function parseInlineMd(str){
+  // Zerlegt einen Zeilen-String in Runs mit bold/italic basierend auf ** und *
+  const runs=[];
+  let rest=str;
+  const re=/(\*\*\*([^*]+)\*\*\*)|(\*\*([^*]+)\*\*)|(\*([^*]+)\*)/;
+  while(rest.length){
+    const m=re.exec(rest);
+    if(!m){runs.push({text:rest,bold:false,italic:false});break;}
+    if(m.index>0)runs.push({text:rest.slice(0,m.index),bold:false,italic:false});
+    if(m[2]!==undefined)runs.push({text:m[2],bold:true,italic:true});
+    else if(m[4]!==undefined)runs.push({text:m[4],bold:true,italic:false});
+    else if(m[6]!==undefined)runs.push({text:m[6],bold:false,italic:true});
+    rest=rest.slice(m.index+m[0].length);
+  }
+  return runs.length?runs:[{text:"",bold:false,italic:false}];
+}
+function parseMarkdownLines(text){
+  const rawLines=(text||"").split("\n");
+  return rawLines.map(line=>{
+    let l=line;
+    let fontSize=1, fontWeight="600", bullet=false, indent=0;
+    // Führende Leerzeichen/Tabs vor Listenpunkten zulassen (verschachtelte Listen)
+    const trimmed=l.replace(/^[ \t]+/,"");
+    const leadWs=l.length-trimmed.length;
+    const h3=/^###\s+(.*)/.exec(l);
+    const h2=/^##\s+(.*)/.exec(l);
+    const h1=/^#\s+(.*)/.exec(l);
+    const li=/^[-*]\s+(.*)/.exec(trimmed);
+    if(h1){l=h1[1];fontSize=1.7;fontWeight="800";}
+    else if(h2){l=h2[1];fontSize=1.4;fontWeight="800";}
+    else if(h3){l=h3[1];fontSize=1.18;fontWeight="700";}
+    else if(li){l=li[1];bullet=true;const level=Math.round(leadWs/4);indent=16+level*24;}
+    return{runs:parseInlineMd(l),fontSize,fontWeight,bullet,indent};
+  });
+}
+// Berechnet die Gesamthöhe eines Markdown-Freitexts (für Auto-Resize der Node-Box)
+function measureTextNodeHeight(label,baseFs){
+  const mdLines=parseMarkdownLines(label||"Text");
+  let cursorY=baseFs*(mdLines[0]?.fontSize||1);
+  for(let i=0;i<mdLines.length;i++){
+    const fs=baseFs*mdLines[i].fontSize;
+    if(i<mdLines.length-1)cursorY+=fs*1.45;
+  }
+  return Math.ceil(cursorY+baseFs*0.5);
+}
+
 function getNodeKind(type){
   if(type.startsWith("operator"))return"circle";
   if(type.startsWith("bpmn_event_")||type==="bpmn_start_event"||type==="bpmn_end_event"||type==="bpmn_intermediate_event")return"circle";
@@ -288,8 +337,14 @@ function getNodeSize(node){
   else if(node.type==="bpmn_group"){dw=200;dh=140;}
   else if(node.type==="bpmn_pool"){dw=480;dh=160;}
   else if(node.type==="bpmn_lane"){dw=480;dh=120;}
+  else if(node.type==="image"){dw=node.w||200;dh=node.h||150;}
+  else if(node.type==="text"){
+    dw=node.w||220;
+    // Höhe folgt automatisch dem Markdown-Inhalt, außer manuell per Resize fixiert
+    dh=node.hLocked?(node.h||24):measureTextNodeHeight(node.label,14);
+  }
   else{dw=NODE_W;dh=NODE_H;}
-  return{w:node.w||dw,h:node.h||dh};
+  return{w:node.w||dw,h:node.type==="text"?dh:(node.h||dh)};
 }
 
 function getPortPoint(node,dir){
@@ -378,7 +433,7 @@ function snapAngle(fromX,fromY,toX,toY){
 }
 
 // ─── ShapeRenderer (transluzente Füllung + Glow, theme-FX-gesteuert) ───────
-function ShapeRenderer({type,label,width=NODE_W,height=NODE_H,selected,dimmed,colors,preview,override,fx,variant,noFilter}){
+function ShapeRenderer({type,label,width=NODE_W,height=NODE_H,selected,dimmed,colors,preview,override,fx,variant,noFilter,nodeSrc}){
   const F=fx||DEFAULT_FX;
   const base=(colors&&colors[type])||DEFAULT_COLORS[type]||{accent:"#aac6f0",text:"#f6f5fa"};
   const c=override?{...base,accent:override}:base;
@@ -387,7 +442,7 @@ function ShapeRenderer({type,label,width=NODE_W,height=NODE_H,selected,dimmed,co
   const fillId=`f${gid}`,sheenId=`s${gid}`;
   const opacity=dimmed?0.28:1;
   const isOp=type.startsWith("operator");
-  const fontSize=isOp?13:(label&&label.length>16?11:12.5);
+  const fontSize=type==="text"?14:isOp?13:(label&&label.length>16?11:12.5);
   const baseShadow=`drop-shadow(0 2px 6px rgba(0,0,0,0.35))`;
   const glow=selected
     ?`drop-shadow(0 0 2px ${rgba(accent,0.75)}) drop-shadow(0 0 11px ${rgba(accent,0.4)})`
@@ -623,9 +678,7 @@ function ShapeRenderer({type,label,width=NODE_W,height=NODE_H,selected,dimmed,co
         <circle cx={cx} cy={cy} r={r} fill={`url(#${sheenId})`} opacity={opacity}/>
         {innerRing}
         {marker}
-        {!marker&&!label&&null}
-        {label&&!marker&&textEl}
-        {label&&marker&&(
+        {label&&(
           <text x={width/2} y={height+12} textAnchor="middle"
             fill={txt} fontSize={10.5} fontWeight="600" fontFamily={FONT}
             style={{pointerEvents:"none",userSelect:"none"}}>{label}</text>
@@ -661,15 +714,19 @@ function ShapeRenderer({type,label,width=NODE_W,height=NODE_H,selected,dimmed,co
           <line x1={cx-s*0.7} y1={cy+s*0.7} x2={cx+s*0.7} y2={cy-s*0.7}/>
         </g>;
       }else if(type.startsWith("bpmn_gateway_event")||type==="bpmn_gateway_exclusive_event"||type==="bpmn_gateway_parallel_event"){
-        const filled=type!=="bpmn_gateway_event";
-        const r1=s*0.95,r2=s*0.7;
+        const r1=s*0.95,r2=s*0.62;
+        // Pentagon-Punkte für das Standard ereignisbasierte Gateway
+        const pentaPts=[...Array(5)].map((_,i)=>{
+          const a=(i/5)*2*Math.PI-Math.PI/2;
+          return `${cx+Math.cos(a)*r2},${cy+Math.sin(a)*r2}`;
+        }).join(" ");
         marker=<g opacity={opacity}>
           <circle cx={cx} cy={cy} r={r1} fill="none" stroke={accent} strokeWidth={1.6}/>
           {type==="bpmn_gateway_exclusive_event"
             ?<path d={`M${cx},${cy-r2} L${cx+r2*0.87},${cy+r2*0.5} L${cx-r2*0.87},${cy+r2*0.5} Z`} fill="none" stroke={accent} strokeWidth={1.6}/>
             :type==="bpmn_gateway_parallel_event"
             ?<g stroke={accent} strokeWidth={1.8}><line x1={cx} y1={cy-r2} x2={cx} y2={cy+r2}/><line x1={cx-r2} y1={cy} x2={cx+r2} y2={cy}/></g>
-            :<path d={`M${cx},${cy-r2} L${cx+r2*0.87},${cy+r2*0.5} L${cx-r2*0.87},${cy+r2*0.5} Z`} fill={accent} stroke="none"/>
+            :<polygon points={pentaPts} fill="none" stroke={accent} strokeWidth={1.6} strokeLinejoin="round"/>
           }
         </g>;
       }
@@ -779,6 +836,54 @@ function ShapeRenderer({type,label,width=NODE_W,height=NODE_H,selected,dimmed,co
       </svg>;
     }
 
+    case "text":{
+      const baseFs=fontSize||14;
+      const mdLines=parseMarkdownLines(label||"Text");
+      const lineHs=mdLines.map(ml=>baseFs*ml.fontSize*1.45);
+      let cursorY=baseFs*(mdLines[0]?.fontSize||1);
+      const tspanRows=mdLines.map((ml,i)=>{
+        const fs=baseFs*ml.fontSize;
+        const y=cursorY;
+        cursorY+=lineHs[i];
+        const bulletPrefix=ml.bullet?"•  ":"";
+        return(
+          <tspan key={i} x={ml.indent} y={y} fontSize={fs} fontWeight={ml.fontWeight}>
+            {bulletPrefix}
+            {ml.runs.map((r,j)=>(
+              <tspan key={j}
+                fontWeight={r.bold?"800":ml.fontWeight}
+                fontStyle={r.italic?"italic":"normal"}>
+                {r.text}
+              </tspan>
+            ))}
+          </tspan>
+        );
+      });
+      return(
+        <svg width={width} height={height} overflow="visible">
+          {selected&&<rect x={-4} y={-4} width={width+8} height={height+8} rx={4} fill="none" stroke={accent} strokeWidth={1.4} strokeDasharray="3 3" opacity={0.7}/>}
+          {/* Unsichtbare Klick-/Drag-Fläche, da reiner Text sonst keine Hit-Area hat */}
+          <rect x={-2} y={-2} width={width+4} height={height+4} fill="transparent" style={{pointerEvents:"all"}}/>
+          <text x={0} y={0} textAnchor="start"
+            fill={txt} fontFamily={FONT}
+            style={{pointerEvents:"none",userSelect:"none"}}>
+            {tspanRows}
+          </text>
+        </svg>);
+    }
+    case "image":{
+      const src=nodeSrc||"";
+      if(!src)return(
+        <svg width={width} height={height} overflow="visible">{defs}{selRing}
+          <rect x={0} y={0} width={width} height={height} rx={6} fill={rgba("#888",0.15)} stroke={rgba("#888",0.4)} strokeWidth={1.5} style={ss}/>
+          <text x={width/2} y={height/2+5} textAnchor="middle" fill="var(--faint)" fontSize={11} fontFamily={FONT}>Bild</text>
+        </svg>);
+      return(
+        <svg width={width} height={height} overflow="visible">{defs}{selRing}
+          <image href={src} x={0} y={0} width={width} height={height} preserveAspectRatio="xMidYMid meet" style={{...ss,borderRadius:6}}/>
+          <rect x={0} y={0} width={width} height={height} rx={0} fill="none" stroke={selected?accent:"transparent"} strokeWidth={selected?2:0} style={{pointerEvents:"none"}}/>
+        </svg>);
+    }
     default: return null;
   }
 }
@@ -831,8 +936,16 @@ function Arrow({from,to,selected,label,onClickEdge,onDblClickLabel,drawing,lineS
   const slen=Math.sqrt(sdx*sdx+sdy*sdy)||1;
   const sux=sdx/slen, suy=sdy/slen;
 
-  // Label: geometric midpoint between from and to (ignoring waypoints for label placement)
-  const labelX=(from.x+to.x)/2, labelY=(from.y+to.y)/2;
+  // Label: Mitte des längsten Segments (korrekt auch bei L-Linien/Waypoints)
+  const allPts=pts;
+  let bestSegLen=0, labelX=(from.x+to.x)/2, labelY=(from.y+to.y)/2;
+  for(let i=0;i<allPts.length-1;i++){
+    const sl=Math.hypot(allPts[i+1].x-allPts[i].x,allPts[i+1].y-allPts[i].y);
+    if(sl>bestSegLen){bestSegLen=sl;
+      labelX=(allPts[i].x+allPts[i+1].x)/2;
+      labelY=(allPts[i].y+allPts[i+1].y)/2;
+    }
+  }
 
   // Start-Marker SVG
   let startMarker=null;
@@ -871,7 +984,7 @@ function Arrow({from,to,selected,label,onClickEdge,onDblClickLabel,drawing,lineS
         <g onDoubleClick={e=>{e.stopPropagation();onDblClickLabel&&onDblClickLabel();}}>
           <rect x={labelX-label.length*3.6-7} y={labelY-11} width={label.length*7.2+14} height={21}
             rx={10} style={{fill:"var(--bg-canvas)",stroke:"var(--border-strong)",strokeWidth:1}}/>
-          <text x={labelX} y={labelY+0.5} textAnchor="middle" dominantBaseline="middle"
+          <text x={labelX} y={labelY+10.5*0.38} textAnchor="middle"
             fontSize={10.5} fontFamily={FONT} fontWeight={500}
             style={{fill:"var(--muted)",pointerEvents:"none",userSelect:"none"}}>{label}</text>
         </g>
@@ -884,7 +997,7 @@ function Arrow({from,to,selected,label,onClickEdge,onDblClickLabel,drawing,lineS
 
 // ─── Export-Helfer: BPMN-Formen als SVG-String ─────────────────────────────
 function bpmnExportShape(node, x, y, w, h, accent, fillCol, sheenless, sw, INK, opacity){
-  const type=node.type, variant=node.variant||"standard", label=node.label||"";
+  const type=node.type, variant=node.variant||"standard", label=escXml(node.label||"");
   const v=variant;
   const fontFam="system-ui,Segoe UI,Arial,sans-serif";
   const labelBelow=(ty)=>label?`<text x="${x+w/2}" y="${ty}" text-anchor="middle" fill="${INK}" font-size="10.5" font-weight="600" font-family="${fontFam}">${label}</text>`:"";
@@ -970,10 +1083,7 @@ function bpmnExportShape(node, x, y, w, h, accent, fillCol, sheenless, sw, INK, 
       marker=`<circle cx="${cx}" cy="${cy}" r="${markerSize*0.42}" fill="${accent}"/>`;
     }
     s+=marker;
-    if(label){
-      if(!marker)s+=labelCenter(cx,cy,12.5);
-      else s+=labelBelow(y+h+12);
-    }
+    if(label)s+=labelBelow(y+h+12);
     return s;
   }
 
@@ -991,11 +1101,14 @@ function bpmnExportShape(node, x, y, w, h, accent, fillCol, sheenless, sw, INK, 
     }else if(type==="bpmn_gateway_complex"){
       s+=`<g stroke="${accent}" stroke-width="2"><line x1="${cx}" y1="${cy-sz}" x2="${cx}" y2="${cy+sz}"/><line x1="${cx-sz}" y1="${cy}" x2="${cx+sz}" y2="${cy}"/><line x1="${cx-sz*0.7}" y1="${cy-sz*0.7}" x2="${cx+sz*0.7}" y2="${cy+sz*0.7}"/><line x1="${cx-sz*0.7}" y1="${cy+sz*0.7}" x2="${cx+sz*0.7}" y2="${cy-sz*0.7}"/></g>`;
     }else if(type.startsWith("bpmn_gateway_event")||type==="bpmn_gateway_exclusive_event"||type==="bpmn_gateway_parallel_event"){
-      const r1=sz*0.95,r2=sz*0.7;
+      const r1=sz*0.95,r2=sz*0.62;
       s+=`<circle cx="${cx}" cy="${cy}" r="${r1}" fill="none" stroke="${accent}" stroke-width="1.6"/>`;
       if(type==="bpmn_gateway_exclusive_event")s+=`<path d="M${cx},${cy-r2} L${cx+r2*0.87},${cy+r2*0.5} L${cx-r2*0.87},${cy+r2*0.5} Z" fill="none" stroke="${accent}" stroke-width="1.6"/>`;
       else if(type==="bpmn_gateway_parallel_event")s+=`<g stroke="${accent}" stroke-width="1.8"><line x1="${cx}" y1="${cy-r2}" x2="${cx}" y2="${cy+r2}"/><line x1="${cx-r2}" y1="${cy}" x2="${cx+r2}" y2="${cy}"/></g>`;
-      else s+=`<path d="M${cx},${cy-r2} L${cx+r2*0.87},${cy+r2*0.5} L${cx-r2*0.87},${cy+r2*0.5} Z" fill="${accent}" stroke="none"/>`;
+      else{
+        const pentaPts=[...Array(5)].map((_,i)=>{const a=(i/5)*2*Math.PI-Math.PI/2;return `${cx+Math.cos(a)*r2},${cy+Math.sin(a)*r2}`;}).join(" ");
+        s+=`<polygon points="${pentaPts}" fill="none" stroke="${accent}" stroke-width="1.6" stroke-linejoin="round"/>`;
+      }
     }
     s+=labelBelow(y+h+12);
     return s;
@@ -1059,6 +1172,17 @@ function bpmnExportShape(node, x, y, w, h, accent, fillCol, sheenless, sw, INK, 
   return "";
 }
 
+// XML/SVG-Escaping für alle eingebetteten Texte (verhindert kaputtes SVG bei &, <, >, " in Labels)
+function escXml(str){
+  if(str==null)return "";
+  return String(str)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&apos;");
+}
+
 function exportDiagram(nodes, edges, format, colors, diagramName, theme){
   if(nodes.length===0){ alert("Canvas ist leer!"); return; }
   const T = theme || (typeof THEMES!=="undefined"?THEMES.bloom:null);
@@ -1081,18 +1205,43 @@ function exportDiagram(nodes, edges, format, colors, diagramName, theme){
     const p1=edge.fromDir?getPortPoint(a,edge.fromDir):cp.p1;
     const p2=edge.toDir?getPortPoint(b,edge.toDir):cp.p2;
     const wps=(edge.waypoints||[]);
-    const dx=p2.x-p1.x,dy=p2.y-p1.y,len=Math.sqrt(dx*dx+dy*dy)||1;
-    const ux=dx/len,uy=dy/len,as=11;
+    // Ortho-Routing: Port-Richtungen beachten, wie im Editor
+    let ePts;
+    if(wps.length===0){
+      const ddx=Math.abs(p2.x-p1.x),ddy=Math.abs(p2.y-p1.y);
+      if(ddx<4||ddy<4){ePts=[p1,p2];}
+      else{
+        const fd=edge.fromDir,td=edge.toDir;
+        let via;
+        if(fd==="top"||fd==="bottom")via={x:p1.x,y:p2.y};
+        else if(fd==="left"||fd==="right")via={x:p2.x,y:p1.y};
+        else if(td==="top"||td==="bottom")via={x:p2.x,y:p1.y};
+        else if(td==="left"||td==="right")via={x:p1.x,y:p2.y};
+        else{
+          const vV={x:p1.x,y:p2.y},vH={x:p2.x,y:p1.y};
+          via=Math.hypot(p2.x-vV.x,p2.y-vV.y)>=Math.hypot(p2.x-vH.x,p2.y-vH.y)?vV:vH;
+        }
+        ePts=[p1,via,p2];
+      }
+    } else {ePts=[p1,...wps,p2];}
+    // Pfeilrichtung vom letzten Segment
+    const eLast=ePts[ePts.length-1],ePrev=ePts[ePts.length-2];
+    const edx=eLast.x-ePrev.x,edy=eLast.y-ePrev.y,elen=Math.sqrt(edx*edx+edy*edy)||1;
+    const ux=edx/elen,uy=edy/elen,as=11;
     const ax=p2.x-ux*as,ay=p2.y-uy*as,px=-uy*(as/2.4),py=ux*(as/2.4);
-    const midX=(p1.x+p2.x)/2+offX,midY=(p1.y+p2.y)/2+offY;
+    // Label-Mitte: längsten Segment nehmen
+    let bestSL=0,midX=(p1.x+p2.x)/2+offX,midY=(p1.y+p2.y)/2+offY;
+    for(let i=0;i<ePts.length-1;i++){
+      const sl=Math.hypot(ePts[i+1].x-ePts[i].x,ePts[i+1].y-ePts[i].y);
+      if(sl>bestSL){bestSL=sl;midX=(ePts[i].x+ePts[i+1].x)/2+offX;midY=(ePts[i].y+ePts[i+1].y)/2+offY;}
+    }
     const ls=edge.lineStyle||"arrow";
     const isDashed=(ls==="dashed"||ls==="dashed-line"||ls==="message");
     const isDotted=(ls==="association"||ls==="association-line");
     const dash=isDotted?` stroke-dasharray="1.5 4"`:isDashed?` stroke-dasharray="7 5"`:"";
     const hasArrowClosed=(ls==="arrow"||ls==="dashed"||ls==="default-flow"||ls==="conditional-flow");
     const hasArrowOpen=(ls==="message"||ls==="association");
-    const pts=[p1,...wps,p2];
-    const pathData=pts.map((p,i)=>`${i===0?"M":"L"}${p.x+offX},${p.y+offY}`).join(" ");
+    const pathData=ePts.map((p,i)=>`${i===0?"M":"L"}${p.x+offX},${p.y+offY}`).join(" ");
     const lineSVG=`<path d="${pathData}" fill="none" stroke="${EDGE}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"${dash}/>`;
     let arrowSVG="";
     if(hasArrowClosed)arrowSVG=`<polygon points="${p2.x+offX},${p2.y+offY} ${ax+px+offX},${ay+py+offY} ${ax-px+offX},${ay-py+offY}" fill="${EDGE}"/>`;
@@ -1100,7 +1249,7 @@ function exportDiagram(nodes, edges, format, colors, diagramName, theme){
     // Start-Marker (Standardfluss / Bedingter Fluss / Nachrichtenfluss)
     let startSVG="";
     {
-      const first=pts[0], second=pts[1]||pts[0];
+      const first=ePts[0], second=ePts[1]||ePts[0];
       const sdx=second.x-first.x, sdy=second.y-first.y;
       const slen=Math.sqrt(sdx*sdx+sdy*sdy)||1;
       const sux=sdx/slen, suy=sdy/slen;
@@ -1119,7 +1268,7 @@ function exportDiagram(nodes, edges, format, colors, diagramName, theme){
         startSVG=`<polygon points="${fx},${fy} ${cx+nx},${cy+ny} ${cx+sux*dl+bx},${cy+suy*dl+by} ${cx-nx},${cy-ny}" fill="${BG}" stroke="${EDGE}" stroke-width="1.4"/>`;
       }
     }
-    const labelSVG=edge.label?`<rect x="${midX-edge.label.length*3.6-5}" y="${midY-10}" width="${edge.label.length*7.2+10}" height="18" rx="6" fill="${BG}" stroke="${rgba('#ffffff',0.16)}"/><text x="${midX}" y="${midY+1}" text-anchor="middle" fill="${INK}" font-size="10.5" font-family="system-ui,Segoe UI,Arial,sans-serif">${edge.label}</text>`:"";
+    const labelSVG=edge.label?`<rect x="${midX-edge.label.length*3.6-7}" y="${midY-11}" width="${edge.label.length*7.2+14}" height="21" rx="10" fill="${BG}" stroke="${rgba('#ffffff',0.18)}"/><text x="${midX}" y="${midY+0.5}" text-anchor="middle" fill="${rgba(INK,0.72)}" font-size="10.5" font-weight="500" font-family="system-ui,Segoe UI,Arial,sans-serif">${escXml(edge.label)}</text>`:"";
     return lineSVG+arrowSVG+startSVG+labelSVG;
   }).join("");
 
@@ -1131,14 +1280,34 @@ function exportDiagram(nodes, edges, format, colors, diagramName, theme){
     const fillR=parseInt(accent.slice(1,3),16)||0;
     const fillG=parseInt(accent.slice(3,5),16)||0;
     const fillB=parseInt(accent.slice(5,7),16)||0;
-    // Mische Accent mit dunklem Hintergrund (BG ~18,27,36) für sichtbare Füllung
-    const bgR=18,bgG=23,bgB=36;
-    const mix=0.28;
+    // BG-Farbe aus Theme-String parsen (nicht hardcoden!)
+    const bgR=parseInt(BG.slice(1,3),16)||0, bgG=parseInt(BG.slice(3,5),16)||0, bgB=parseInt(BG.slice(5,7),16)||0;
+    const mix=0.32;
     const mr=Math.round(bgR*(1-mix)+fillR*mix);
     const mg=Math.round(bgG*(1-mix)+fillG*mix);
     const mb=Math.round(bgB*(1-mix)+fillB*mix);
     const fillCol=`rgb(${mr},${mg},${mb})`;
     const sw=FX.strokeW;
+    if(node.type==="image"){
+      return node.src?`<image href="${node.src}" xlink:href="${node.src}" x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid meet"/>`:"";    }
+    if(node.type==="text"){
+      const baseFs=14;
+      const mdLines=parseMarkdownLines(node.label||"");
+      let cursorY=baseFs*(mdLines[0]?.fontSize||1);
+      const tspans=mdLines.map((ml,i)=>{
+        const fs=baseFs*ml.fontSize;
+        const ty=y+cursorY;
+        cursorY+=fs*1.45;
+        const bulletPrefix=ml.bullet?"&#8226;&#160;&#160;":"";
+        const innerRuns=ml.runs.map(r=>{
+          const fw=r.bold?"800":ml.fontWeight;
+          const fs2=r.italic?"italic":"normal";
+          return `<tspan font-weight="${fw}" font-style="${fs2}">${escXml(r.text)}</tspan>`;
+        }).join("");
+        return `<tspan x="${x+ml.indent}" y="${ty}" font-size="${fs}" font-weight="${ml.fontWeight}">${bulletPrefix}${innerRuns}</tspan>`;
+      }).join("");
+      return `<text x="${x}" y="${y}" text-anchor="start" fill="${INK}" font-family="system-ui,Segoe UI,Arial,sans-serif">${tspans}</text>`;
+    }
     if(node.type.startsWith("bpmn_")){
       return bpmnExportShape(node,x,y,w,h,accent,fillCol,null,sw,INK,1);
     }
@@ -1153,17 +1322,17 @@ function exportDiagram(nodes, edges, format, colors, diagramName, theme){
       default:{const lm={operator_and:"AND",operator_or:"OR",operator_xor:"XOR"};const r=Math.min(w,h)/2-2;return `<circle cx="${x+w/2}" cy="${y+h/2}" r="${r}" fill="${fillCol}" stroke="${accent}" stroke-width="${sw}"/><text x="${x+w/2}" y="${y+h/2+12.5*0.38}" text-anchor="middle" fill="${INK}" font-size="12.5" font-weight="700" font-family="system-ui,Segoe UI,Arial,sans-serif" letter-spacing="0.5">${lm[node.type]||""}</text>`;}
     }
     const ty=node.type==="dokument"?y+(h-11)/2:y+h/2;
-    const lines=(node.label||"").split("\n");
+    const lines=escXml(node.label||"").split("\n");
     const lineH=14*1.4;
     const labelSVG=lines.length<=1
-      ?`<text x="${x+w/2}" y="${ty+12.5*0.38}" text-anchor="middle" fill="${INK}" font-size="12.5" font-weight="600" font-family="system-ui,Segoe UI,Arial,sans-serif">${node.label||""}</text>`
+      ?`<text x="${x+w/2}" y="${ty+12.5*0.38}" text-anchor="middle" fill="${INK}" font-size="12.5" font-weight="600" font-family="system-ui,Segoe UI,Arial,sans-serif">${lines[0]||""}</text>`
       :`<text x="${x+w/2}" text-anchor="middle" fill="${INK}" font-size="12.5" font-weight="600" font-family="system-ui,Segoe UI,Arial,sans-serif">${lines.map((l,i)=>`<tspan x="${x+w/2}" y="${ty-((lines.length-1)*lineH/2)+(i*lineH)+(12.5*0.38)}">${l}</tspan>`).join("")}</text>`;
     return shape+labelSVG;
   };
   const poolLaneSVG=nodes.filter(n=>n.type==="bpmn_pool"||n.type==="bpmn_lane").map(renderNodeSVG).join("\n");
   const otherNodeSVG=nodes.filter(n=>n.type!=="bpmn_pool"&&n.type!=="bpmn_lane").map(renderNodeSVG).join("\n");
 
-  const svgStr=`<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="${BG}"/>${poolLaneSVG}${otherNodeSVG}${edgeSVG}</svg>`;
+  const svgStr=`<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="${BG}"/>${poolLaneSVG}${otherNodeSVG}${edgeSVG}</svg>`;
   const fname=(diagramName||"flowra-diagram").replace(/\s+/g,"-").toLowerCase();
 
   if(format==="svg"){
@@ -1177,25 +1346,34 @@ function exportDiagram(nodes, edges, format, colors, diagramName, theme){
   const reader=new FileReader();
   reader.onload=()=>{
     img.onload=()=>{
-      const canvas=document.createElement("canvas");
-      canvas.width=W*scale;canvas.height=H*scale;
-      const ctx=canvas.getContext("2d");
-      if(format==="jpeg"){ctx.fillStyle=BG;ctx.fillRect(0,0,canvas.width,canvas.height);}
-      ctx.scale(scale,scale);ctx.drawImage(img,0,0);
-      canvas.toBlob(b=>{
-        // PNG/JPEG: Base64 ans Backend zum Speichern
-        const fr=new FileReader();
-        fr.onload=()=>{
-          const b64=fr.result.split(",")[1];
-          const ext=format==="jpeg"?"jpg":"png";
-          fetch(`${API_BASE}/export`,{method:"POST",headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({data:b64,filename:`${fname}.${ext}`,mime:format==="jpeg"?"image/jpeg":"image/png"})});
-        };
-        fr.readAsDataURL(b);
-      },format==="jpeg"?"image/jpeg":"image/png",0.95);
+      try{
+        const canvas=document.createElement("canvas");
+        canvas.width=W*scale;canvas.height=H*scale;
+        const ctx=canvas.getContext("2d");
+        if(format==="jpeg"){ctx.fillStyle=BG;ctx.fillRect(0,0,canvas.width,canvas.height);}
+        ctx.scale(scale,scale);ctx.drawImage(img,0,0);
+        canvas.toBlob(b=>{
+          if(!b){console.error("Export fehlgeschlagen: canvas.toBlob lieferte kein Ergebnis (evtl. tainted canvas durch eingebettetes Bild).");return;}
+          // PNG/JPEG: Base64 ans Backend zum Speichern
+          const fr=new FileReader();
+          fr.onload=()=>{
+            const b64=fr.result.split(",")[1];
+            const ext=format==="jpeg"?"jpg":"png";
+            fetch(`${API_BASE}/export`,{method:"POST",headers:{"Content-Type":"application/json"},
+              body:JSON.stringify({data:b64,filename:`${fname}.${ext}`,mime:format==="jpeg"?"image/jpeg":"image/png"})})
+              .catch(err=>console.error("Export-Upload fehlgeschlagen:",err));
+          };
+          fr.onerror=()=>console.error("FileReader Fehler beim Export-Blob");
+          fr.readAsDataURL(b);
+        },format==="jpeg"?"image/jpeg":"image/png",0.95);
+      }catch(err){
+        console.error("Export-Canvas Fehler (evtl. tainted durch eingebettetes Bild):",err);
+      }
     };
+    img.onerror=(err)=>{console.error("SVG konnte nicht als Bild geladen werden (img.onerror):",err);};
     img.src=reader.result;
   };
+  reader.onerror=()=>console.error("FileReader Fehler beim SVG-Laden");
   reader.readAsDataURL(blob);
 }
 
@@ -1815,6 +1993,8 @@ const BPMN_DEFAULT_LABEL={
   bpmn_gateway_complex:"", bpmn_gateway_event:"", bpmn_gateway_exclusive_event:"", bpmn_gateway_parallel_event:"",
   bpmn_data_object:"", bpmn_data_list:"", bpmn_data_input:"", bpmn_data_output:"", bpmn_data_store:"",
   bpmn_custom_artifact:"",
+  image:"",
+  text:"Text",
 };
 
 const PALETTE=[...PALETTE_EPK,...PALETTE_BPMN];
@@ -2073,7 +2253,7 @@ export default function FlowraEditor(){
         nw=Math.round(nw/g)*g; nh=Math.round(nh/g)*g;
         nx=Math.round(nx/g)*g; ny=Math.round(ny/g)*g;
       }
-      setNodes(prev=>{const next=prev.map(n=>n.id===id?{...n,x:nx,y:ny,w:nw,h:nh}:n);resizeNodesRef.current=next;return next;});
+      setNodes(prev=>{const next=prev.map(n=>n.id===id?{...n,x:nx,y:ny,w:nw,h:nh,...(n.type==="text"?{hLocked:true}:{})}:n);resizeNodesRef.current=next;return next;});
       return;
     }
     if(dragging){let nx=x-dragging.offX,ny=y-dragging.offY;
@@ -2225,7 +2405,7 @@ export default function FlowraEditor(){
   };
   useEffect(()=>{const el=svgRef.current;if(!el)return;el.addEventListener("wheel",handleWheel,{passive:false});return()=>el.removeEventListener("wheel",handleWheel);});
 
-  const handleNodeDblClick=(e,id)=>{e.stopPropagation();const node=nodes.find(n=>n.id===id);setEditingId(id);setEditText(node.label);};
+  const handleNodeDblClick=(e,id)=>{e.stopPropagation();const node=nodes.find(n=>n.id===id);if(node.type==="image")return;setEditingId(id);setEditText(node.label);};
   const commitNodeEdit=()=>{if(!editingId)return;const newNodes=nodes.map(n=>n.id===editingId?{...n,label:editText}:n);setNodes(newNodes);pushHistory(newNodes,edges);setEditingId(null);};
   const commitEdgeEdit=()=>{if(!editingEdgeId)return;const newEdges=edges.map(e=>e.id===editingEdgeId?{...e,label:editEdgeText}:e);setEdges(newEdges);pushHistory(nodes,newEdges);setEditingEdgeId(null);};
 
@@ -2376,6 +2556,60 @@ export default function FlowraEditor(){
             })}
           </div>
           <div style={{marginTop:"auto",padding:"14px 18px",borderTop:"1px solid var(--border)"}}>
+            {/* Bild hochladen */}
+            <label className="pal-item" style={{display:"flex",alignItems:"center",gap:8,padding:"9px 12px",borderRadius:"var(--r-md)",background:"var(--glass)",border:"1px solid var(--border)",cursor:"pointer",marginBottom:10,color:"var(--muted)",fontSize:12.5,fontWeight:600}}>
+              <span style={{fontSize:16}}>🖼</span>
+              <span>Bild einfügen</span>
+              <input type="file" accept="image/png,image/jpeg" style={{display:"none"}}
+                onChange={e=>{
+                  const file=e.target.files?.[0];
+                  if(!file)return;
+                  const reader=new FileReader();
+                  reader.onload=ev=>{
+                    try{
+                      const src=ev.target.result;
+                      const imgEl=document.createElement('img');
+                      imgEl.onload=()=>{
+                        try{
+                          const maxW=400,maxH=300;
+                          let iw=imgEl.naturalWidth||200,ih=imgEl.naturalHeight||150;
+                          if(iw>maxW){ih=Math.round(ih*(maxW/iw));iw=maxW;}
+                          if(ih>maxH){iw=Math.round(iw*(maxH/ih));ih=maxH;}
+                          const id=`n${Date.now().toString(36)}${Math.random().toString(36).slice(2,7)}`;
+                          const cvx=Math.round(-canvasOffset.x/zoom)+40;
+                          const cvy=Math.round(-canvasOffset.y/zoom)+40;
+                          const newNode={id,type:"image",label:"",src,x:cvx,y:cvy,w:iw,h:ih};
+                          const newNodes=[...nodes,newNode];
+                          setNodes(newNodes);
+                          pushHistory(newNodes,edges);
+                          setSelected({type:"node",id});
+                        }catch(err){console.error("image insert error:",err);}
+                      };
+                      imgEl.onerror=()=>{console.error("image load error");};
+                      imgEl.src=src;
+                    }catch(err){console.error("reader error:",err);}
+                  };
+                  reader.readAsDataURL(file);
+                  e.target.value="";
+                }}/>
+            </label>
+            {/* Freier Text */}
+            <div className="pal-item" onClick={()=>{
+                const cvx=Math.round(-canvasOffset.x/zoom)+40;
+                const cvy=Math.round(-canvasOffset.y/zoom)+40;
+                const id=`n${Date.now().toString(36)}${Math.random().toString(36).slice(2,7)}`;
+                const newNode={id,type:"text",label:"Text",x:cvx,y:cvy,w:140,h:24};
+                const newNodes=[...nodes,newNode];
+                setNodes(newNodes);
+                pushHistory(newNodes,edges);
+                setSelected({type:"node",id});
+                setEditingId(id);
+                setEditText("Text");
+              }}
+              style={{display:"flex",alignItems:"center",gap:8,padding:"9px 12px",borderRadius:"var(--r-md)",background:"var(--glass)",border:"1px solid var(--border)",cursor:"pointer",marginBottom:14,color:"var(--muted)",fontSize:12.5,fontWeight:600}}>
+              <span style={{fontSize:15,fontWeight:800,fontFamily:"serif"}}>T</span>
+              <span>Freier Text</span>
+            </div>
             <div style={{fontSize:10,color:"var(--faint)",lineHeight:1.9}}>
               <div style={{color:"var(--muted)",fontWeight:700,marginBottom:5,letterSpacing:1}}>SHORTCUTS</div>
               {[["Drag","→ Canvas"],["Port ziehen","Verbinden"],["Doppelklick","Umbenennen"],["Entf","Löschen"],["Strg+S","Speichern"],["Strg+Z / Y","Undo / Redo"],["Strg+C / V","Kopieren"],["Ziehen / Pfeiltasten","Pan"],["Scroll","Zoom"]].map(([k,v])=>(
@@ -2475,7 +2709,7 @@ export default function FlowraEditor(){
                 {nodes.filter(n=>n.type==="bpmn_pool"||n.type==="bpmn_lane").map(node=>{
                   const{w,h}=getNodeSize(node);
                   const isSel=selected?.type==="node"&&selected.id===node.id;
-                  const showPorts=!isPaletteDrag&&(isSel||!!drawingEdge||hoverNode===node.id);
+                  const showPorts=(node.type!=="image")&&!isPaletteDrag&&(isSel||!!drawingEdge||hoverNode===node.id);
                   const isDrawTarget=drawingEdge&&!isSel&&hoverNode===node.id&&drawingEdge.fromId!==node.id;
                   return(
                     <g key={node.id} transform={`translate(${node.x},${node.y})`}
@@ -2525,7 +2759,7 @@ export default function FlowraEditor(){
                 {nodes.filter(n=>n.type!=="bpmn_pool"&&n.type!=="bpmn_lane").map(node=>{
                   const{w,h}=getNodeSize(node);
                   const isSel=selected?.type==="node"&&selected.id===node.id;
-                  const showPorts=!isPaletteDrag&&(isSel||!!drawingEdge||hoverNode===node.id);
+                  const showPorts=(node.type!=="image")&&!isPaletteDrag&&(isSel||!!drawingEdge||hoverNode===node.id);
                   const isDrawTarget=drawingEdge&&!isSel&&hoverNode===node.id&&drawingEdge.fromId!==node.id;
                   return(
                     <g key={node.id} transform={`translate(${node.x},${node.y})`}
@@ -2539,7 +2773,7 @@ export default function FlowraEditor(){
                       :<rect x={-10} y={-10} width={(node.w||NODE_W)+20} height={(node.h||NODE_H)+20} rx={18} fill="none" stroke="var(--accent)" strokeWidth={2} opacity={0.7} style={{animation:"ringpulse 1s ease-in-out infinite"}}/>
                     )}
                     <g ref={el=>{if(el)wobbleRefs.current[node.id]=el;else delete wobbleRefs.current[node.id];}}>
-                        <ShapeRenderer type={node.type} label={editingId===node.id?"":node.label} width={w} height={h} selected={isSel} colors={colors} fx={T.fx} override={node.color} variant={node.variant}/>
+                        <ShapeRenderer type={node.type} label={editingId===node.id?"":node.label} width={w} height={h} selected={isSel} colors={colors} fx={T.fx} override={node.color} variant={node.variant} nodeSrc={node.src}/>
                         {showPorts&&getAllPorts(node).map(port=>{
                           const hov=hoveredPort?.nodeId===node.id&&hoveredPort?.dir===port.dir;
                           return(<circle key={port.dir} className="port-dot" cx={port.x-node.x} cy={port.y-node.y} r={hov?8.5:6}
@@ -2586,7 +2820,7 @@ export default function FlowraEditor(){
         {/* PROPERTIES */}
         <aside className="glass" style={{width:208,display:"flex",flexDirection:"column",gap:12,flexShrink:0,margin:12,marginLeft:0,padding:"18px 16px",borderRadius:"var(--r-lg)"}}>
           <div style={{fontSize:11,fontWeight:700,letterSpacing:2,color:"var(--muted)"}}>EIGENSCHAFTEN</div>
-          {selected?.type==="node"&&(()=>{const node=nodes.find(n=>n.id===selected.id);if(!node)return null;const item=PALETTE.find(p=>p.type===node.type&&p.variant===node.variant)||PALETTE.find(p=>p.type===node.type);const acc=accentOf(node.type);return(
+          {selected?.type==="node"&&(()=>{const node=nodes.find(n=>n.id===selected.id);if(!node)return null;const item=PALETTE.find(p=>p.type===node.type&&p.variant===node.variant)||PALETTE.find(p=>p.type===node.type);const acc=accentOf(node.type);if(node.type==="image")return(<div style={{padding:"18px 16px",display:"flex",flexDirection:"column",gap:10}}><div style={{fontSize:11,fontWeight:700,letterSpacing:1.4,color:"var(--faint)",marginBottom:4}}>BILD</div><div style={{fontSize:12,color:"var(--muted)"}}>Bild-Elemente können verschoben, skaliert und gelöscht werden.</div><label style={{display:"flex",alignItems:"center",gap:8,padding:"8px 12px",borderRadius:"var(--r-md)",background:"var(--glass)",border:"1px solid var(--border)",cursor:"pointer",color:"var(--muted)",fontSize:12,fontWeight:600}}><span>🔄 Bild ersetzen</span><input type="file" accept="image/png,image/jpeg" style={{display:"none"}} onChange={ev=>{const file=ev.target.files?.[0];if(!file)return;const rd=new FileReader();rd.onload=e2=>{const nn=nodes.map(n=>n.id===node.id?{...n,src:e2.target.result}:n);setNodes(nn);pushHistory(nn,edges);};rd.readAsDataURL(file);ev.target.value="";}}/></label><div onClick={()=>{const nn=nodes.map(n=>n.id===node.id?{...n,locked:!n.locked}:n);setNodes(nn);pushHistory(nn,edges);}} style={{display:"flex",alignItems:"center",gap:8,padding:"8px 11px",borderRadius:8,cursor:"pointer",background:node.locked?"color-mix(in oklab,var(--accent) 12%,var(--glass))":"var(--glass)",border:`1px solid ${node.locked?"var(--accent)":"var(--border)"}`,color:node.locked?"var(--accent)":"var(--muted)",transition:"all .15s",userSelect:"none"}}><Icon name={node.locked?"lock":"unlock"} size={13}/><span style={{fontSize:12,fontWeight:600}}>{node.locked?"Gesperrt – klicken zum Entsperren":"Position sperren"}</span></div></div>);return(
             <div className="pop-in" style={{display:"flex",flexDirection:"column",gap:9}}>
               <div style={{display:"flex",alignItems:"center",gap:9,padding:"10px 12px",background:"var(--glass)",borderRadius:"var(--r-md)",border:"1px solid var(--border)"}}>
                 <span style={{width:10,height:10,borderRadius:3,background:acc,boxShadow:`0 0 8px ${rgba(acc,0.8)}`}}/>
@@ -2595,16 +2829,14 @@ export default function FlowraEditor(){
               <div style={{fontSize:11,color:"var(--faint)",marginTop:2}}>Bezeichnung</div>
               <textarea value={node.label} onChange={e=>setNodes(prev=>prev.map(n=>n.id===node.id?{...n,label:e.target.value}:n))} onBlur={()=>pushHistory(nodes,edges)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey)e.preventDefault();}} rows={Math.max(2,(node.label.match(/\n/g)||[]).length+1)} style={{background:"var(--glass)",border:"1px solid var(--border)",borderRadius:8,color:"var(--text)",padding:"8px 10px",fontSize:12.5,width:"100%",resize:"none",lineHeight:1.4,fontFamily:FONT}}/>
               <div style={{fontSize:10,color:"var(--dim)"}}>Shift+Enter = neue Zeile</div>
-              {(node.type==="bpmn_pool"||node.type==="bpmn_lane")&&(
-                <div onClick={()=>{const nn=nodes.map(n=>n.id===node.id?{...n,locked:!n.locked}:n);setNodes(nn);pushHistory(nn,edges);}}
-                  style={{display:"flex",alignItems:"center",gap:8,padding:"8px 11px",borderRadius:8,cursor:"pointer",
-                    background:node.locked?"color-mix(in oklab,var(--accent) 12%,var(--glass))":"var(--glass)",
-                    border:`1px solid ${node.locked?"var(--accent)":"var(--border)"}`,
-                    color:node.locked?"var(--accent)":"var(--muted)",transition:"all .15s",marginTop:4,userSelect:"none"}}>
-                  <Icon name={node.locked?"lock":"unlock"} size={13}/>
-                  <span style={{fontSize:12,fontWeight:600}}>{node.locked?"Gesperrt – klicken zum Entsperren":"Position sperren"}</span>
-                </div>
-              )}
+              <div onClick={()=>{const nn=nodes.map(n=>n.id===node.id?{...n,locked:!n.locked}:n);setNodes(nn);pushHistory(nn,edges);}}
+                style={{display:"flex",alignItems:"center",gap:8,padding:"8px 11px",borderRadius:8,cursor:"pointer",
+                  background:node.locked?"color-mix(in oklab,var(--accent) 12%,var(--glass))":"var(--glass)",
+                  border:`1px solid ${node.locked?"var(--accent)":"var(--border)"}`,
+                  color:node.locked?"var(--accent)":"var(--muted)",transition:"all .15s",marginTop:4,userSelect:"none"}}>
+                <Icon name={node.locked?"lock":"unlock"} size={13}/>
+                <span style={{fontSize:12,fontWeight:600}}>{node.locked?"Gesperrt – klicken zum Entsperren":"Position sperren"}</span>
+              </div>
               <div style={{fontSize:11,color:"var(--faint)",marginTop:4}}>Breite</div>
               <div style={{display:"flex",alignItems:"center",gap:6}}>
                 <input type="range" min={80} max={300} value={node.w||NODE_W} step={5} onChange={e=>setNodes(prev=>prev.map(n=>n.id===node.id?{...n,w:Number(e.target.value)}:n))} onMouseUp={()=>pushHistory(nodes,edges)} style={{flex:1,accentColor:"var(--emerald)",cursor:"pointer"}}/>
