@@ -8,6 +8,8 @@ fokussiert, schnell und für echte Modellierungsstandards gebaut.
 
 - ✅ EPK-Editor (Ereignisgesteuerte Prozessketten)
 - ✅ BPMN 2.0-Editor (Aktivitäten, Ereignisse, Gateways, Daten, Pool/Lane, Artefakte)
+- ✅ Freie Textelemente mit Markdown-Unterstützung
+- ✅ Bild-Elemente (PNG/JPEG einbetten)
 
 ## Funktionen
 
@@ -23,6 +25,9 @@ fokussiert, schnell und für echte Modellierungsstandards gebaut.
 - Diagramm-Name editierbar
 - Export als PNG, JPEG oder SVG
 - Einstellungen: Farben pro Element-Typ anpassbar, mehrere Themes
+- **Freier Text** – Markdown-formatierter Text direkt auf dem Canvas (`#` Überschriften, `**fett**`, `*kursiv*`, `- Listen`)
+- **Bilder einfügen** – PNG/JPEG lokal hochladen und als Canvas-Element platzieren, skalierbar und sperrbar
+- Position sperren für alle Elemente (verhindert versehentliches Verschieben)
 
 ### BPMN 2.0
 - Vollständige BPMN-Palette: Aufgaben (Task, Subprocess, Transaction, …), Start-/Zwischen-/Endereignisse mit Varianten (Nachricht, Timer, Eskalation, Fehler, …), Gateways (XOR, AND, OR, Komplex, Event-basiert), Datenobjekte, Datenspeicher, Pool & Lane, Textannotation, Gruppe
