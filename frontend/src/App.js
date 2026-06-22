@@ -2950,8 +2950,7 @@ export default function FlowraEditor(){
                 {label}
               </div>
             ))}
-            {nodes.some(n=>n.type&&n.type.startsWith("bpmn_"))&&(
-              <div className="menu-item" onClick={()=>{
+            <div className="menu-item" onClick={()=>{
                   const xml=exportBpmnXml(nodes,edges,diagramName);
                   const b64=btoa(unescape(encodeURIComponent(xml)));
                   fetch(`${API_BASE}/export`,{method:"POST",headers:{"Content-Type":"application/json"},
@@ -2959,10 +2958,9 @@ export default function FlowraEditor(){
                     .catch(err=>console.error("BPMN-XML-Export fehlgeschlagen:",err));
                   setExportOpen(false);
                 }}
-                style={{padding:"11px 18px",fontSize:13,fontWeight:600,color:"var(--text)",cursor:"pointer"}}>
+                style={{padding:"11px 18px",fontSize:13,fontWeight:600,color:"var(--text)",borderTop:"1px solid var(--border)",cursor:"pointer"}}>
                 ⌘ BPMN 2.0 XML
               </div>
-            )}
           </div>
         )}
         {showFAQ&&<FAQModal onClose={()=>setShowFAQ(false)}/>}
