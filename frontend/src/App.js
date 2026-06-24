@@ -1328,6 +1328,25 @@ function importBpmnXml(xmlText){
     }
   });
 
+  // ── DI: Edge-Wegpunkte sammeln (bpmndi:BPMNEdge → di:waypoint) ─────────
+  // So bleiben die Linien beim Import exakt wie im Original geroutet,
+  // statt von Flowra neu (und oft chaotisch) berechnet zu werden.
+  const edgeWaypointsMap={}; // bpmnElement-ID → [{x,y},...]
+  const edgePortDirs={};     // bpmnElement-ID → {fromDir,toDir} (Flowra-eigene Attribute)
+  getEls("BPMNEdge").forEach(edgeEl=>{
+    const elRef=edgeEl.getAttribute("bpmnElement");
+    if(!elRef)return;
+    const wps=Array.from(edgeEl.getElementsByTagNameNS("*","waypoint")).map(wp=>({
+      x:parseFloat(wp.getAttribute("x")||0),
+      y:parseFloat(wp.getAttribute("y")||0),
+    }));
+    if(wps.length>=2)edgeWaypointsMap[elRef]=wps;
+    // Flowra-eigene Port-Richtungen (falls vorhanden, für exakten Roundtrip)
+    const fd=edgeEl.getAttribute("flowra:fromDir")||edgeEl.getAttributeNS("http://flowra.app/bpmn-ext","fromDir");
+    const td=edgeEl.getAttribute("flowra:toDir")||edgeEl.getAttributeNS("http://flowra.app/bpmn-ext","toDir");
+    if(fd||td)edgePortDirs[elRef]={fromDir:fd||undefined,toDir:td||undefined};
+  });
+
   // ── Lanes vorbereiten (für Zuordnung Element → Lane-Label, optional) ──
   const laneRefs={}; // flowNodeId → laneId
   getEls("lane").forEach(lane=>{
@@ -1403,7 +1422,42 @@ function importBpmnXml(xmlText){
       if(!src||!tgt||!idMap[src]||!idMap[tgt])return;
       const eid=`e${Date.now().toString(36)}${Math.random().toString(36).slice(2,7)}${edges.length}`;
       const lineStyle=tag==="messageFlow"?"message":tag==="association"?"association":"arrow";
-      edges.push({id:eid,from:idMap[src],to:idMap[tgt],label:name,lineStyle});
+      const edge={id:eid,from:idMap[src],to:idMap[tgt],label:name,lineStyle};
+      // Wegpunkte aus DI übernehmen (mittlere Punkte ohne Start/Ende-Port)
+      const wps=edgeWaypointsMap[id];
+      const explicitDirs=edgePortDirs[id];
+      if(wps&&wps.length>=2){
+        if(wps.length>2)edge.waypoints=wps.slice(1,-1).map(p=>({x:p.x,y:p.y}));
+      }
+      if(explicitDirs){
+        // Exakte Port-Richtungen aus Flowra-eigenem Export (verlustfreier Roundtrip)
+        if(explicitDirs.fromDir)edge.fromDir=explicitDirs.fromDir;
+        if(explicitDirs.toDir)edge.toDir=explicitDirs.toDir;
+      }else if(wps&&wps.length>=2){
+        // Fallback: Richtungen aus Wegpunkten ableiten (Dateien anderer Tools)
+        let isOrtho=true;
+        for(let i=0;i<wps.length-1;i++){
+          const dx=Math.abs(wps[i+1].x-wps[i].x), dy=Math.abs(wps[i+1].y-wps[i].y);
+          if(dx>4&&dy>4){isOrtho=false;break;}
+        }
+        if(isOrtho){
+          const first=wps[0], second=wps[1];
+          const last=wps[wps.length-1], prev=wps[wps.length-2];
+          const dirOf=(a,b)=>{
+            const dx=b.x-a.x, dy=b.y-a.y;
+            if(Math.abs(dx)>=Math.abs(dy))return dx>=0?"right":"left";
+            return dy>=0?"bottom":"top";
+          };
+          if(Math.abs(second.x-first.x)>2||Math.abs(second.y-first.y)>2){
+            edge.fromDir=dirOf(first,second);
+          }
+          if(Math.abs(last.x-prev.x)>2||Math.abs(last.y-prev.y)>2){
+            const arriveDir=dirOf(prev,last);
+            edge.toDir={right:"left",left:"right",top:"bottom",bottom:"top"}[arriveDir];
+          }
+        }
+      }
+      edges.push(edge);
     });
   });
 
@@ -1446,7 +1500,7 @@ function exportBpmnXml(nodes, edges, diagramName){
     const tag=bpmnXmlTag(n);
     if(!tag)return ""; // unbekannter/nicht abbildbarer Typ wird übersprungen
     const id=nodeXmlId(n);
-    const name=escXml((n.label||"").replace(/\n/g," "));
+    const name=escXml(n.label||"").replace(/\n/g,"&#10;");
     const incoming=edges.filter(e=>e.to===n.id).map(e=>`<bpmn:incoming>${bpmnId("Flow",e.id)}</bpmn:incoming>`).join("");
     const outgoing=edges.filter(e=>e.from===n.id).map(e=>`<bpmn:outgoing>${bpmnId("Flow",e.id)}</bpmn:outgoing>`).join("");
 
@@ -1638,7 +1692,11 @@ function exportBpmnXml(nodes, edges, diagramName){
     if(!pts)return "";
     const id=bpmnId("Flow",e.id);
     const wpXml=pts.map(p=>`<di:waypoint x="${p.x}" y="${p.y}"/>`).join("\n      ");
-    return `<bpmndi:BPMNEdge id="${id}_di" bpmnElement="${id}">
+    // Flowra-eigene Port-Richtungen als Custom-Attribute (andere Tools ignorieren sie,
+    // aber beim Reimport in Flowra bleiben die exakten Andockpunkte erhalten)
+    const fromDirAttr=e.fromDir?` flowra:fromDir="${e.fromDir}"`:"";
+    const toDirAttr=e.toDir?` flowra:toDir="${e.toDir}"`:"";
+    return `<bpmndi:BPMNEdge id="${id}_di" bpmnElement="${id}"${fromDirAttr}${toDirAttr}>
       ${wpXml}
     </bpmndi:BPMNEdge>`;
   }).join("\n    ");
@@ -1658,6 +1716,7 @@ function exportBpmnXml(nodes, edges, diagramName){
   xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
   xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
   xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+  xmlns:flowra="http://flowra.app/bpmn-ext"
   id="${bpmnId('Definitions','main')}"
   targetNamespace="http://flowra.app/bpmn">
   ${rootContent}
@@ -2950,7 +3009,8 @@ export default function FlowraEditor(){
                 {label}
               </div>
             ))}
-            <div className="menu-item" onClick={()=>{
+            {nodes.some(n=>n.type&&n.type.startsWith("bpmn_"))&&(
+              <div className="menu-item" onClick={()=>{
                   const xml=exportBpmnXml(nodes,edges,diagramName);
                   const b64=btoa(unescape(encodeURIComponent(xml)));
                   fetch(`${API_BASE}/export`,{method:"POST",headers:{"Content-Type":"application/json"},
@@ -2958,9 +3018,10 @@ export default function FlowraEditor(){
                     .catch(err=>console.error("BPMN-XML-Export fehlgeschlagen:",err));
                   setExportOpen(false);
                 }}
-                style={{padding:"11px 18px",fontSize:13,fontWeight:600,color:"var(--text)",borderTop:"1px solid var(--border)",cursor:"pointer"}}>
+                style={{padding:"11px 18px",fontSize:13,fontWeight:600,color:"var(--text)",cursor:"pointer"}}>
                 ⌘ BPMN 2.0 XML
               </div>
+            )}
           </div>
         )}
         {showFAQ&&<FAQModal onClose={()=>setShowFAQ(false)}/>}
