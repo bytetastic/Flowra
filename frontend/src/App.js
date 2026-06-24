@@ -1183,6 +1183,548 @@ function escXml(str){
     .replace(/'/g,"&apos;");
 }
 
+// ════════════════════════════════════════════════════════════════════════
+// BPMN 2.0 XML EXPORT — erzeugt eine standardkonforme .bpmn-Datei
+// (importierbar in Camunda Modeler, bpmn.io, Signavio, etc.)
+// ════════════════════════════════════════════════════════════════════════
+
+// Eindeutige, XML-konforme IDs (BPMN-Elemente brauchen stabile String-IDs ohne Sonderzeichen)
+function bpmnId(prefix, rawId){
+  return `${prefix}_${String(rawId).replace(/[^a-zA-Z0-9_]/g,"")}`;
+}
+
+// Mapping: interner Node-Typ + Variant → BPMN-XML-Elementname + ggf. EventDefinition
+function bpmnXmlTag(node){
+  const v=node.variant||"";
+  switch(node.type){
+    case "bpmn_task": return "task";
+    case "bpmn_subprocess": return "subProcess";
+    case "bpmn_transaction": return "transaction";
+    case "bpmn_call_activity": return "callActivity";
+    case "bpmn_event_subprocess": return "subProcess"; // mit triggeredByEvent="true"
+    case "bpmn_gateway_exclusive": return "exclusiveGateway";
+    case "bpmn_gateway_parallel": return "parallelGateway";
+    case "bpmn_gateway_inclusive": return "inclusiveGateway";
+    case "bpmn_gateway_complex": return "complexGateway";
+    case "bpmn_gateway_event":
+    case "bpmn_gateway_exclusive_event":
+    case "bpmn_gateway_parallel_event": return "eventBasedGateway";
+    case "bpmn_data_object": case "bpmn_data_list": return "dataObjectReference";
+    case "bpmn_data_input": return "dataInput";
+    case "bpmn_data_output": return "dataOutput";
+    case "bpmn_data_store": return "dataStoreReference";
+    case "bpmn_text_annotation": return "textAnnotation";
+    case "bpmn_group": return "group";
+    case "bpmn_start_event": return "startEvent";
+    case "bpmn_intermediate_event": return v.includes("filled")||v.includes("throw")?"intermediateThrowEvent":"intermediateCatchEvent";
+    case "bpmn_end_event": return "endEvent";
+    default: return null;
+  }
+}
+
+// EventDefinition-Element für Start/Zwischen/End-Ereignisse je nach Variant
+function bpmnEventDefinition(variant){
+  const v=variant||"";
+  if(v.includes("message"))return "messageEventDefinition";
+  if(v.includes("timer"))return "timerEventDefinition";
+  if(v.includes("escalation"))return "escalationEventDefinition";
+  if(v.includes("conditional"))return "conditionalEventDefinition";
+  if(v.includes("error"))return "errorEventDefinition";
+  if(v.includes("cancel"))return "cancelEventDefinition";
+  if(v.includes("compensation"))return "compensationEventDefinition";
+  if(v.includes("signal"))return "signalEventDefinition";
+  if(v.includes("link"))return "linkEventDefinition";
+  if(v.includes("termination"))return "terminateEventDefinition";
+  return null; // Standard-Ereignis ohne Definition
+}
+
+// Aktivitäts-Marker (loop/MI/adhoc/compensation) → multiInstanceLoopCharacteristics / standardLoopCharacteristics
+function bpmnActivityMarkerXml(variant){
+  const markers=(variant||"").split(",").filter(Boolean);
+  let xml="";
+  if(markers.includes("loop")){
+    xml+=`<bpmn:standardLoopCharacteristics/>`;
+  }
+  if(markers.includes("parallel_mi")){
+    xml+=`<bpmn:multiInstanceLoopCharacteristics isSequential="false"/>`;
+  }
+  if(markers.includes("sequential_mi")){
+    xml+=`<bpmn:multiInstanceLoopCharacteristics isSequential="true"/>`;
+  }
+  return xml;
+}
+
+// ════════════════════════════════════════════════════════════════════════
+// BPMN 2.0 XML IMPORT — liest eine .bpmn-Datei (aus Flowra oder anderen Tools
+// wie Camunda Modeler / bpmn.io) und baut interne Node/Edge-Objekte
+// ════════════════════════════════════════════════════════════════════════
+
+// Rück-Mapping: BPMN-XML-Tag (+ EventDefinition) → interner Typ + Variant
+function bpmnTagToInternal(tagName, eventDefTag, isInterrupting, isThrow){
+  switch(tagName){
+    case "task": case "userTask": case "serviceTask": case "scriptTask":
+    case "manualTask": case "businessRuleTask": case "sendTask": case "receiveTask":
+      return{type:"bpmn_task",variant:undefined};
+    case "subProcess": return{type:"bpmn_subprocess",variant:undefined};
+    case "transaction": return{type:"bpmn_transaction",variant:undefined};
+    case "callActivity": return{type:"bpmn_call_activity",variant:undefined};
+    case "exclusiveGateway": return{type:"bpmn_gateway_exclusive",variant:undefined};
+    case "parallelGateway": return{type:"bpmn_gateway_parallel",variant:undefined};
+    case "inclusiveGateway": return{type:"bpmn_gateway_inclusive",variant:undefined};
+    case "complexGateway": return{type:"bpmn_gateway_complex",variant:undefined};
+    case "eventBasedGateway": return{type:"bpmn_gateway_event",variant:undefined};
+    case "dataObjectReference": return{type:"bpmn_data_object",variant:undefined};
+    case "dataStoreReference": return{type:"bpmn_data_store",variant:undefined};
+    case "textAnnotation": return{type:"bpmn_text_annotation",variant:undefined};
+    case "group": return{type:"bpmn_group",variant:undefined};
+    case "startEvent": case "endEvent": case "intermediateCatchEvent": case "intermediateThrowEvent": case "boundaryEvent":{
+      const nodeType=tagName==="startEvent"?"bpmn_start_event"
+        :tagName==="endEvent"?"bpmn_end_event"
+        :"bpmn_intermediate_event";
+      let variant="standard";
+      const defMap={
+        messageEventDefinition:"message", timerEventDefinition:"timer",
+        escalationEventDefinition:"escalation", conditionalEventDefinition:"conditional",
+        errorEventDefinition:"error", cancelEventDefinition:"cancel",
+        compensateEventDefinition:"compensation", signalEventDefinition:"signal",
+        linkEventDefinition:"link", terminateEventDefinition:"termination",
+      };
+      if(eventDefTag&&defMap[eventDefTag]){
+        variant=defMap[eventDefTag];
+        if(tagName==="endEvent"||isThrow)variant+="_filled";
+        if(tagName==="boundaryEvent"&&isInterrupting===false)variant+="_non_interrupting";
+      }
+      return{type:nodeType,variant:variant==="standard"?"standard":variant};
+    }
+    default: return null;
+  }
+}
+
+function importBpmnXml(xmlText){
+  const parser=new DOMParser();
+  const doc=parser.parseFromString(xmlText,"text/xml");
+  const errorNode=doc.querySelector("parsererror");
+  if(errorNode)throw new Error("Ungültiges XML: "+errorNode.textContent.slice(0,200));
+
+  const nsResolver=()=>null;
+  const getEls=(tag)=>Array.from(doc.getElementsByTagNameNS("*",tag));
+
+  const nodes=[];
+  const edges=[];
+  const idMap={}; // BPMN-XML-ID → interne Node-ID
+
+  // ── DI: Shape-Positionen sammeln (bpmndi:BPMNShape) ───────────────────
+  const shapeBounds={}; // bpmnElement-ID → {x,y,w,h}
+  getEls("BPMNShape").forEach(shape=>{
+    const elRef=shape.getAttribute("bpmnElement");
+    const bounds=shape.getElementsByTagNameNS("*","Bounds")[0];
+    if(elRef&&bounds){
+      shapeBounds[elRef]={
+        x:parseFloat(bounds.getAttribute("x")||0),
+        y:parseFloat(bounds.getAttribute("y")||0),
+        w:parseFloat(bounds.getAttribute("width")||100),
+        h:parseFloat(bounds.getAttribute("height")||80),
+      };
+    }
+  });
+
+  // ── DI: Edge-Wegpunkte sammeln (bpmndi:BPMNEdge → di:waypoint) ─────────
+  // So bleiben die Linien beim Import exakt wie im Original geroutet,
+  // statt von Flowra neu (und oft chaotisch) berechnet zu werden.
+  const edgeWaypointsMap={}; // bpmnElement-ID → [{x,y},...]
+  const edgePortDirs={};     // bpmnElement-ID → {fromDir,toDir} (Flowra-eigene Attribute)
+  getEls("BPMNEdge").forEach(edgeEl=>{
+    const elRef=edgeEl.getAttribute("bpmnElement");
+    if(!elRef)return;
+    const wps=Array.from(edgeEl.getElementsByTagNameNS("*","waypoint")).map(wp=>({
+      x:parseFloat(wp.getAttribute("x")||0),
+      y:parseFloat(wp.getAttribute("y")||0),
+    }));
+    if(wps.length>=2)edgeWaypointsMap[elRef]=wps;
+    // Flowra-eigene Port-Richtungen (falls vorhanden, für exakten Roundtrip)
+    const fd=edgeEl.getAttribute("flowra:fromDir")||edgeEl.getAttributeNS("http://flowra.app/bpmn-ext","fromDir");
+    const td=edgeEl.getAttribute("flowra:toDir")||edgeEl.getAttributeNS("http://flowra.app/bpmn-ext","toDir");
+    if(fd||td)edgePortDirs[elRef]={fromDir:fd||undefined,toDir:td||undefined};
+  });
+
+  // ── Lanes vorbereiten (für Zuordnung Element → Lane-Label, optional) ──
+  const laneRefs={}; // flowNodeId → laneId
+  getEls("lane").forEach(lane=>{
+    const laneId=lane.getAttribute("id");
+    Array.from(lane.getElementsByTagNameNS("*","flowNodeRef")).forEach(ref=>{
+      laneRefs[ref.textContent.trim()]=laneId;
+    });
+  });
+
+  // ── Pool/Participant ───────────────────────────────────────────────────
+  getEls("participant").forEach(p=>{
+    const id=p.getAttribute("id");
+    const name=p.getAttribute("name")||"";
+    const b=shapeBounds[id];
+    const nid=`n${Date.now().toString(36)}${Math.random().toString(36).slice(2,7)}`;
+    idMap[id]=nid;
+    nodes.push({id:nid,type:"bpmn_pool",label:name,x:b?b.x:0,y:b?b.y:0,w:b?b.w:480,h:b?b.h:200});
+  });
+  getEls("lane").forEach(l=>{
+    const id=l.getAttribute("id");
+    const name=l.getAttribute("name")||"";
+    const b=shapeBounds[id];
+    const nid=`n${Date.now().toString(36)}${Math.random().toString(36).slice(2,7)}`;
+    idMap[id]=nid;
+    nodes.push({id:nid,type:"bpmn_lane",label:name,x:b?b.x:0,y:b?b.y:0,w:b?b.w:480,h:b?b.h:100});
+  });
+
+  // ── Flow-Elemente (Tasks, Events, Gateways, Daten, Artefakte) ─────────
+  const flowTags=["task","userTask","serviceTask","scriptTask","manualTask","businessRuleTask",
+    "sendTask","receiveTask","subProcess","transaction","callActivity",
+    "exclusiveGateway","parallelGateway","inclusiveGateway","complexGateway","eventBasedGateway",
+    "dataObjectReference","dataStoreReference","textAnnotation","group",
+    "startEvent","endEvent","intermediateCatchEvent","intermediateThrowEvent","boundaryEvent"];
+
+  flowTags.forEach(tag=>{
+    getEls(tag).forEach(el=>{
+      const id=el.getAttribute("id");
+      if(!id||idMap[id])return;
+      const name=tag==="textAnnotation"
+        ?(el.getElementsByTagNameNS("*","text")[0]?.textContent||"")
+        :(el.getAttribute("name")||"");
+      // EventDefinition suchen (erstes Kind-Element mit "EventDefinition" im Namen)
+      let eventDefTag=null;
+      if(el.children)for(const child of el.children){
+        if(child.localName&&child.localName.endsWith("EventDefinition")){eventDefTag=child.localName;break;}
+      }
+      const isInterrupting=el.getAttribute("isInterrupting")!=="false";
+      const isThrow=tag==="intermediateThrowEvent"||tag==="endEvent";
+      const mapped=bpmnTagToInternal(tag,eventDefTag,isInterrupting,isThrow);
+      if(!mapped)return;
+      const b=shapeBounds[id];
+      const nid=`n${Date.now().toString(36)}${Math.random().toString(36).slice(2,7)}${nodes.length}`;
+      idMap[id]=nid;
+      // Fallback-Position als Raster, falls DI-Koordinaten fehlen (manche Tools liefern kein BPMNDI)
+      const gridIdx=nodes.length;
+      const fallbackX=80+(gridIdx%6)*180;
+      const fallbackY=80+Math.floor(gridIdx/6)*140;
+      const node={id:nid,type:mapped.type,label:name,x:b?b.x:fallbackX,y:b?b.y:fallbackY};
+      if(mapped.variant)node.variant=mapped.variant;
+      if(b){node.w=b.w;node.h=b.h;}
+      nodes.push(node);
+    });
+  });
+
+  // ── Sequenzflüsse / Nachrichtenflüsse / Assoziationen ─────────────────
+  const flowTagsEdges=["sequenceFlow","messageFlow","association"];
+  flowTagsEdges.forEach(tag=>{
+    getEls(tag).forEach(el=>{
+      const id=el.getAttribute("id");
+      const src=el.getAttribute("sourceRef");
+      const tgt=el.getAttribute("targetRef");
+      const name=el.getAttribute("name")||"";
+      if(!src||!tgt||!idMap[src]||!idMap[tgt])return;
+      const eid=`e${Date.now().toString(36)}${Math.random().toString(36).slice(2,7)}${edges.length}`;
+      const lineStyle=tag==="messageFlow"?"message":tag==="association"?"association":"arrow";
+      const edge={id:eid,from:idMap[src],to:idMap[tgt],label:name,lineStyle};
+      // Wegpunkte aus DI übernehmen (mittlere Punkte ohne Start/Ende-Port)
+      const wps=edgeWaypointsMap[id];
+      const explicitDirs=edgePortDirs[id];
+      if(wps&&wps.length>=2){
+        if(wps.length>2)edge.waypoints=wps.slice(1,-1).map(p=>({x:p.x,y:p.y}));
+      }
+      if(explicitDirs){
+        // Exakte Port-Richtungen aus Flowra-eigenem Export (verlustfreier Roundtrip)
+        if(explicitDirs.fromDir)edge.fromDir=explicitDirs.fromDir;
+        if(explicitDirs.toDir)edge.toDir=explicitDirs.toDir;
+      }else if(wps&&wps.length>=2){
+        // Fallback: Richtungen aus Wegpunkten ableiten (Dateien anderer Tools)
+        let isOrtho=true;
+        for(let i=0;i<wps.length-1;i++){
+          const dx=Math.abs(wps[i+1].x-wps[i].x), dy=Math.abs(wps[i+1].y-wps[i].y);
+          if(dx>4&&dy>4){isOrtho=false;break;}
+        }
+        if(isOrtho){
+          const first=wps[0], second=wps[1];
+          const last=wps[wps.length-1], prev=wps[wps.length-2];
+          const dirOf=(a,b)=>{
+            const dx=b.x-a.x, dy=b.y-a.y;
+            if(Math.abs(dx)>=Math.abs(dy))return dx>=0?"right":"left";
+            return dy>=0?"bottom":"top";
+          };
+          if(Math.abs(second.x-first.x)>2||Math.abs(second.y-first.y)>2){
+            edge.fromDir=dirOf(first,second);
+          }
+          if(Math.abs(last.x-prev.x)>2||Math.abs(last.y-prev.y)>2){
+            const arriveDir=dirOf(prev,last);
+            edge.toDir={right:"left",left:"right",top:"bottom",bottom:"top"}[arriveDir];
+          }
+        }
+      }
+      edges.push(edge);
+    });
+  });
+
+  if(nodes.length===0)throw new Error("Keine BPMN-Elemente in der Datei gefunden.");
+
+  return{nodes,edges};
+}
+
+function exportBpmnXml(nodes, edges, diagramName){
+  const poolNodes=nodes.filter(n=>n.type==="bpmn_pool");
+  const laneNodes=nodes.filter(n=>n.type==="bpmn_lane");
+  const hasPool=poolNodes.length>0;
+
+  // Flow-Elemente: alles außer Pool/Lane/Artefakte/Bild/Text(frei)/EPK-Typen
+  const flowNodes=nodes.filter(n=>{
+    if(n.type==="bpmn_pool"||n.type==="bpmn_lane")return false;
+    if(n.type==="image"||n.type==="text")return false;
+    if(!n.type.startsWith("bpmn_"))return false; // keine EPK-Elemente
+    return true;
+  });
+
+  const nodeXmlId=n=>bpmnId("El",n.id);
+
+  // ── Element → Pool-Zuordnung (per Y-Position innerhalb der Pool-Box) ──
+  // Bei mehreren Pools wird jedes Flow-Element dem Pool zugeordnet, dessen
+  // vertikaler Bereich seinen Mittelpunkt enthält. Ohne Pool (oder bei
+  // Elementen außerhalb jeder Pool-Box) landet alles im ersten/einzigen Prozess.
+  const poolOf=(n)=>{
+    if(!hasPool)return null;
+    const cy=n.y+getNodeSize(n).h/2;
+    for(const p of poolNodes){
+      const{h:ph}=getNodeSize(p);
+      if(cy>=p.y&&cy<=p.y+ph)return p;
+    }
+    return poolNodes[0]; // Fallback: erster Pool falls außerhalb aller Boxen
+  };
+
+  // ── XML-Builder für ein einzelnes Flow-Element ─────────────────────────
+  const buildFlowElementXml=(n)=>{
+    const tag=bpmnXmlTag(n);
+    if(!tag)return ""; // unbekannter/nicht abbildbarer Typ wird übersprungen
+    const id=nodeXmlId(n);
+    const name=escXml(n.label||"").replace(/\n/g,"&#10;");
+    const incoming=edges.filter(e=>e.to===n.id).map(e=>`<bpmn:incoming>${bpmnId("Flow",e.id)}</bpmn:incoming>`).join("");
+    const outgoing=edges.filter(e=>e.from===n.id).map(e=>`<bpmn:outgoing>${bpmnId("Flow",e.id)}</bpmn:outgoing>`).join("");
+
+    if(n.type==="bpmn_start_event"||n.type==="bpmn_intermediate_event"||n.type==="bpmn_end_event"){
+      const def=bpmnEventDefinition(n.variant);
+      const defXml=def?`<bpmn:${def} id="${bpmnId('EvDef',n.id)}"/>`:"";
+      const nonInterrupting=(n.variant||"").includes("non_interrupting")?` isInterrupting="false"`:"";
+      return `<bpmn:${tag} id="${id}" name="${name}"${n.type==="bpmn_start_event"?nonInterrupting:""}>${incoming}${outgoing}${defXml}</bpmn:${tag}>`;
+    }
+    if(tag==="task"||tag==="subProcess"||tag==="transaction"||tag==="callActivity"){
+      const markerXml=bpmnActivityMarkerXml(n.variant);
+      const triggeredByEvent=n.type==="bpmn_event_subprocess"?` triggeredByEvent="true"`:"";
+      return `<bpmn:${tag} id="${id}" name="${name}"${triggeredByEvent}>${incoming}${outgoing}${markerXml}</bpmn:${tag}>`;
+    }
+    if(tag.endsWith("Gateway")){
+      return `<bpmn:${tag} id="${id}" name="${name}">${incoming}${outgoing}</bpmn:${tag}>`;
+    }
+    if(tag==="dataObjectReference"){
+      const dataObjId=bpmnId("DataObj",n.id);
+      return `<bpmn:dataObject id="${dataObjId}_obj"/><bpmn:dataObjectReference id="${id}" name="${name}" dataObjectRef="${dataObjId}_obj"/>`;
+    }
+    if(tag==="dataStoreReference"){
+      return `<bpmn:dataStoreReference id="${id}" name="${name}"/>`;
+    }
+    if(tag==="textAnnotation"){
+      return `<bpmn:textAnnotation id="${id}"><bpmn:text>${name}</bpmn:text></bpmn:textAnnotation>`;
+    }
+    if(tag==="group"){
+      return `<bpmn:group id="${id}"/>`;
+    }
+    return "";
+  };
+
+  // ── Kanten klassifizieren: Sequenzfluss / Assoziation / Nachrichtenfluss ──
+  const dataTypes=["bpmn_data_object","bpmn_data_list","bpmn_data_input","bpmn_data_output","bpmn_data_store","bpmn_text_annotation"];
+  const flowEdges=edges.filter(e=>{
+    const a=nodes.find(n=>n.id===e.from), b=nodes.find(n=>n.id===e.to);
+    return a&&b&&a.type.startsWith("bpmn_")&&b.type.startsWith("bpmn_")
+      &&a.type!=="bpmn_pool"&&a.type!=="bpmn_lane"&&b.type!=="bpmn_pool"&&b.type!=="bpmn_lane";
+  });
+  const classifyEdge=(e)=>{
+    const srcN=nodes.find(n=>n.id===e.from), tgtN=nodes.find(n=>n.id===e.to);
+    const touchesData=(srcN&&dataTypes.includes(srcN.type))||(tgtN&&dataTypes.includes(tgtN.type));
+    if(e.lineStyle==="association"||e.lineStyle==="association-line"||(e.lineStyle==="dashed"&&touchesData))return"association";
+    if(e.lineStyle==="message")return"message";
+    // Verbindung zwischen zwei unterschiedlichen Pools ist immer ein Nachrichtenfluss,
+    // unabhängig vom gewählten Linienstil (BPMN erlaubt sequenceFlow nur INNERHALB eines Prozesses)
+    if(hasPool&&srcN&&tgtN){
+      const pa=poolOf(srcN), pb=poolOf(tgtN);
+      if(pa&&pb&&pa.id!==pb.id)return"message";
+    }
+    return"sequence";
+  };
+
+  const sequenceFlowXml=(e)=>{
+    const id=bpmnId("Flow",e.id);
+    const name=e.label?` name="${escXml(e.label)}"`:"";
+    return `<bpmn:sequenceFlow id="${id}"${name} sourceRef="${bpmnId('El',e.from)}" targetRef="${bpmnId('El',e.to)}"/>`;
+  };
+  const associationXml=(e)=>{
+    const id=bpmnId("Flow",e.id);
+    return `<bpmn:association id="${id}" sourceRef="${bpmnId('El',e.from)}" targetRef="${bpmnId('El',e.to)}"/>`;
+  };
+  const messageFlowXml=(e)=>{
+    const id=bpmnId("Flow",e.id);
+    const name=e.label?` name="${escXml(e.label)}"`:"";
+    return `<bpmn:messageFlow id="${id}"${name} sourceRef="${bpmnId('El',e.from)}" targetRef="${bpmnId('El',e.to)}"/>`;
+  };
+
+  const messageFlowEdges=flowEdges.filter(e=>classifyEdge(e)==="message");
+
+  // ── Pro Pool (oder einem einzigen Default-Prozess ohne Pool) einen <bpmn:process> bauen ──
+  const pools=hasPool?poolNodes:[null];
+  const processBlocks=pools.map((pool,pi)=>{
+    const procId=bpmnId("Process",pool?pool.id:"main");
+    const myFlowNodes=hasPool?flowNodes.filter(n=>poolOf(n)?.id===pool.id):flowNodes;
+    const myLanes=hasPool?laneNodes.filter(lane=>{
+      // Lane gehört zum Pool, wenn ihr Y-Bereich innerhalb der Pool-Box liegt
+      const{h:ph}=getNodeSize(pool);
+      const lcy=lane.y+getNodeSize(lane).h/2;
+      return lcy>=pool.y&&lcy<=pool.y+ph;
+    }):[];
+
+    let laneSetXml="";
+    if(myLanes.length){
+      const laneXml=myLanes.map(lane=>{
+        const laneId=bpmnId("Lane",lane.id);
+        const{h:laneH}=getNodeSize(lane);
+        const laneTop=lane.y, laneBottom=lane.y+laneH;
+        const refs=myFlowNodes.filter(n=>{
+          const cy=n.y+getNodeSize(n).h/2;
+          return cy>=laneTop&&cy<=laneBottom;
+        }).map(n=>`<bpmn:flowNodeRef>${nodeXmlId(n)}</bpmn:flowNodeRef>`).join("");
+        return `<bpmn:lane id="${laneId}" name="${escXml(lane.label||"")}">${refs}</bpmn:lane>`;
+      }).join("\n      ");
+      laneSetXml=`<bpmn:laneSet id="${bpmnId('LaneSet',pool?pool.id:'main')}">\n      ${laneXml}\n    </bpmn:laneSet>`;
+    }
+
+    const myFlowElementsXml=myFlowNodes.map(buildFlowElementXml).join("\n    ");
+
+    // Sequenzflüsse/Assoziationen NUR zwischen Elementen die zu DIESEM Pool/Prozess gehören
+    const myFlowIds=new Set(myFlowNodes.map(n=>n.id));
+    const mySeqEdges=flowEdges.filter(e=>{
+      const cls=classifyEdge(e);
+      if(cls==="message")return false; // Message-Flows gehören auf Collaboration-Ebene
+      return myFlowIds.has(e.from)&&myFlowIds.has(e.to);
+    });
+    const mySeqXml=mySeqEdges.map(e=>classifyEdge(e)==="association"?associationXml(e):sequenceFlowXml(e)).join("\n    ");
+
+    return{
+      pool, procId,
+      xml:`<bpmn:process id="${procId}" name="${escXml(pool?pool.label||"":diagramName)}" isExecutable="false">
+    ${laneSetXml}
+    ${myFlowElementsXml}
+    ${mySeqXml}
+  </bpmn:process>`
+    };
+  });
+
+  const processXmlAll=processBlocks.map(b=>b.xml).join("\n  ");
+
+  // ── Collaboration (nur falls mind. 1 Pool vorhanden) ──────────────────
+  let collaborationXml="";
+  const collabId=bpmnId("Collaboration","main");
+  if(hasPool){
+    const participantsXml=processBlocks.map(b=>{
+      const participantId=bpmnId("Part",b.pool.id);
+      return `<bpmn:participant id="${participantId}" name="${escXml(b.pool.label||"")}" processRef="${b.procId}"/>`;
+    }).join("\n    ");
+    const messageFlowsXml=messageFlowEdges.map(messageFlowXml).join("\n    ");
+    collaborationXml=`<bpmn:collaboration id="${collabId}">
+    ${participantsXml}
+    ${messageFlowsXml}
+  </bpmn:collaboration>`;
+  }
+
+  // ── BPMN DI (visuelle Darstellung: Positionen/Größen + Waypoints) ──────
+  const shapeDi=[];
+  processBlocks.forEach(b=>{
+    if(b.pool){
+      const{w,h}=getNodeSize(b.pool);
+      const participantId=bpmnId("Part",b.pool.id);
+      shapeDi.push(`<bpmndi:BPMNShape id="${participantId}_di" bpmnElement="${participantId}" isHorizontal="true">
+      <dc:Bounds x="${b.pool.x}" y="${b.pool.y}" width="${w}" height="${h}"/>
+    </bpmndi:BPMNShape>`);
+    }
+  });
+  laneNodes.forEach(lane=>{
+    const{w,h}=getNodeSize(lane);
+    shapeDi.push(`<bpmndi:BPMNShape id="${bpmnId('Lane',lane.id)}_di" bpmnElement="${bpmnId('Lane',lane.id)}" isHorizontal="true">
+      <dc:Bounds x="${lane.x}" y="${lane.y}" width="${w}" height="${h}"/>
+    </bpmndi:BPMNShape>`);
+  });
+  flowNodes.forEach(n=>{
+    const{w,h}=getNodeSize(n);
+    const id=nodeXmlId(n);
+    shapeDi.push(`<bpmndi:BPMNShape id="${id}_di" bpmnElement="${id}">
+      <dc:Bounds x="${n.x}" y="${n.y}" width="${w}" height="${h}"/>
+    </bpmndi:BPMNShape>`);
+  });
+
+  // Waypoints: Port-zu-Port (nicht nur Mittelpunkt), mit Ortho-Knick falls nötig —
+  // analog zur Routing-Logik im SVG-Export, damit Linien beim Reimport gerade bleiben
+  const edgeWaypoints=(e)=>{
+    const a=nodes.find(n=>n.id===e.from), b=nodes.find(n=>n.id===e.to);
+    if(!a||!b)return null;
+    const p1=e.fromDir?getPortPoint(a,e.fromDir):getClosestPorts(a,b).p1;
+    const p2=e.toDir?getPortPoint(b,e.toDir):getClosestPorts(a,b).p2;
+    const wps=(e.waypoints||[]);
+    if(wps.length>0)return[p1,...wps,p2];
+    const ddx=Math.abs(p2.x-p1.x), ddy=Math.abs(p2.y-p1.y);
+    if(ddx<4||ddy<4)return[p1,p2];
+    const fd=e.fromDir, td=e.toDir;
+    let via;
+    if(fd==="top"||fd==="bottom")via={x:p1.x,y:p2.y};
+    else if(fd==="left"||fd==="right")via={x:p2.x,y:p1.y};
+    else if(td==="top"||td==="bottom")via={x:p2.x,y:p1.y};
+    else if(td==="left"||td==="right")via={x:p1.x,y:p2.y};
+    else{
+      const vV={x:p1.x,y:p2.y},vH={x:p2.x,y:p1.y};
+      via=Math.hypot(p2.x-vV.x,p2.y-vV.y)>=Math.hypot(p2.x-vH.x,p2.y-vH.y)?vV:vH;
+    }
+    return[p1,via,p2];
+  };
+
+  const allDiEdges=[...flowEdges];
+  const edgeDi=allDiEdges.map(e=>{
+    const pts=edgeWaypoints(e);
+    if(!pts)return "";
+    const id=bpmnId("Flow",e.id);
+    const wpXml=pts.map(p=>`<di:waypoint x="${p.x}" y="${p.y}"/>`).join("\n      ");
+    // Flowra-eigene Port-Richtungen als Custom-Attribute (andere Tools ignorieren sie,
+    // aber beim Reimport in Flowra bleiben die exakten Andockpunkte erhalten)
+    const fromDirAttr=e.fromDir?` flowra:fromDir="${e.fromDir}"`:"";
+    const toDirAttr=e.toDir?` flowra:toDir="${e.toDir}"`:"";
+    return `<bpmndi:BPMNEdge id="${id}_di" bpmnElement="${id}"${fromDirAttr}${toDirAttr}>
+      ${wpXml}
+    </bpmndi:BPMNEdge>`;
+  }).join("\n    ");
+
+  const planeElement=hasPool?collabId:(processBlocks[0]?processBlocks[0].procId:bpmnId("Process","main"));
+  const diagramXml=`<bpmndi:BPMNDiagram id="${bpmnId('Diagram','main')}">
+    <bpmndi:BPMNPlane id="${bpmnId('Plane','main')}" bpmnElement="${planeElement}">
+      ${shapeDi.join("\n      ")}
+      ${edgeDi}
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>`;
+
+  const rootContent=hasPool?collaborationXml+"\n  "+processXmlAll:processXmlAll;
+
+  const xml=`<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+  xmlns:flowra="http://flowra.app/bpmn-ext"
+  id="${bpmnId('Definitions','main')}"
+  targetNamespace="http://flowra.app/bpmn">
+  ${rootContent}
+  ${diagramXml}
+</bpmn:definitions>`;
+
+  return xml;
+}
 function exportDiagram(nodes, edges, format, colors, diagramName, theme){
   if(nodes.length===0){ alert("Canvas ist leer!"); return; }
   const T = theme || (typeof THEMES!=="undefined"?THEMES.bloom:null);
@@ -2064,6 +2606,7 @@ export default function FlowraEditor(){
   const [wobble,setWobble]=useState(10);
   const [diagramName,setDiagramName]=useState("Unbenanntes Diagramm");
   const [openLangs,setOpenLangs]=useState(()=>{try{const s=localStorage.getItem("flowra-open-langs");if(s)return JSON.parse(s);}catch(e){}return{epk:true,bpmn:false};});
+  const [pendingImport,setPendingImport]=useState(null); // {nodes,edges} wartend auf Ersetzen/Hinzufügen-Entscheidung
   const [openGroups,setOpenGroups]=useState(()=>{try{const s=localStorage.getItem("flowra-open-groups");if(s)return JSON.parse(s);}catch(e){}return{};});
   const toggleLang=(id)=>setOpenLangs(prev=>{const n={...prev,[id]:!prev[id]};try{localStorage.setItem("flowra-open-langs",JSON.stringify(n));}catch(e){}return n;});
   const toggleGroup=(key)=>setOpenGroups(prev=>{const n={...prev,[key]:!prev[key]};try{localStorage.setItem("flowra-open-groups",JSON.stringify(n));}catch(e){}return n;});
@@ -2455,7 +2998,7 @@ export default function FlowraEditor(){
       <div style={{position:"relative",zIndex:1,display:"flex",height:"100vh",color:"var(--text)",overflow:"hidden",fontFamily:FONT}}>
 
         {exportOpen&&(
-          <div style={{position:"fixed",right:16,top:60,zIndex:9999,minWidth:140,
+          <div style={{position:"fixed",right:16,top:60,zIndex:9999,minWidth:160,
             borderRadius:"var(--r-md)",overflow:"hidden",
             boxShadow:"0 8px 32px rgba(0,0,0,0.6)",
             background:"rgba(12,14,19,0.99)",border:"1px solid var(--border)"}}>
@@ -2466,9 +3009,62 @@ export default function FlowraEditor(){
                 {label}
               </div>
             ))}
+            {nodes.some(n=>n.type&&n.type.startsWith("bpmn_"))&&(
+              <div className="menu-item" onClick={()=>{
+                  const xml=exportBpmnXml(nodes,edges,diagramName);
+                  const b64=btoa(unescape(encodeURIComponent(xml)));
+                  fetch(`${API_BASE}/export`,{method:"POST",headers:{"Content-Type":"application/json"},
+                    body:JSON.stringify({data:b64,filename:`${diagramName||"diagramm"}.bpmn`,mime:"application/xml"})})
+                    .catch(err=>console.error("BPMN-XML-Export fehlgeschlagen:",err));
+                  setExportOpen(false);
+                }}
+                style={{padding:"11px 18px",fontSize:13,fontWeight:600,color:"var(--text)",cursor:"pointer"}}>
+                ⌘ BPMN 2.0 XML
+              </div>
+            )}
           </div>
         )}
         {showFAQ&&<FAQModal onClose={()=>setShowFAQ(false)}/>}
+        {pendingImport&&(
+          <div className="pop-in" style={{position:"fixed",inset:0,zIndex:10001,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.55)",backdropFilter:"blur(4px)"}}>
+            <div style={{width:"min(420px,90vw)",borderRadius:"var(--r-xl)",overflow:"hidden",background:"color-mix(in oklab,var(--bg) 92%,transparent)",border:"1px solid var(--border-strong)",boxShadow:"var(--shadow)",padding:"24px 22px"}}>
+              <div style={{fontWeight:800,fontSize:16,marginBottom:8}}>BPMN-Import</div>
+              <div style={{fontSize:13,color:"var(--muted)",marginBottom:18,lineHeight:1.5}}>
+                Es sind bereits {nodes.length} Elemente im aktuellen Diagramm. Wie soll der Import erfolgen?
+              </div>
+              <div style={{display:"flex",flexDirection:"column",gap:8}}>
+                <button className="tbtn accent" style={{width:"100%",justifyContent:"center",padding:"10px"}}
+                  onClick={()=>{
+                    setNodes(pendingImport.nodes);
+                    setEdges(pendingImport.edges);
+                    pushHistory(pendingImport.nodes,pendingImport.edges);
+                    setPendingImport(null);
+                  }}>Aktuelles Diagramm ersetzen</button>
+                <button className="tbtn" style={{width:"100%",justifyContent:"center",padding:"10px"}}
+                  onClick={()=>{
+                    const offset=80;
+                    const remapped={};
+                    const newNodes=pendingImport.nodes.map(n=>{
+                      const nid=`n${Date.now().toString(36)}${Math.random().toString(36).slice(2,7)}`;
+                      remapped[n.id]=nid;
+                      return{...n,id:nid,x:n.x+offset,y:n.y+offset};
+                    });
+                    const newEdges=pendingImport.edges.map(e=>({
+                      ...e,id:`e${Date.now().toString(36)}${Math.random().toString(36).slice(2,7)}`,
+                      from:remapped[e.from],to:remapped[e.to]
+                    }));
+                    const merged={nodes:[...nodes,...newNodes],edges:[...edges,...newEdges]};
+                    setNodes(merged.nodes);
+                    setEdges(merged.edges);
+                    pushHistory(merged.nodes,merged.edges);
+                    setPendingImport(null);
+                  }}>Zum Diagramm hinzufügen</button>
+                <button className="tbtn" style={{width:"100%",justifyContent:"center",padding:"10px",color:"var(--faint)"}}
+                  onClick={()=>setPendingImport(null)}>Abbrechen</button>
+              </div>
+            </div>
+          </div>
+        )}
         {showOnboarding&&<OnboardingScreen onDone={()=>setShowOnboarding(false)}/>}
         {showProjects&&<ProjectManager currentName={diagramName} onLoad={loadDiagram} onNew={newDiagram} onClose={()=>setShowProjects(false)}/>}
         {showSettings&&<SettingsPanel theme={theme} onTheme={applyTheme} colors={colors} onColorsChange={handleColorsChange} snapGrid={snapGrid} onSnapGrid={setSnapGrid} showGrid={showGrid} onShowGrid={setShowGrid} wobble={wobble} onWobble={setWobble} snapLines={snapLines} onSnapLines={setSnapLines} onClose={()=>setShowSettings(false)} onFAQ={()=>{setShowSettings(false);setShowFAQ(true);}}/>}
@@ -2610,6 +3206,36 @@ export default function FlowraEditor(){
               <span style={{fontSize:15,fontWeight:800,fontFamily:"serif"}}>T</span>
               <span>Freier Text</span>
             </div>
+            {/* BPMN XML Import */}
+            <label className="pal-item" style={{display:"flex",alignItems:"center",gap:8,padding:"9px 12px",borderRadius:"var(--r-md)",background:"var(--glass)",border:"1px solid var(--border)",cursor:"pointer",marginBottom:14,color:"var(--muted)",fontSize:12.5,fontWeight:600}}>
+              <span style={{fontSize:15}}>⌘</span>
+              <span>BPMN XML importieren</span>
+              <input type="file" accept=".bpmn,.xml,application/xml,text/xml" style={{display:"none"}}
+                onChange={e=>{
+                  const file=e.target.files?.[0];
+                  if(!file)return;
+                  const reader=new FileReader();
+                  reader.onload=ev=>{
+                    try{
+                      const xmlText=ev.target.result;
+                      const imported=importBpmnXml(xmlText);
+                      if(nodes.length>0){
+                        setPendingImport(imported);
+                      }else{
+                        setNodes(imported.nodes);
+                        setEdges(imported.edges);
+                        pushHistory(imported.nodes,imported.edges);
+                      }
+                    }catch(err){
+                      console.error("BPMN-Import fehlgeschlagen:",err);
+                      alert("BPMN-Import fehlgeschlagen: "+err.message);
+                    }
+                  };
+                  reader.onerror=()=>console.error("Datei konnte nicht gelesen werden");
+                  reader.readAsText(file);
+                  e.target.value="";
+                }}/>
+            </label>
             <div style={{fontSize:10,color:"var(--faint)",lineHeight:1.9}}>
               <div style={{color:"var(--muted)",fontWeight:700,marginBottom:5,letterSpacing:1}}>SHORTCUTS</div>
               {[["Drag","→ Canvas"],["Port ziehen","Verbinden"],["Doppelklick","Umbenennen"],["Entf","Löschen"],["Strg+S","Speichern"],["Strg+Z / Y","Undo / Redo"],["Strg+C / V","Kopieren"],["Ziehen / Pfeiltasten","Pan"],["Scroll","Zoom"]].map(([k,v])=>(
