@@ -146,35 +146,35 @@ const THEMES = {
     bg:"#18171d", bgCanvas:"#1d1b24", edge:"#837c8e",
     fx:{ fill:0.22, strokeW:2.2, glow:5, glowAmt:0.45 },
     elements:{ ereignis:"#9fe3b3", funktion:"#aac6f0", organisationseinheit:"#cdb8ef", informationsobjekt:"#a6e2e0", dokument:"#3dd6b5", prozesspfad:"#f6b3a4", operator:"#f6dd9c",
-      bpmn_task:"#aac6f0", bpmn_event_start:"#9fe3b3", bpmn_event_end:"#f6b3a4", bpmn_event_intermediate:"#f6dd9c", bpmn_gateway:"#f6dd9c", bpmn_data:"#a6e2e0", bpmn_artifact:"#cdb8ef", bpmn_pool:"#837c8e" },
+      bpmn_task:"#aac6f0", bpmn_event_start:"#9fe3b3", bpmn_event_end:"#f6b3a4", bpmn_event_intermediate:"#f6dd9c", bpmn_gateway:"#f6dd9c", bpmn_data:"#a6e2e0", bpmn_artifact:"#cdb8ef", bpmn_pool:"#837c8e", psp:"#f4c4ac" },
   },
   eclipse: {
     id:"eclipse", name:"Eclipse", dot:"#7c8dff", accent:"#7c8dff", accent2:"#38d6e6", ink:"#f2f5fc", danger:"#ff7a8a",
     bg:"#080a14", bgCanvas:"#0a0c17", edge:"#6e7894",
     fx:{ fill:0.14, strokeW:1.9, glow:6, glowAmt:0.55 },
     elements:{ ereignis:"#5fd07a", funktion:"#5b93ff", organisationseinheit:"#b07cff", informationsobjekt:"#34cfe0", dokument:"#1fc8a8", prozesspfad:"#ff7a8a", operator:"#ffc24b",
-      bpmn_task:"#5b93ff", bpmn_event_start:"#5fd07a", bpmn_event_end:"#ff7a8a", bpmn_event_intermediate:"#ffc24b", bpmn_gateway:"#ffc24b", bpmn_data:"#34cfe0", bpmn_artifact:"#b07cff", bpmn_pool:"#6e7894" },
+      bpmn_task:"#5b93ff", bpmn_event_start:"#5fd07a", bpmn_event_end:"#ff7a8a", bpmn_event_intermediate:"#ffc24b", bpmn_gateway:"#ffc24b", bpmn_data:"#34cfe0", bpmn_artifact:"#b07cff", bpmn_pool:"#6e7894", psp:"#38d6e6" },
   },
   nocturne: {
     id:"nocturne", name:"Nocturne", dot:"#b37bff", accent:"#b37bff", accent2:"#ff5fa6", ink:"#f2f5fc", danger:"#ff5f9e",
     bg:"#0a0712", bgCanvas:"#0c0917", edge:"#73688f",
     fx:{ fill:0.14, strokeW:1.9, glow:7, glowAmt:0.6 },
     elements:{ ereignis:"#4be3a0", funktion:"#6e8bff", organisationseinheit:"#c77dff", informationsobjekt:"#3ad6ff", dokument:"#2fe0c8", prozesspfad:"#ff5f9e", operator:"#ffce4a",
-      bpmn_task:"#6e8bff", bpmn_event_start:"#4be3a0", bpmn_event_end:"#ff5f9e", bpmn_event_intermediate:"#ffce4a", bpmn_gateway:"#ffce4a", bpmn_data:"#3ad6ff", bpmn_artifact:"#c77dff", bpmn_pool:"#73688f" },
+      bpmn_task:"#6e8bff", bpmn_event_start:"#4be3a0", bpmn_event_end:"#ff5f9e", bpmn_event_intermediate:"#ffce4a", bpmn_gateway:"#ffce4a", bpmn_data:"#3ad6ff", bpmn_artifact:"#c77dff", bpmn_pool:"#73688f", psp:"#ff5fa6" },
   },
   graphite: {
     id:"graphite", name:"Graphite", dot:"#c6f24e", accent:"#c6f24e", accent2:"#c6f24e", ink:"#f0f1f4", danger:"#ff7a8a",
     bg:"#0b0b0d", bgCanvas:"#0d0d10", edge:"#6b6e78",
     fx:{ fill:0.13, strokeW:1.9, glow:5, glowAmt:0.5 },
     elements:{ ereignis:"#5fd07a", funktion:"#5b93ff", organisationseinheit:"#b07cff", informationsobjekt:"#34cfe0", dokument:"#1fc8a8", prozesspfad:"#ff7a8a", operator:"#ffc24b",
-      bpmn_task:"#5b93ff", bpmn_event_start:"#5fd07a", bpmn_event_end:"#ff7a8a", bpmn_event_intermediate:"#ffc24b", bpmn_gateway:"#ffc24b", bpmn_data:"#34cfe0", bpmn_artifact:"#b07cff", bpmn_pool:"#6b6e78" },
+      bpmn_task:"#5b93ff", bpmn_event_start:"#5fd07a", bpmn_event_end:"#ff7a8a", bpmn_event_intermediate:"#ffc24b", bpmn_gateway:"#ffc24b", bpmn_data:"#34cfe0", bpmn_artifact:"#b07cff", bpmn_pool:"#6b6e78", psp:"#c6f24e" },
   },
   matte: {
     id:"matte", name:"Matte", dot:"#8b93bf", accent:"#8b93bf", accent2:"#8b93bf", ink:"#eceef4", danger:"#c8929a",
     bg:"#101118", bgCanvas:"#13141c", edge:"#6d7283",
     fx:{ fill:0.17, strokeW:2.0, glow:0, glowAmt:0 },
     elements:{ ereignis:"#84ad8b", funktion:"#7e9ec4", organisationseinheit:"#a496c0", informationsobjekt:"#79b0b9", dokument:"#5bbfaa", prozesspfad:"#c8929a", operator:"#cbb27e",
-      bpmn_task:"#7e9ec4", bpmn_event_start:"#84ad8b", bpmn_event_end:"#c8929a", bpmn_event_intermediate:"#cbb27e", bpmn_gateway:"#cbb27e", bpmn_data:"#79b0b9", bpmn_artifact:"#a496c0", bpmn_pool:"#6d7283" },
+      bpmn_task:"#7e9ec4", bpmn_event_start:"#84ad8b", bpmn_event_end:"#c8929a", bpmn_event_intermediate:"#cbb27e", bpmn_gateway:"#cbb27e", bpmn_data:"#79b0b9", bpmn_artifact:"#a496c0", bpmn_pool:"#6d7283", psp:"#8b93bf" },
   },
 };
 const THEME_ORDER = ["bloom","eclipse","nocturne","graphite","matte"];
@@ -213,6 +213,8 @@ function themeColors(themeId){
     bpmn_custom_artifact:{accent:e.bpmn_artifact,text:t.ink},
     // BPMN – Teilnehmer
     bpmn_pool:{accent:e.bpmn_pool,text:t.ink}, bpmn_lane:{accent:e.bpmn_pool,text:t.ink},
+    // PSP
+    psp_project:{accent:e.psp,text:t.ink}, psp_subproject:{accent:e.psp,text:t.ink}, psp_workpackage:{accent:e.psp,text:t.ink},
   };
 }
 function loadTheme(){ try{ const t=localStorage.getItem("flowra-theme"); if(t&&THEMES[t]) return t; }catch(e){} return "bloom"; }
@@ -343,8 +345,40 @@ function getNodeSize(node){
     // Höhe folgt automatisch dem Markdown-Inhalt, außer manuell per Resize fixiert
     dh=node.hLocked?(node.h||24):measureTextNodeHeight(node.label,14);
   }
+  else if(node.type==="psp_project"){dw=180;dh=78;}
+  else if(node.type==="psp_subproject"){dw=160;dh=72;}
+  else if(node.type==="psp_workpackage"){dw=140;dh=66;}
   else{dw=NODE_W;dh=NODE_H;}
   return{w:node.w||dw,h:node.type==="text"?dh:(node.h||dh)};
+}
+
+// ─── PSP: automatische Code-Nummerierung (1, 1.1, 1.1.1 ...) aus der Baumstruktur ──
+// Kanten zwischen PSP-Elementen werden als Eltern→Kind interpretiert (edge.from = Eltern).
+// Kinder werden nach x-Position sortiert (links nach rechts = Reihenfolge im PSP-Code).
+function buildPspCodes(nodes, edges){
+  const pspNodes=nodes.filter(n=>n.type&&n.type.startsWith("psp_"));
+  const pspIds=new Set(pspNodes.map(n=>n.id));
+  const childrenOf={};
+  const hasParent=new Set();
+  edges.forEach(e=>{
+    if(pspIds.has(e.from)&&pspIds.has(e.to)){
+      (childrenOf[e.from]=childrenOf[e.from]||[]).push(e.to);
+      hasParent.add(e.to);
+    }
+  });
+  const byId=Object.fromEntries(pspNodes.map(n=>[n.id,n]));
+  const codes={};
+  const assign=(id,prefix)=>{
+    codes[id]=prefix;
+    const kids=(childrenOf[id]||[]).slice().sort((a,b)=>(byId[a]?.x||0)-(byId[b]?.x||0));
+    kids.forEach((cid,i)=>assign(cid,prefix?`${prefix}.${i+1}`:`${i+1}`));
+  };
+  const roots=pspNodes.filter(n=>!hasParent.has(n.id)).sort((a,b)=>(a.x||0)-(b.x||0));
+  // Wurzel bekommt Code "1" (bzw. "2","3" bei mehreren Projektbäumen),
+  // Kinder darunter "1.1","1.2", Enkel "1.1.1" usw. – entspricht der PSP-ID-
+  // Konvention aus DIN 69901 / Lehrbuch-Beispielen (Projekt selbst = Code "1").
+  roots.forEach((r,i)=>assign(r.id,`${i+1}`));
+  return codes;
 }
 
 function getPortPoint(node,dir){
@@ -433,7 +467,7 @@ function snapAngle(fromX,fromY,toX,toY){
 }
 
 // ─── ShapeRenderer (transluzente Füllung + Glow, theme-FX-gesteuert) ───────
-function ShapeRenderer({type,label,width=NODE_W,height=NODE_H,selected,dimmed,colors,preview,override,fx,variant,noFilter,nodeSrc}){
+function ShapeRenderer({type,label,width=NODE_W,height=NODE_H,selected,dimmed,colors,preview,override,fx,variant,noFilter,nodeSrc,pspCode,pspResponsible,pspStatus}){
   const F=fx||DEFAULT_FX;
   const base=(colors&&colors[type])||DEFAULT_COLORS[type]||{accent:"#aac6f0",text:"#f6f5fa"};
   const c=override?{...base,accent:override}:base;
@@ -871,6 +905,40 @@ function ShapeRenderer({type,label,width=NODE_W,height=NODE_H,selected,dimmed,co
           </text>
         </svg>);
     }
+    // ─── PSP: Projekt / Teilprojekt / Arbeitspaket ───────────────────────────
+    case "psp_project": case "psp_subproject": case "psp_workpackage":{
+      const isProject=type==="psp_project";
+      const isSub=type==="psp_subproject";
+      const sw=isProject?strokeW*1.3:isSub?strokeW*1.05:strokeW*0.85;
+      const rx=6;
+      const footerH=Math.min(22,height*0.34);
+      const headerH=height-footerH;
+      const ampelColors={green:"#4caf6d",yellow:"#e6c34a",red:"#d9534f",done:"#2b2f38"};
+      const ampelCol=pspStatus&&ampelColors[pspStatus];
+      const respText=pspResponsible||"";
+      return <svg width={width} height={height} overflow="visible">{defs}{selRing}
+        {/* Gesamtrahmen */}
+        <rect x={0} y={0} width={width} height={height} rx={rx} fill={fill} stroke={accent} strokeWidth={sw} style={ss}/>
+        <rect x={0} y={0} width={width} height={height} rx={rx} fill={`url(#${sheenId})`} opacity={opacity}/>
+        {/* Kopfzeile: Name (kräftiger gefüllt) */}
+        <rect x={0} y={0} width={width} height={headerH} rx={rx} fill={rgba(accent,isProject?0.34:isSub?0.24:0.16)} style={{pointerEvents:"none"}}/>
+        <rect x={0} y={headerH-rx} width={width} height={rx} fill={rgba(accent,isProject?0.34:isSub?0.24:0.16)} style={{pointerEvents:"none"}}/>
+        <text x={width/2} y={headerH/2-((lines.length-1)*lineH)/2+fontSize*0.38} textAnchor="middle"
+          fill={txt} fontSize={fontSize} fontWeight={isProject?"800":isSub?"700":"600"} fontFamily={FONT}
+          style={{pointerEvents:"none",userSelect:"none",letterSpacing:"0.2px"}}>
+          {lines.map((l,i)=><tspan key={i} x={width/2} dy={i===0?0:lineH}>{l}</tspan>)}
+        </text>
+        {/* Trennlinie Kopf/Fuß */}
+        <line x1={0} y1={headerH} x2={width} y2={headerH} stroke={accent} strokeWidth={1} opacity={0.5} style={{pointerEvents:"none"}}/>
+        {/* Fußzeile: links PSP-ID, rechts Verantwortlicher */}
+        <line x1={width/2} y1={headerH} x2={width/2} y2={height} stroke={accent} strokeWidth={1} opacity={0.35} style={{pointerEvents:"none"}}/>
+        <text x={width/4} y={headerH+footerH/2+3.5} textAnchor="middle" fontSize={10} fontWeight="800" fontFamily={FONT} fill={txt} opacity={0.9} style={{pointerEvents:"none",userSelect:"none"}}>{pspCode||""}</text>
+        <text x={(width*3)/4} y={headerH+footerH/2+3.5} textAnchor="middle" fontSize={9.5} fontWeight="500" fontFamily={FONT} fill={txt} opacity={0.75} style={{pointerEvents:"none",userSelect:"none"}}>{respText||"–"}</text>
+        {/* Ampel-Statusleiste (optional, DIN-Zusatzelement für Fortschrittssteuerung) */}
+        {ampelCol&&<rect x={0} y={0} width={5} height={height} rx={2.5} fill={ampelCol} style={{pointerEvents:"none"}}/>}
+      </svg>;
+    }
+
     case "image":{
       const src=nodeSrc||"";
       if(!src)return(
@@ -1328,25 +1396,6 @@ function importBpmnXml(xmlText){
     }
   });
 
-  // ── DI: Edge-Wegpunkte sammeln (bpmndi:BPMNEdge → di:waypoint) ─────────
-  // So bleiben die Linien beim Import exakt wie im Original geroutet,
-  // statt von Flowra neu (und oft chaotisch) berechnet zu werden.
-  const edgeWaypointsMap={}; // bpmnElement-ID → [{x,y},...]
-  const edgePortDirs={};     // bpmnElement-ID → {fromDir,toDir} (Flowra-eigene Attribute)
-  getEls("BPMNEdge").forEach(edgeEl=>{
-    const elRef=edgeEl.getAttribute("bpmnElement");
-    if(!elRef)return;
-    const wps=Array.from(edgeEl.getElementsByTagNameNS("*","waypoint")).map(wp=>({
-      x:parseFloat(wp.getAttribute("x")||0),
-      y:parseFloat(wp.getAttribute("y")||0),
-    }));
-    if(wps.length>=2)edgeWaypointsMap[elRef]=wps;
-    // Flowra-eigene Port-Richtungen (falls vorhanden, für exakten Roundtrip)
-    const fd=edgeEl.getAttribute("flowra:fromDir")||edgeEl.getAttributeNS("http://flowra.app/bpmn-ext","fromDir");
-    const td=edgeEl.getAttribute("flowra:toDir")||edgeEl.getAttributeNS("http://flowra.app/bpmn-ext","toDir");
-    if(fd||td)edgePortDirs[elRef]={fromDir:fd||undefined,toDir:td||undefined};
-  });
-
   // ── Lanes vorbereiten (für Zuordnung Element → Lane-Label, optional) ──
   const laneRefs={}; // flowNodeId → laneId
   getEls("lane").forEach(lane=>{
@@ -1422,42 +1471,7 @@ function importBpmnXml(xmlText){
       if(!src||!tgt||!idMap[src]||!idMap[tgt])return;
       const eid=`e${Date.now().toString(36)}${Math.random().toString(36).slice(2,7)}${edges.length}`;
       const lineStyle=tag==="messageFlow"?"message":tag==="association"?"association":"arrow";
-      const edge={id:eid,from:idMap[src],to:idMap[tgt],label:name,lineStyle};
-      // Wegpunkte aus DI übernehmen (mittlere Punkte ohne Start/Ende-Port)
-      const wps=edgeWaypointsMap[id];
-      const explicitDirs=edgePortDirs[id];
-      if(wps&&wps.length>=2){
-        if(wps.length>2)edge.waypoints=wps.slice(1,-1).map(p=>({x:p.x,y:p.y}));
-      }
-      if(explicitDirs){
-        // Exakte Port-Richtungen aus Flowra-eigenem Export (verlustfreier Roundtrip)
-        if(explicitDirs.fromDir)edge.fromDir=explicitDirs.fromDir;
-        if(explicitDirs.toDir)edge.toDir=explicitDirs.toDir;
-      }else if(wps&&wps.length>=2){
-        // Fallback: Richtungen aus Wegpunkten ableiten (Dateien anderer Tools)
-        let isOrtho=true;
-        for(let i=0;i<wps.length-1;i++){
-          const dx=Math.abs(wps[i+1].x-wps[i].x), dy=Math.abs(wps[i+1].y-wps[i].y);
-          if(dx>4&&dy>4){isOrtho=false;break;}
-        }
-        if(isOrtho){
-          const first=wps[0], second=wps[1];
-          const last=wps[wps.length-1], prev=wps[wps.length-2];
-          const dirOf=(a,b)=>{
-            const dx=b.x-a.x, dy=b.y-a.y;
-            if(Math.abs(dx)>=Math.abs(dy))return dx>=0?"right":"left";
-            return dy>=0?"bottom":"top";
-          };
-          if(Math.abs(second.x-first.x)>2||Math.abs(second.y-first.y)>2){
-            edge.fromDir=dirOf(first,second);
-          }
-          if(Math.abs(last.x-prev.x)>2||Math.abs(last.y-prev.y)>2){
-            const arriveDir=dirOf(prev,last);
-            edge.toDir={right:"left",left:"right",top:"bottom",bottom:"top"}[arriveDir];
-          }
-        }
-      }
-      edges.push(edge);
+      edges.push({id:eid,from:idMap[src],to:idMap[tgt],label:name,lineStyle});
     });
   });
 
@@ -1500,7 +1514,7 @@ function exportBpmnXml(nodes, edges, diagramName){
     const tag=bpmnXmlTag(n);
     if(!tag)return ""; // unbekannter/nicht abbildbarer Typ wird übersprungen
     const id=nodeXmlId(n);
-    const name=escXml(n.label||"").replace(/\n/g,"&#10;");
+    const name=escXml((n.label||"").replace(/\n/g," "));
     const incoming=edges.filter(e=>e.to===n.id).map(e=>`<bpmn:incoming>${bpmnId("Flow",e.id)}</bpmn:incoming>`).join("");
     const outgoing=edges.filter(e=>e.from===n.id).map(e=>`<bpmn:outgoing>${bpmnId("Flow",e.id)}</bpmn:outgoing>`).join("");
 
@@ -1692,11 +1706,7 @@ function exportBpmnXml(nodes, edges, diagramName){
     if(!pts)return "";
     const id=bpmnId("Flow",e.id);
     const wpXml=pts.map(p=>`<di:waypoint x="${p.x}" y="${p.y}"/>`).join("\n      ");
-    // Flowra-eigene Port-Richtungen als Custom-Attribute (andere Tools ignorieren sie,
-    // aber beim Reimport in Flowra bleiben die exakten Andockpunkte erhalten)
-    const fromDirAttr=e.fromDir?` flowra:fromDir="${e.fromDir}"`:"";
-    const toDirAttr=e.toDir?` flowra:toDir="${e.toDir}"`:"";
-    return `<bpmndi:BPMNEdge id="${id}_di" bpmnElement="${id}"${fromDirAttr}${toDirAttr}>
+    return `<bpmndi:BPMNEdge id="${id}_di" bpmnElement="${id}">
       ${wpXml}
     </bpmndi:BPMNEdge>`;
   }).join("\n    ");
@@ -1716,7 +1726,6 @@ function exportBpmnXml(nodes, edges, diagramName){
   xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
   xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
   xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
-  xmlns:flowra="http://flowra.app/bpmn-ext"
   id="${bpmnId('Definitions','main')}"
   targetNamespace="http://flowra.app/bpmn">
   ${rootContent}
@@ -1814,6 +1823,7 @@ function exportDiagram(nodes, edges, format, colors, diagramName, theme){
     return lineSVG+arrowSVG+startSVG+labelSVG;
   }).join("");
 
+  const exportPspCodes=buildPspCodes(nodes,edges);
   const renderNodeSVG=node=>{
     const{w,h}=getNodeSize(node);
     const cBase=col(node.type); const accent=node.color||cBase.accent;
@@ -1832,6 +1842,36 @@ function exportDiagram(nodes, edges, format, colors, diagramName, theme){
     const sw=FX.strokeW;
     if(node.type==="image"){
       return node.src?`<image href="${node.src}" xlink:href="${node.src}" x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid meet"/>`:"";    }
+    if(node.type&&node.type.startsWith("psp_")){
+      const fontFam="system-ui,Segoe UI,Arial,sans-serif";
+      const isProject=node.type==="psp_project";
+      const isSub=node.type==="psp_subproject";
+      const pw=isProject?FX.strokeW*1.3:isSub?FX.strokeW*1.05:FX.strokeW*0.85;
+      const rx=6;
+      const footerH=Math.min(22,h*0.34);
+      const headerH=h-footerH;
+      const code=node.pspCodeOverride||exportPspCodes[node.id]||"";
+      const resp=node.pspResponsible||"";
+      const ampelColors={green:"#4caf6d",yellow:"#e6c34a",red:"#d9534f",done:"#2b2f38"};
+      const ampelCol=node.pspStatus&&ampelColors[node.pspStatus];
+      const headerFill=rgba(accent,isProject?0.34:isSub?0.24:0.16);
+      const lines4=escXml(node.label||"").split("\n");
+      const lineH4=14*1.45;
+      const labelY0=y+headerH/2-((lines4.length-1)*lineH4)/2;
+      const labelSvg=`<text x="${x+w/2}" y="${labelY0+14*0.38}" text-anchor="middle" fill="${INK}" font-size="14" font-weight="${isProject?800:isSub?700:600}" font-family="${fontFam}">`
+        +lines4.map((l,i)=>`<tspan x="${x+w/2}" dy="${i===0?0:lineH4}">${l}</tspan>`).join("")
+        +`</text>`;
+      const footerY=y+headerH;
+      const footerSvg=`<line x1="${x}" y1="${footerY}" x2="${x+w}" y2="${footerY}" stroke="${accent}" stroke-width="1" opacity="0.5"/>`
+        +`<line x1="${x+w/2}" y1="${footerY}" x2="${x+w/2}" y2="${y+h}" stroke="${accent}" stroke-width="1" opacity="0.35"/>`
+        +`<text x="${x+w/4}" y="${footerY+footerH/2+3.5}" text-anchor="middle" font-size="10" font-weight="800" font-family="${fontFam}" fill="${INK}" opacity="0.9">${escXml(code)}</text>`
+        +`<text x="${x+(w*3)/4}" y="${footerY+footerH/2+3.5}" text-anchor="middle" font-size="9.5" font-weight="500" font-family="${fontFam}" fill="${INK}" opacity="0.75">${resp?escXml(resp):"&#8211;"}</text>`;
+      const ampelSvg=ampelCol?`<rect x="${x}" y="${y}" width="5" height="${h}" rx="2.5" fill="${ampelCol}"/>`:"";
+      return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${fillCol}" stroke="${accent}" stroke-width="${pw}"/>`
+        +`<rect x="${x}" y="${y}" width="${w}" height="${headerH}" rx="${rx}" fill="${headerFill}"/>`
+        +`<rect x="${x}" y="${y+headerH-rx}" width="${w}" height="${rx}" fill="${headerFill}"/>`
+        +labelSvg+footerSvg+ampelSvg;
+    }
     if(node.type==="text"){
       const baseFs=14;
       const mdLines=parseMarkdownLines(node.label||"");
@@ -2081,10 +2121,10 @@ function OnboardingScreen({onDone}){
             <h2 style={{margin:0,fontSize:23,fontWeight:700,color:"var(--text)",lineHeight:1.35}}>Willkommen bei Flowra ✦</h2>
             <p style={{margin:0,fontSize:14.5,color:"var(--muted)",lineHeight:1.75}}>
               Dein modernes Tool für visuelle Prozessmodellierung.<br/>
-              Starte mit <strong style={{color:"var(--emerald)"}}>EPK</strong> und <strong style={{color:"var(--emerald)"}}>BPMN 2.0</strong> — UML und ER folgen bald.
+              Starte mit <strong style={{color:"var(--emerald)"}}>EPK</strong>, <strong style={{color:"var(--emerald)"}}>BPMN 2.0</strong> und <strong style={{color:"var(--emerald)"}}>PSP</strong> — UML und ER folgen bald.
             </p>
             <div style={{display:"flex",gap:20,justifyContent:"center",marginTop:4,flexWrap:"wrap"}}>
-              {[["✅","EPK"],["✅","BPMN"],["🔜","UML"],["🔜","ER"]].map(([ic,lb])=>(
+              {[["✅","EPK"],["✅","BPMN"],["✅","PSP"],["🔜","UML"],["🔜","ER"]].map(([ic,lb])=>(
                 <span key={lb} style={{fontSize:12.5,color:ic==="✅"?"var(--emerald)":"var(--faint)",fontWeight:600}}>{ic} {lb}</span>
               ))}
             </div>
@@ -2523,6 +2563,12 @@ const PALETTE_BPMN=[
   {type:"bpmn_lane",label:"Lane",group:"Teilnehmer"},
 ];
 
+const PALETTE_PSP=[
+  {type:"psp_project",label:"Projekt"},
+  {type:"psp_subproject",label:"Teilprojekt"},
+  {type:"psp_workpackage",label:"Arbeitspaket"},
+];
+
 // Default-Beschriftung beim Ablegen auf den Canvas.
 // Aktivitäten/Pools bekommen Platzhaltertext, Icons (Ereignisse/Gateways/Daten) bleiben leer.
 const BPMN_DEFAULT_LABEL={
@@ -2537,13 +2583,15 @@ const BPMN_DEFAULT_LABEL={
   bpmn_custom_artifact:"",
   image:"",
   text:"Text",
+  psp_project:"Projekt", psp_subproject:"Teilprojekt", psp_workpackage:"Arbeitspaket",
 };
 
-const PALETTE=[...PALETTE_EPK,...PALETTE_BPMN];
+const PALETTE=[...PALETTE_EPK,...PALETTE_BPMN,...PALETTE_PSP];
 const LABEL_MAP=Object.fromEntries(PALETTE.map(p=>[p.type,p.label]));
 const LANGUAGES=[
   {id:"epk",name:"EPK",items:PALETTE_EPK},
   {id:"bpmn",name:"BPMN 2.0",items:PALETTE_BPMN},
+  {id:"psp",name:"PSP",items:PALETTE_PSP},
 ];
 
 // Welche Typen teilen sich eine Akzentfarbe (für Einstellungen + Reset)
@@ -2559,6 +2607,7 @@ const ACCENT_LINKED={
   bpmn_data_object:["bpmn_data_object","bpmn_data_list","bpmn_data_input","bpmn_data_output","bpmn_data_store"],
   bpmn_text_annotation:["bpmn_text_annotation","bpmn_group","bpmn_custom_artifact"],
   bpmn_pool:["bpmn_pool","bpmn_lane"],
+  psp_project:["psp_project","psp_subproject","psp_workpackage"],
 };
 
 // Repräsentative Typen für die Akzent-Liste in den Einstellungen
@@ -2574,6 +2623,9 @@ const ACCENT_GROUPS={
     ["bpmn_gateway_exclusive","Gateways"],["bpmn_data_object","Daten"],
     ["bpmn_text_annotation","Artefakte"],["bpmn_pool","Pool / Lane"],
   ],
+  psp:[
+    ["psp_project","Projekt / Teilprojekt / Arbeitspaket"],
+  ],
 };
 // ─── Main Editor ───────────────────────────────────────────────────────────
 const uid=()=>`n${Date.now().toString(36)}${Math.random().toString(36).slice(2,7)}`;
@@ -2582,6 +2634,7 @@ const MAX_HISTORY=50;
 export default function FlowraEditor(){
   const [nodes,setNodes]=useState([]);
   const [edges,setEdges]=useState([]);
+  const pspCodes=React.useMemo(()=>buildPspCodes(nodes,edges),[nodes,edges]);
   const [selected,setSelected]=useState(null);
   const [dragging,setDragging]=useState(null);
   const [resizing,setResizing]=useState(null);
@@ -2605,7 +2658,7 @@ export default function FlowraEditor(){
   const [showGrid,setShowGrid]=useState(false);
   const [wobble,setWobble]=useState(10);
   const [diagramName,setDiagramName]=useState("Unbenanntes Diagramm");
-  const [openLangs,setOpenLangs]=useState(()=>{try{const s=localStorage.getItem("flowra-open-langs");if(s)return JSON.parse(s);}catch(e){}return{epk:true,bpmn:false};});
+  const [openLangs,setOpenLangs]=useState(()=>{try{const s=localStorage.getItem("flowra-open-langs");if(s)return JSON.parse(s);}catch(e){}return{epk:true,bpmn:false,psp:false};});
   const [pendingImport,setPendingImport]=useState(null); // {nodes,edges} wartend auf Ersetzen/Hinzufügen-Entscheidung
   const [openGroups,setOpenGroups]=useState(()=>{try{const s=localStorage.getItem("flowra-open-groups");if(s)return JSON.parse(s);}catch(e){}return{};});
   const toggleLang=(id)=>setOpenLangs(prev=>{const n={...prev,[id]:!prev[id]};try{localStorage.setItem("flowra-open-langs",JSON.stringify(n));}catch(e){}return n;});
@@ -2770,7 +2823,11 @@ export default function FlowraEditor(){
     resizeNodesRef.current=nodes;
     setResizing({id:node.id,handle,startX:x,startY:y,startW:w,startH:h,startNX:node.x,startNY:node.y,lockAspect});
   };
-  const handlePortMouseUp=(e,nodeId,dir)=>{e.stopPropagation();portHandledRef.current=true;setTimeout(()=>{portHandledRef.current=false;},50);if(drawingEdge&&drawingEdge.fromId!==nodeId){const newEdges=[...edges,{id:uid(),from:drawingEdge.fromId,to:nodeId,fromDir:drawingEdge.fromDir,toDir:dir,label:"",waypoints:drawingEdge.waypoints||[]}];setEdges(newEdges);pushHistory(nodes,newEdges);kick(nodeId,0,14);}setDrawingEdgeSynced(null);setHoveredPort(null);};
+  const handlePortMouseUp=(e,nodeId,dir)=>{e.stopPropagation();portHandledRef.current=true;setTimeout(()=>{portHandledRef.current=false;},50);if(drawingEdge&&drawingEdge.fromId!==nodeId){
+    const fromNode=nodes.find(n=>n.id===drawingEdge.fromId);
+    const toNode=nodes.find(n=>n.id===nodeId);
+    const bothPsp=fromNode&&toNode&&fromNode.type?.startsWith("psp_")&&toNode.type?.startsWith("psp_");
+    const newEdges=[...edges,{id:uid(),from:drawingEdge.fromId,to:nodeId,fromDir:drawingEdge.fromDir,toDir:dir,label:"",waypoints:drawingEdge.waypoints||[],...(bothPsp?{lineStyle:"line"}:{})}];setEdges(newEdges);pushHistory(nodes,newEdges);kick(nodeId,0,14);}setDrawingEdgeSynced(null);setHoveredPort(null);};
 
   const handleSVGMouseMove=e=>{const rect=svgRef.current.getBoundingClientRect();const{x,y}=toCanvas(e.clientX-rect.left,e.clientY-rect.top);
     if(resizing){
@@ -3399,7 +3456,7 @@ export default function FlowraEditor(){
                       :<rect x={-10} y={-10} width={(node.w||NODE_W)+20} height={(node.h||NODE_H)+20} rx={18} fill="none" stroke="var(--accent)" strokeWidth={2} opacity={0.7} style={{animation:"ringpulse 1s ease-in-out infinite"}}/>
                     )}
                     <g ref={el=>{if(el)wobbleRefs.current[node.id]=el;else delete wobbleRefs.current[node.id];}}>
-                        <ShapeRenderer type={node.type} label={editingId===node.id?"":node.label} width={w} height={h} selected={isSel} colors={colors} fx={T.fx} override={node.color} variant={node.variant} nodeSrc={node.src}/>
+                        <ShapeRenderer type={node.type} label={editingId===node.id?"":node.label} width={w} height={h} selected={isSel} colors={colors} fx={T.fx} override={node.color} variant={node.variant} nodeSrc={node.src} pspCode={node.pspCodeOverride||pspCodes[node.id]} pspResponsible={node.pspResponsible} pspStatus={node.pspStatus}/>
                         {showPorts&&getAllPorts(node).map(port=>{
                           const hov=hoveredPort?.nodeId===node.id&&hoveredPort?.dir===port.dir;
                           return(<circle key={port.dir} className="port-dot" cx={port.x-node.x} cy={port.y-node.y} r={hov?8.5:6}
@@ -3446,7 +3503,59 @@ export default function FlowraEditor(){
         {/* PROPERTIES */}
         <aside className="glass" style={{width:208,display:"flex",flexDirection:"column",gap:12,flexShrink:0,margin:12,marginLeft:0,padding:"18px 16px",borderRadius:"var(--r-lg)"}}>
           <div style={{fontSize:11,fontWeight:700,letterSpacing:2,color:"var(--muted)"}}>EIGENSCHAFTEN</div>
-          {selected?.type==="node"&&(()=>{const node=nodes.find(n=>n.id===selected.id);if(!node)return null;const item=PALETTE.find(p=>p.type===node.type&&p.variant===node.variant)||PALETTE.find(p=>p.type===node.type);const acc=accentOf(node.type);if(node.type==="image")return(<div style={{padding:"18px 16px",display:"flex",flexDirection:"column",gap:10}}><div style={{fontSize:11,fontWeight:700,letterSpacing:1.4,color:"var(--faint)",marginBottom:4}}>BILD</div><div style={{fontSize:12,color:"var(--muted)"}}>Bild-Elemente können verschoben, skaliert und gelöscht werden.</div><label style={{display:"flex",alignItems:"center",gap:8,padding:"8px 12px",borderRadius:"var(--r-md)",background:"var(--glass)",border:"1px solid var(--border)",cursor:"pointer",color:"var(--muted)",fontSize:12,fontWeight:600}}><span>🔄 Bild ersetzen</span><input type="file" accept="image/png,image/jpeg" style={{display:"none"}} onChange={ev=>{const file=ev.target.files?.[0];if(!file)return;const rd=new FileReader();rd.onload=e2=>{const nn=nodes.map(n=>n.id===node.id?{...n,src:e2.target.result}:n);setNodes(nn);pushHistory(nn,edges);};rd.readAsDataURL(file);ev.target.value="";}}/></label><div onClick={()=>{const nn=nodes.map(n=>n.id===node.id?{...n,locked:!n.locked}:n);setNodes(nn);pushHistory(nn,edges);}} style={{display:"flex",alignItems:"center",gap:8,padding:"8px 11px",borderRadius:8,cursor:"pointer",background:node.locked?"color-mix(in oklab,var(--accent) 12%,var(--glass))":"var(--glass)",border:`1px solid ${node.locked?"var(--accent)":"var(--border)"}`,color:node.locked?"var(--accent)":"var(--muted)",transition:"all .15s",userSelect:"none"}}><Icon name={node.locked?"lock":"unlock"} size={13}/><span style={{fontSize:12,fontWeight:600}}>{node.locked?"Gesperrt – klicken zum Entsperren":"Position sperren"}</span></div></div>);return(
+          {selected?.type==="node"&&(()=>{const node=nodes.find(n=>n.id===selected.id);if(!node)return null;const item=PALETTE.find(p=>p.type===node.type&&p.variant===node.variant)||PALETTE.find(p=>p.type===node.type);const acc=accentOf(node.type);if(node.type==="image")return(<div style={{padding:"18px 16px",display:"flex",flexDirection:"column",gap:10}}><div style={{fontSize:11,fontWeight:700,letterSpacing:1.4,color:"var(--faint)",marginBottom:4}}>BILD</div><div style={{fontSize:12,color:"var(--muted)"}}>Bild-Elemente können verschoben, skaliert und gelöscht werden.</div><label style={{display:"flex",alignItems:"center",gap:8,padding:"8px 12px",borderRadius:"var(--r-md)",background:"var(--glass)",border:"1px solid var(--border)",cursor:"pointer",color:"var(--muted)",fontSize:12,fontWeight:600}}><span>🔄 Bild ersetzen</span><input type="file" accept="image/png,image/jpeg" style={{display:"none"}} onChange={ev=>{const file=ev.target.files?.[0];if(!file)return;const rd=new FileReader();rd.onload=e2=>{const nn=nodes.map(n=>n.id===node.id?{...n,src:e2.target.result}:n);setNodes(nn);pushHistory(nn,edges);};rd.readAsDataURL(file);ev.target.value="";}}/></label><div onClick={()=>{const nn=nodes.map(n=>n.id===node.id?{...n,locked:!n.locked}:n);setNodes(nn);pushHistory(nn,edges);}} style={{display:"flex",alignItems:"center",gap:8,padding:"8px 11px",borderRadius:8,cursor:"pointer",background:node.locked?"color-mix(in oklab,var(--accent) 12%,var(--glass))":"var(--glass)",border:`1px solid ${node.locked?"var(--accent)":"var(--border)"}`,color:node.locked?"var(--accent)":"var(--muted)",transition:"all .15s",userSelect:"none"}}><Icon name={node.locked?"lock":"unlock"} size={13}/><span style={{fontSize:12,fontWeight:600}}>{node.locked?"Gesperrt – klicken zum Entsperren":"Position sperren"}</span></div></div>);
+          if(node.type&&node.type.startsWith("psp_"))return(
+            <div className="pop-in" style={{display:"flex",flexDirection:"column",gap:9}}>
+              <div style={{display:"flex",alignItems:"center",gap:9,padding:"10px 12px",background:"var(--glass)",borderRadius:"var(--r-md)",border:"1px solid var(--border)"}}>
+                <div style={{width:10,height:10,borderRadius:"50%",background:acc,flexShrink:0}}/>
+                <div style={{fontSize:12.5,fontWeight:700,flex:1}}>{item?.label||LABEL_MAP[node.type]}</div>
+              </div>
+              <div style={{padding:"2px 2px 8px"}}>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:6}}>
+                  <div style={{fontSize:10.5,fontWeight:700,letterSpacing:1,color:"var(--faint)"}}>PSP-ID</div>
+                  {node.pspCodeOverride&&(
+                    <div onClick={()=>{const nn=nodes.map(n=>n.id===node.id?{...n,pspCodeOverride:undefined}:n);setNodes(nn);pushHistory(nn,edges);}}
+                      style={{fontSize:10,color:"var(--accent)",cursor:"pointer",fontWeight:600}}>↺ Automatisch</div>
+                  )}
+                </div>
+                <input type="text" value={node.pspCodeOverride??(pspCodes[node.id]||"")} placeholder="z.B. 1.2.3"
+                  onChange={e=>{const nn=nodes.map(n=>n.id===node.id?{...n,pspCodeOverride:e.target.value}:n);setNodes(nn);}}
+                  onBlur={()=>pushHistory(nodes,edges)}
+                  style={{width:"100%",padding:"8px 10px",borderRadius:8,background:"var(--glass)",border:`1px solid ${node.pspCodeOverride?"var(--accent)":"var(--border)"}`,color:"var(--text)",fontSize:12.5,fontFamily:FONT}}/>
+                <div style={{fontSize:10,color:"var(--faint)",marginTop:5,lineHeight:1.4}}>Standardmäßig automatisch aus der Baumstruktur berechnet – hier überschreibbar.</div>
+              </div>
+              <div style={{padding:"2px 2px 8px"}}>
+                <div style={{fontSize:10.5,fontWeight:700,letterSpacing:1,color:"var(--faint)",marginBottom:6}}>VERANTWORTLICH</div>
+                <input type="text" value={node.pspResponsible||""} placeholder="Name eintragen…"
+                  onChange={e=>{const nn=nodes.map(n=>n.id===node.id?{...n,pspResponsible:e.target.value}:n);setNodes(nn);}}
+                  onBlur={()=>pushHistory(nodes,edges)}
+                  style={{width:"100%",padding:"8px 10px",borderRadius:8,background:"var(--glass)",border:"1px solid var(--border)",color:"var(--text)",fontSize:12.5,fontFamily:FONT}}/>
+              </div>
+              <div style={{padding:"2px 2px 8px"}}>
+                <div style={{fontSize:10.5,fontWeight:700,letterSpacing:1,color:"var(--faint)",marginBottom:6}}>STATUS (AMPEL)</div>
+                <div style={{display:"flex",gap:6}}>
+                  {[["none","Kein Status","transparent"],["green","Im Plan","#4caf6d"],["yellow","Verzug droht","#e6c34a"],["red","Verzug","#d9534f"],["done","Fertig","#2b2f38"]].map(([val,tooltip,col])=>(
+                    <div key={val} title={tooltip} onClick={()=>{const nn=nodes.map(n=>n.id===node.id?{...n,pspStatus:val==="none"?undefined:val}:n);setNodes(nn);pushHistory(nn,edges);}}
+                      style={{width:26,height:26,borderRadius:"50%",cursor:"pointer",
+                        background:val==="none"?"var(--glass)":col,
+                        border:`2px solid ${(node.pspStatus===val||(val==="none"&&!node.pspStatus))?"var(--accent)":"var(--border)"}`,
+                        display:"flex",alignItems:"center",justifyContent:"center"}}>
+                      {val==="none"&&<span style={{fontSize:13,color:"var(--faint)"}}>–</span>}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div onClick={()=>{const nn=nodes.map(n=>n.id===node.id?{...n,locked:!n.locked}:n);setNodes(nn);pushHistory(nn,edges);}}
+                style={{display:"flex",alignItems:"center",gap:8,padding:"8px 11px",borderRadius:8,cursor:"pointer",
+                  background:node.locked?"color-mix(in oklab,var(--accent) 12%,var(--glass))":"var(--glass)",
+                  border:`1px solid ${node.locked?"var(--accent)":"var(--border)"}`,
+                  color:node.locked?"var(--accent)":"var(--muted)",transition:"all .15s",userSelect:"none"}}>
+                <Icon name={node.locked?"lock":"unlock"} size={13}/>
+                <span style={{fontSize:12,fontWeight:600}}>{node.locked?"Gesperrt – klicken zum Entsperren":"Position sperren"}</span>
+              </div>
+            </div>
+          );
+          return(
             <div className="pop-in" style={{display:"flex",flexDirection:"column",gap:9}}>
               <div style={{display:"flex",alignItems:"center",gap:9,padding:"10px 12px",background:"var(--glass)",borderRadius:"var(--r-md)",border:"1px solid var(--border)"}}>
                 <span style={{width:10,height:10,borderRadius:3,background:acc,boxShadow:`0 0 8px ${rgba(acc,0.8)}`}}/>

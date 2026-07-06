@@ -8,6 +8,8 @@ fokussiert, schnell und für echte Modellierungsstandards gebaut.
 
 - ✅ EPK-Editor (Ereignisgesteuerte Prozessketten)
 - ✅ BPMN 2.0-Editor (Aktivitäten, Ereignisse, Gateways, Daten, Pool/Lane, Artefakte)
+- ✅ BPMN 2.0 XML-Import/-Export (standardkonform, kompatibel mit Camunda Modeler, bpmn.io, Signavio)
+- ✅ PSP-Editor (Projektstrukturplan nach DIN 69901: Projekt, Teilprojekt, Arbeitspaket)
 - ✅ Freie Textelemente mit Markdown-Unterstützung
 - ✅ Bild-Elemente (PNG/JPEG einbetten)
 
@@ -33,6 +35,13 @@ fokussiert, schnell und für echte Modellierungsstandards gebaut.
 - Vollständige BPMN-Palette: Aufgaben (Task, Subprocess, Transaction, …), Start-/Zwischen-/Endereignisse mit Varianten (Nachricht, Timer, Eskalation, Fehler, …), Gateways (XOR, AND, OR, Komplex, Event-basiert), Datenobjekte, Datenspeicher, Pool & Lane, Textannotation, Gruppe
 - BPMN-Linientypen: Sequenzfluss, Standardfluss, Bedingter Fluss, Nachrichtenfluss, Assoziation
 - Pool/Lane-Position sperren (verhindert versehentliches Verschieben)
+- **BPMN 2.0 XML-Import/-Export** – Diagramme als standardkonforme `.bpmn`-Datei exportieren und in anderen Tools (Camunda Modeler, bpmn.io, Signavio) weiterverwenden, sowie `.bpmn`-Dateien aus Flowra oder Fremd-Tools wieder importieren. Unterstützt mehrere Pools, korrekte Nachrichtenfluss-Klassifizierung zwischen Prozessen sowie einen weitgehend verlustfreien Roundtrip (Wegpunkte, Port-Richtungen und mehrzeilige Labels bleiben beim Reimport in Flowra erhalten)
+
+### PSP (Projektstrukturplan)
+- Elemente: Projekt (Wurzel), Teilprojekt, Arbeitspaket – nach DIN 69901
+- Automatische PSP-Code-Nummerierung (1, 1.1, 1.1.1 …) aus der Baumstruktur, jederzeit manuell überschreibbar
+- Feld für Verantwortliche direkt am Element
+- Optionale Ampel-Statusanzeige (grün/gelb/rot/fertig) als Steuerungselement
 
 ## Technologie
 
@@ -52,7 +61,7 @@ Fertige Builds für alle Betriebssysteme sind unter [Releases](../../releases) v
 | `Flowra-macOS.zip` | macOS | Entpacken, `Flowra.app` in Programme ziehen |
 
 Die Datenbank `flowra.db` wird beim ersten Start automatisch neben der Datei erstellt.  
-Exportierte Diagramme (PNG/JPEG/SVG) landen im persönlichen Downloads-Ordner.
+Exportierte Diagramme (PNG/JPEG/SVG/BPMN-XML) landen im persönlichen Downloads-Ordner.
 
 ## Einrichtung für Entwicklung
 
