@@ -1299,7 +1299,7 @@ function bpmnEventDefinition(variant){
   if(v.includes("conditional"))return "conditionalEventDefinition";
   if(v.includes("error"))return "errorEventDefinition";
   if(v.includes("cancel"))return "cancelEventDefinition";
-  if(v.includes("compensation"))return "compensationEventDefinition";
+  if(v.includes("compensation"))return "compensateEventDefinition";
   if(v.includes("signal"))return "signalEventDefinition";
   if(v.includes("link"))return "linkEventDefinition";
   if(v.includes("termination"))return "terminateEventDefinition";
@@ -2344,9 +2344,17 @@ function ProjectManager({currentName, onLoad, onNew, onClose}){
 
   const handleRename = async (oldName) => {
     if(!renameVal.trim()) return;
-    await fetch(`${API_BASE}/diagrams/${encodeURIComponent(oldName)}/rename`, {
-      method:"PUT", headers:{"Content-Type":"application/json"}, body:JSON.stringify({name:renameVal})
-    });
+    try {
+      const r = await fetch(`${API_BASE}/diagrams/${encodeURIComponent(oldName)}/rename`, {
+        method:"PUT", headers:{"Content-Type":"application/json"}, body:JSON.stringify({name:renameVal})
+      });
+      if(!r.ok){
+        const detail = (await r.json().catch(()=>null))?.detail;
+        setError(detail || `Umbenennen fehlgeschlagen (HTTP ${r.status})`);
+        return;
+      }
+      setError("");
+    } catch(e){ setError("Backend nicht erreichbar"); return; }
     setRenaming(null); refresh();
   };
 
@@ -2761,11 +2769,12 @@ export default function FlowraEditor(){
   const saveDiagram = async () => {
     setSaveStatus('saving');
     try {
-      await fetch(`${API_BASE}/diagrams/${encodeURIComponent(diagramName)}`, {
+      const r = await fetch(`${API_BASE}/diagrams/${encodeURIComponent(diagramName)}`, {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
         body: JSON.stringify({nodes, edges})
       });
+      if(!r.ok) throw new Error(`Speichern fehlgeschlagen (HTTP ${r.status})`);
       setSaveStatus('saved');
       setTimeout(()=>setSaveStatus(''),2000);
     } catch(e) { setSaveStatus('error'); setTimeout(()=>setSaveStatus(''),3000); }
@@ -3024,7 +3033,7 @@ export default function FlowraEditor(){
       }
       if((e.ctrlKey||e.metaKey)&&e.key==="s"){e.preventDefault();saveDiagram();return;}
       if((e.ctrlKey||e.metaKey)&&e.key==="z"){e.preventDefault();undo();return;}
-      if((e.ctrlKey||e.metaKey)&&(e.key==="y"||(e.shiftKey&&e.key==="z"))){e.preventDefault();redo();return;}
+      if((e.ctrlKey||e.metaKey)&&(e.key==="y"||(e.shiftKey&&(e.key==="z"||e.key==="Z")))){e.preventDefault();redo();return;}
       if((e.ctrlKey||e.metaKey)&&e.key==="c"){if(selected?.type==="node"){const n=nodes.find(n=>n.id===selected.id);if(n)setClipboard({...n});}return;}
       if((e.ctrlKey||e.metaKey)&&e.key==="v"){if(clipboard){const id=uid();const newNode={...clipboard,id,x:clipboard.x+GRID*2,y:clipboard.y+GRID*2};const newNodes=[...nodes,newNode];setNodes(newNodes);pushHistory(newNodes,edges);setSelected({type:"node",id});nodesRef.current[id]=newNode;kick(id,0,26);}return;}
       if(e.key==="Delete"||e.key==="Backspace")deleteSelected();

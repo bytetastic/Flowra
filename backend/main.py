@@ -104,8 +104,13 @@ def rename_diagram(name: str, body: dict):
     if not new_name:
         raise HTTPException(400, "Name darf nicht leer sein")
     with get_db() as con:
-        con.execute("UPDATE diagrams SET name=? WHERE name=?", (new_name, name))
-        con.commit()
+        try:
+            cur = con.execute("UPDATE diagrams SET name=? WHERE name=?", (new_name, name))
+            con.commit()
+        except sqlite3.IntegrityError:
+            raise HTTPException(409, f"Ein Diagramm namens '{new_name}' existiert bereits")
+        if cur.rowcount == 0:
+            raise HTTPException(404, f"Diagramm '{name}' nicht gefunden")
     return {"renamed": new_name}
 
 
